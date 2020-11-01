@@ -1,0 +1,209 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Atropos</name>
+    </assembly>
+    <members>
+        <member name="T:Atropos.ImmutableDictionary">
+            <summary>
+            Provides the helper methods for the <see cref="T:Atropos.ImmutableDictionary`2"/>
+            </summary>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary.Init``2(System.Collections.Generic.IEnumerable{System.ValueTuple{``0,``1}})">
+            <summary>
+            Initializes the immutable dictionary based on the provided key-value pairs 
+            </summary>
+            <typeparam name="TKey">The dictionary key type</typeparam>
+            <typeparam name="TValue">The dictionary value type</typeparam>
+            <param name="keyValuePairs">The pairs to use for the immutable dictionary</param>
+            <returns>A new immutable dictionary containing the provided <paramref name="keyValuePairs"/></returns>
+        </member>
+        <member name="T:Atropos.ImmutableDictionary`2">
+            <summary>
+            Represents an immutable dictionary
+            </summary>
+            <typeparam name="TKey">Type of the key</typeparam>
+            <typeparam name="TValue">Type of the value</typeparam>
+        </member>
+        <member name="P:Atropos.ImmutableDictionary`2.Item(`0)">
+            <summary>
+            Returns the value by the given key
+            </summary>
+            <param name="key">The key</param>
+            <returns></returns>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the given key is not present in the dictionary</exception>
+        </member>
+        <member name="P:Atropos.ImmutableDictionary`2.Keys">
+            <summary>
+            Returns an enumeration of all the keys in this dictionary
+            </summary>
+        </member>
+        <member name="T:Atropos.ImmutableList">
+            <summary>
+            Helper class with the extension methods for the <see cref="T:Atropos.ImmutableList`1"/> class.
+            </summary>
+        </member>
+        <member name="M:Atropos.ImmutableList.Init``1(``0,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Atropos.ImmutableList`1"/> class
+            </summary>
+            <typeparam name="T">Immutable list element type, inferred automatically from the <paramref name="item"/>parameter</typeparam>
+            <param name="item">value of the element(s) to repeat <paramref name="count"/> times</param>
+            <param name="count">The number of times to repeat the provided <paramref name="item"/></param>
+            <returns>A new immutable list that contains <paramref name="count"/> instances of <paramref name="item"/></returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.Add``2(Atropos.ImmutableList{``0},``1)">
+            <summary>
+            Makes a copy of the list, and adds the specified object to the end of the copied
+                list.
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">Added item type</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="value">The object to add to the list</param>
+            <returns>A new list with the object added</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.AddRange``2(Atropos.ImmutableList{``0},System.Collections.Generic.IEnumerable{``1})">
+            <summary>
+            Adds a range of items to the immutable list
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">Added item type</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="items">The list of items to add</param>
+            <returns>A new immutable list equal to the original list with the <paramref name="items"/> added at the end.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.Insert``2(Atropos.ImmutableList{``0},System.Int32,``1)">
+            <summary>
+            Inserts the specified element at the specified index in the immutable list.
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">Added item type</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="index">The zero-based index at which to insert the value.</param>
+            <param name="element">The object to insert.</param>
+            <returns>A new immutable list that includes the specified element.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.InsertRange``2(Atropos.ImmutableList{``0},System.Int32,System.Collections.Generic.IEnumerable{``1})">
+            <summary>
+            Inserts the specified elements at the specified index in the immutable list.
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">Added item type</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="index">The zero-based index at which the new elements should be inserted.</param>
+            <param name="items">The elements to insert.</param>
+            <returns>A new immutable list that includes the specified elements.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.Replace``2(Atropos.ImmutableList{``0},``0,``1)">
+            <summary>
+             Returns a new list with the first matching element in the list replaced with 
+             the specified element.
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">Added item type</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="oldValue">The element to be replaced.</param>
+            <param name="newValue">The element to replace the first occurrence of oldValue with</param>
+            <returns>A new list that contains newValue, even if oldvalue is the same as newValue.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.SetItem``2(Atropos.ImmutableList{``0},System.Int32,``1)">
+            <summary>
+            Replaces an element in the list at a given position with the specified element.
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">The type of the replacement value</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="index">The position in the list of the element to replace.</param>
+            <param name="value">The element to replace the old element with.</param>
+            <returns>A new list that contains the new element, even if the element at the specified
+            location is the same as the new element.</returns>
+        </member>
+        <member name="T:Atropos.ImmutableList`1">
+            <summary>
+            Immutable list
+            </summary>
+            <typeparam name="T">Type of the list elements</typeparam>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.Clear">
+            <summary>
+            Clears the list
+            </summary>
+            <returns>A new immutable list of the same type as this, but with no elements</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.IndexOf(`0,System.Int32,System.Int32)">
+            <summary>
+            Searches for the specified object and returns the zero-based index of the first 
+            occurrence within the range of elements in the list
+            that starts at the specified index and contains the specified number of elements.
+            </summary>
+            <param name="item">Object to find</param>
+            <param name="index">Zero-based start index</param>
+            <param name="count">The length of the search range</param>
+            <returns>The zero-based index of the first occurrence of item within the range of elements
+            in the <see cref="T:Atropos.ImmutableList`1"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
+            of elements if found; otherwise -1.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.LastIndexOf(`0,System.Int32,System.Int32)">
+            <summary>
+            Searches for the specified object and returns the zero-based index of the last occurrence within 
+            the range of elements in the <see cref="T:Atropos.ImmutableList`1"/>
+            that contains the specified number of elements and ends at the specified index.
+            </summary>
+            <param name="item">The object to locate in the list. The value can be null for reference types.</param>
+            <param name="index">The zero-based starting index of the search. 0 (zero) is valid in an empty list.</param>
+            <param name="count"> The number of elements in the section to search.</param>
+            <returns>The zero-based index of the last occurrence of item within the range of elements
+            in the <see cref="T:Atropos.ImmutableList`1"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
+            of elements if found; otherwise -1.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.Remove(`0)">
+            <summary>
+            Removes the first occurrence of a specified object from this immutable list.
+            </summary>
+            <param name="value">The object to remove from the list.</param>
+            <returns>A new immutable list with the specified object removed</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.RemoveAll(System.Predicate{`0})">
+            <summary>
+            Removes all the elements that match the conditions defined by the specified predicate.
+            </summary>
+            <param name="match">The delegate that defines the conditions of the elements to remove.</param>
+            <returns>A new immutable list with the elements removed.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.RemoveAt(System.Int32)">
+            <summary>
+            Removes the element at the specified index of the immutable list.
+            </summary>
+            <param name="index">The index of the element to remove.</param>
+            <returns>A new immutable list with the element removed.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.RemoveRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Removes the specified objects from the list.
+            </summary>
+            <param name="items">The objects to remove from the list.</param>
+            <returns> A new immutable list with the specified objects removed, if items matched objects in the list.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Atropos.ImmutableList`1.RemoveRange(System.Int32,System.Int32)" -->
+        <member name="P:Atropos.ImmutableList`1.Item(System.Int32)">
+            <summary>
+            Returns an element from the list. Asympthotic is O(log(<see cref="P:Atropos.ImmutableList`1.Count"/>)).
+            </summary>
+            <param name="index">The zero-based index of the element to return</param>
+            <returns>The value at the requested <paramref name="index"/></returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when requested index is below zero or aboove <see cref="P:Atropos.ImmutableList`1.Count"/>-1</exception>
+        </member>
+        <member name="P:Atropos.ImmutableList`1.Count">
+            <summary>
+            Returns count of the elements in the <see cref="T:Atropos.ImmutableList`1"/>
+            </summary>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.GetEnumerator">
+            <summary>
+            Returns the list enumerator
+            </summary>
+            <returns>The list enumerator</returns>
+        </member>
+    </members>
+</doc>
