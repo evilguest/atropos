@@ -519,11 +519,7 @@ namespace Atropos
         }
 
     }
-
-    /// <summary>
-    /// Contains a number of items
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /*
     internal unsafe class Leaf<T>
     {
         private static readonly int Size = 256 / (typeof(T).IsByRef ? sizeof(IntPtr) : Marshal.SizeOf<T>());
@@ -538,5 +534,5 @@ namespace Atropos
         private fixed int data[8];
         [FieldOffset(0)]
         private Vector256<int> vdata;
-    }
+    }*/
 }

@@ -246,11 +246,5 @@
             Creates a new empty immutable list
             </summary>
         </member>
-        <member name="T:Atropos.Leaf`1">
-            <summary>
-            Contains a number of items
-            </summary>
-            <typeparam name="T"></typeparam>
-        </member>
     </members>
 </doc>
