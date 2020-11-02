@@ -16,8 +16,12 @@ Implements [System.Collections.Generic.IReadOnlyList&lt;](https://docs.microsoft
 `T`  
 Type of the list elements  
   
+### Constructors
+- [ImmutableList()](./ImmutableList-T--ImmutableList().md 'Atropos.ImmutableList&lt;T&gt;.ImmutableList()')
+- [ImmutableList(T, int)](./ImmutableList-T--ImmutableList(T_int).md 'Atropos.ImmutableList&lt;T&gt;.ImmutableList(T, int)')
 ### Properties
 - [Count](./ImmutableList-T--Count.md 'Atropos.ImmutableList&lt;T&gt;.Count')
+- [Empty](./ImmutableList-T--Empty.md 'Atropos.ImmutableList&lt;T&gt;.Empty')
 - [this[int]](./ImmutableList-T--this-int-.md 'Atropos.ImmutableList&lt;T&gt;.this[int]')
 ### Methods
 - [Clear()](./ImmutableList-T--Clear().md 'Atropos.ImmutableList&lt;T&gt;.Clear()')
@@ -28,3 +32,4 @@ Type of the list elements
 - [RemoveAll(System.Predicate&lt;T&gt;)](./ImmutableList-T--RemoveAll(Predicate-T-).md 'Atropos.ImmutableList&lt;T&gt;.RemoveAll(System.Predicate&lt;T&gt;)')
 - [RemoveAt(int)](./ImmutableList-T--RemoveAt(int).md 'Atropos.ImmutableList&lt;T&gt;.RemoveAt(int)')
 - [RemoveRange(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-T--RemoveRange(IEnumerable-T-).md 'Atropos.ImmutableList&lt;T&gt;.RemoveRange(System.Collections.Generic.IEnumerable&lt;T&gt;)')
+- [RemoveRange(int, int)](./ImmutableList-T--RemoveRange(int_int).md 'Atropos.ImmutableList&lt;T&gt;.RemoveRange(int, int)')

@@ -1,7 +1,6 @@
 ### [Atropos](./Atropos.md 'Atropos').[ImmutableList](./ImmutableList.md 'Atropos.ImmutableList')
 ## ImmutableList.Add&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, B) Method
-Makes a copy of the list, and adds the specified object to the end of the copied  
-    list.  
+Makes a copy of the list, and adds the specified object to the end of the copied list.  
 ```csharp
 public static Atropos.ImmutableList<B> Add<T,B>(this Atropos.ImmutableList<T> list, B value);
 ```

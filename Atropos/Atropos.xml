@@ -54,11 +54,19 @@
         </member>
         <member name="M:Atropos.ImmutableList.Add``2(Atropos.ImmutableList{``0},``1)">
             <summary>
-            Makes a copy of the list, and adds the specified object to the end of the copied
-                list.
+            Makes a copy of the list, and adds the specified object to the end of the copied list.
             </summary>
             <typeparam name="T">Element type of the original list</typeparam>
             <typeparam name="B">Added item type</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="value">The object to add to the list</param>
+            <returns>A new list with the object added</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.Add``1(Atropos.ImmutableList{``0},``0)">
+            <summary>
+            Makes a copy of the list, and adds the specified object to the end of the copied list.
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
             <param name="list">Original immutable list</param>
             <param name="value">The object to add to the list</param>
             <returns>A new list with the object added</returns>
@@ -69,6 +77,15 @@
             </summary>
             <typeparam name="T">Element type of the original list</typeparam>
             <typeparam name="B">Added item type</typeparam>
+            <param name="list">Original immutable list</param>
+            <param name="items">The list of items to add</param>
+            <returns>A new immutable list equal to the original list with the <paramref name="items"/> added at the end.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.AddRange``1(Atropos.ImmutableList{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Adds a range of items to the immutable list
+            </summary>
+            <typeparam name="T">Element type of the original list</typeparam>
             <param name="list">Original immutable list</param>
             <param name="items">The list of items to add</param>
             <returns>A new immutable list equal to the original list with the <paramref name="items"/> added at the end.</returns>
@@ -124,6 +141,11 @@
             Immutable list
             </summary>
             <typeparam name="T">Type of the list elements</typeparam>
+        </member>
+        <member name="P:Atropos.ImmutableList`1.Empty">
+            <summary>
+            Returns an empty <see cref="T:Atropos.ImmutableList`1"/>
+            </summary>
         </member>
         <member name="M:Atropos.ImmutableList`1.Clear">
             <summary>
@@ -185,7 +207,14 @@
             <param name="items">The objects to remove from the list.</param>
             <returns> A new immutable list with the specified objects removed, if items matched objects in the list.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Atropos.ImmutableList`1.RemoveRange(System.Int32,System.Int32)" -->
+        <member name="M:Atropos.ImmutableList`1.RemoveRange(System.Int32,System.Int32)">
+            <summary>
+            Removes a range of elements from the <see cref="T:Atropos.ImmutableList`1"/>
+            </summary>
+            <param name="index">The zero-based starting index of the range of elements to remove.</param>
+            <param name="count">The number of elements to remove.</param>
+            <returns>A new immutable list with the elements removed.</returns>
+        </member>
         <member name="P:Atropos.ImmutableList`1.Item(System.Int32)">
             <summary>
             Returns an element from the list. Asympthotic is O(log(<see cref="P:Atropos.ImmutableList`1.Count"/>)).
@@ -204,6 +233,24 @@
             Returns the list enumerator
             </summary>
             <returns>The list enumerator</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.#ctor(`0,System.Int32)">
+            <summary>
+            Constructs a list from the value
+            </summary>
+            <param name="value">The value of the list element</param>
+            <param name="count">The count of elements to create</param>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.#ctor">
+            <summary>
+            Creates a new empty immutable list
+            </summary>
+        </member>
+        <member name="T:Atropos.Leaf`1">
+            <summary>
+            Contains a number of items
+            </summary>
+            <typeparam name="T"></typeparam>
         </member>
     </members>
 </doc>
