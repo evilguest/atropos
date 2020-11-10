@@ -11,7 +11,7 @@ Element type of the original list
   
 <a name='Atropos-ImmutableList-AddRange-T_B-(Atropos-ImmutableList-T-_System-Collections-Generic-IEnumerable-B-)-B'></a>
 `B`  
-Added item type  
+Added item type. Must be an ancestor of [T](#Atropos-ImmutableList-AddRange-T_B-(Atropos-ImmutableList-T-_System-Collections-Generic-IEnumerable-B-)-T 'Atropos.ImmutableList.AddRange&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;B&gt;).T')  
   
 #### Parameters
 <a name='Atropos-ImmutableList-AddRange-T_B-(Atropos-ImmutableList-T-_System-Collections-Generic-IEnumerable-B-)-list'></a>

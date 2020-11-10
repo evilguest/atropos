@@ -11,7 +11,7 @@ Element type of the original list
   
 <a name='Atropos-ImmutableList-Add-T_B-(Atropos-ImmutableList-T-_B)-B'></a>
 `B`  
-Added item type  
+Added item type. Must be an ancestor of [T](#Atropos-ImmutableList-Add-T_B-(Atropos-ImmutableList-T-_B)-T 'Atropos.ImmutableList.Add&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, B).T')  
   
 #### Parameters
 <a name='Atropos-ImmutableList-Add-T_B-(Atropos-ImmutableList-T-_B)-list'></a>

@@ -11,7 +11,7 @@ Element type of the original list
   
 <a name='Atropos-ImmutableList-SetItem-T_B-(Atropos-ImmutableList-T-_int_B)-B'></a>
 `B`  
-The type of the replacement value  
+The type of the replacement value. Must be an ancestor of [T](#Atropos-ImmutableList-SetItem-T_B-(Atropos-ImmutableList-T-_int_B)-T 'Atropos.ImmutableList.SetItem&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, int, B).T').  
   
 #### Parameters
 <a name='Atropos-ImmutableList-SetItem-T_B-(Atropos-ImmutableList-T-_int_B)-list'></a>

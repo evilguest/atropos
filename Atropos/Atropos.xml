@@ -57,16 +57,7 @@
             Makes a copy of the list, and adds the specified object to the end of the copied list.
             </summary>
             <typeparam name="T">Element type of the original list</typeparam>
-            <typeparam name="B">Added item type</typeparam>
-            <param name="list">Original immutable list</param>
-            <param name="value">The object to add to the list</param>
-            <returns>A new list with the object added</returns>
-        </member>
-        <member name="M:Atropos.ImmutableList.Add``1(Atropos.ImmutableList{``0},``0)">
-            <summary>
-            Makes a copy of the list, and adds the specified object to the end of the copied list.
-            </summary>
-            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">Added item type. Must be an ancestor of <typeparamref name="T"/></typeparam>
             <param name="list">Original immutable list</param>
             <param name="value">The object to add to the list</param>
             <returns>A new list with the object added</returns>
@@ -76,16 +67,7 @@
             Adds a range of items to the immutable list
             </summary>
             <typeparam name="T">Element type of the original list</typeparam>
-            <typeparam name="B">Added item type</typeparam>
-            <param name="list">Original immutable list</param>
-            <param name="items">The list of items to add</param>
-            <returns>A new immutable list equal to the original list with the <paramref name="items"/> added at the end.</returns>
-        </member>
-        <member name="M:Atropos.ImmutableList.AddRange``1(Atropos.ImmutableList{``0},System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Adds a range of items to the immutable list
-            </summary>
-            <typeparam name="T">Element type of the original list</typeparam>
+            <typeparam name="B">Added item type. Must be an ancestor of <typeparamref name="T"/></typeparam>
             <param name="list">Original immutable list</param>
             <param name="items">The list of items to add</param>
             <returns>A new immutable list equal to the original list with the <paramref name="items"/> added at the end.</returns>
@@ -129,7 +111,7 @@
             Replaces an element in the list at a given position with the specified element.
             </summary>
             <typeparam name="T">Element type of the original list</typeparam>
-            <typeparam name="B">The type of the replacement value</typeparam>
+            <typeparam name="B">The type of the replacement value. Must be an ancestor of <typeparamref name="T"/>.</typeparam>
             <param name="list">Original immutable list</param>
             <param name="index">The position in the list of the element to replace.</param>
             <param name="value">The element to replace the old element with.</param>
@@ -245,6 +227,29 @@
             <summary>
             Creates a new empty immutable list
             </summary>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.Add(`0)">
+            <summary>
+            Makes a copy of the list, and adds the specified object to the end of the copied list.
+            </summary>
+            <param name="value">The object to add to the list</param>
+            <returns>A new list with the object added</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.AddRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Adds a range of items to the immutable list
+            </summary>
+            <param name="values">The list of items to add</param>
+            <returns>A new immutable list equal to the original list with the <paramref name="values"/> added at the end.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.SetItem(System.Int32,`0)">
+            <summary>
+            Replaces an element in the list at a given position with the specified element.
+            </summary>
+            <param name="index">The position in the list of the element to replace.</param>
+            <param name="value">The element to replace the old element with.</param>
+            <returns>A new list that contains the new element, even if the element at the specified
+            location is the same as the new element.</returns>
         </member>
     </members>
 </doc>

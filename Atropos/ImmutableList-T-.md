@@ -24,6 +24,8 @@ Type of the list elements
 - [Empty](./ImmutableList-T--Empty.md 'Atropos.ImmutableList&lt;T&gt;.Empty')
 - [this[int]](./ImmutableList-T--this-int-.md 'Atropos.ImmutableList&lt;T&gt;.this[int]')
 ### Methods
+- [Add(T)](./ImmutableList-T--Add(T).md 'Atropos.ImmutableList&lt;T&gt;.Add(T)')
+- [AddRange(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-T--AddRange(IEnumerable-T-).md 'Atropos.ImmutableList&lt;T&gt;.AddRange(System.Collections.Generic.IEnumerable&lt;T&gt;)')
 - [Clear()](./ImmutableList-T--Clear().md 'Atropos.ImmutableList&lt;T&gt;.Clear()')
 - [GetEnumerator()](./ImmutableList-T--GetEnumerator().md 'Atropos.ImmutableList&lt;T&gt;.GetEnumerator()')
 - [IndexOf(T, int, int)](./ImmutableList-T--IndexOf(T_int_int).md 'Atropos.ImmutableList&lt;T&gt;.IndexOf(T, int, int)')
@@ -33,3 +35,4 @@ Type of the list elements
 - [RemoveAt(int)](./ImmutableList-T--RemoveAt(int).md 'Atropos.ImmutableList&lt;T&gt;.RemoveAt(int)')
 - [RemoveRange(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-T--RemoveRange(IEnumerable-T-).md 'Atropos.ImmutableList&lt;T&gt;.RemoveRange(System.Collections.Generic.IEnumerable&lt;T&gt;)')
 - [RemoveRange(int, int)](./ImmutableList-T--RemoveRange(int_int).md 'Atropos.ImmutableList&lt;T&gt;.RemoveRange(int, int)')
+- [SetItem(int, T)](./ImmutableList-T--SetItem(int_T).md 'Atropos.ImmutableList&lt;T&gt;.SetItem(int, T)')
