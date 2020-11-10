@@ -158,6 +158,7 @@ namespace Atropos
         /// <returns>The zero-based index of the first occurrence of item within the range of elements
         /// in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
         /// of elements if found; otherwise -1.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="ImmutableList{T}.Count"/>-1.</exception>
         public int IndexOf(T item, int index, int count)
         {
             if (index < 0 || index + count > Count)
@@ -233,7 +234,7 @@ namespace Atropos
         /// </summary>
         /// <param name="index">The zero-based index of the element to return</param>
         /// <returns>The value at the requested <paramref name="index"/></returns>
-        /// <exception cref="IndexOutOfRangeException">Thrown when requested index is below zero or aboove <see cref="ImmutableList{T}.Count"/>-1</exception>
+        /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/>  is below zero or above <see cref="ImmutableList{T}.Count"/>-1.</exception>
         public T this[int index]
         {
             get

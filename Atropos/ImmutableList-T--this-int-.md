@@ -13,4 +13,4 @@ The zero-based index of the element to return
 [T](./ImmutableList-T-.md#Atropos-ImmutableList-T--T 'Atropos.ImmutableList&lt;T&gt;.T')  
 #### Exceptions
 [System.IndexOutOfRangeException](https://docs.microsoft.com/en-us/dotnet/api/System.IndexOutOfRangeException 'System.IndexOutOfRangeException')  
-Thrown when requested index is below zero or aboove [Count](./ImmutableList-T--Count.md 'Atropos.ImmutableList&lt;T&gt;.Count')-1  
+Thrown when requested [index](#Atropos-ImmutableList-T--this-int--index 'Atropos.ImmutableList&lt;T&gt;.this[int].index')  is below zero or above [Count](./ImmutableList-T--Count.md 'Atropos.ImmutableList&lt;T&gt;.Count')-1.  

@@ -147,6 +147,7 @@
             <returns>The zero-based index of the first occurrence of item within the range of elements
             in the <see cref="T:Atropos.ImmutableList`1"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
             of elements if found; otherwise -1.</returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="P:Atropos.ImmutableList`1.Count"/>-1.</exception>
         </member>
         <member name="M:Atropos.ImmutableList`1.LastIndexOf(`0,System.Int32,System.Int32)">
             <summary>
@@ -203,7 +204,7 @@
             </summary>
             <param name="index">The zero-based index of the element to return</param>
             <returns>The value at the requested <paramref name="index"/></returns>
-            <exception cref="T:System.IndexOutOfRangeException">Thrown when requested index is below zero or aboove <see cref="P:Atropos.ImmutableList`1.Count"/>-1</exception>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when requested <paramref name="index"/>  is below zero or above <see cref="P:Atropos.ImmutableList`1.Count"/>-1.</exception>
         </member>
         <member name="P:Atropos.ImmutableList`1.Count">
             <summary>
