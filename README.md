@@ -17,7 +17,7 @@ to be executed within O(Log(Count)) with sufficiently large logaritm base. Inser
 ## Calendar plan
 
 | # | Phase | ETA (DMY) |
-| - | ----- | --- :|
+|- | ----- | ---:|
 | 1 | Initial implementation (basic functions) | 20.11.2020 |
 | 2 | Unit test coverage | 27.11.2020
 | 3 | Extended functions (Merge, Split, mass-initialization, etc) | 4.12.2020 |
