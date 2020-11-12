@@ -24,3 +24,6 @@ The number of elements in the section to search.
 The zero-based index of the last occurrence of item within the range of elements  
             in the [ImmutableList&lt;T&gt;](./ImmutableList-T-.md 'Atropos.ImmutableList&lt;T&gt;') that starts at [index](#Atropos-ImmutableList-T--LastIndexOf(T_int_int)-index 'Atropos.ImmutableList&lt;T&gt;.LastIndexOf(T, int, int).index') and contains [count](#Atropos-ImmutableList-T--LastIndexOf(T_int_int)-count 'Atropos.ImmutableList&lt;T&gt;.LastIndexOf(T, int, int).count') number   
             of elements if found; otherwise -1.  
+#### Exceptions
+[System.IndexOutOfRangeException](https://docs.microsoft.com/en-us/dotnet/api/System.IndexOutOfRangeException 'System.IndexOutOfRangeException')  
+Thrown when requested [index](#Atropos-ImmutableList-T--LastIndexOf(T_int_int)-index 'Atropos.ImmutableList&lt;T&gt;.LastIndexOf(T, int, int).index') is below zero or ([index](#Atropos-ImmutableList-T--LastIndexOf(T_int_int)-index 'Atropos.ImmutableList&lt;T&gt;.LastIndexOf(T, int, int).index')+[count](#Atropos-ImmutableList-T--LastIndexOf(T_int_int)-count 'Atropos.ImmutableList&lt;T&gt;.LastIndexOf(T, int, int).count')) is above [Count](./ImmutableList-T--Count.md 'Atropos.ImmutableList&lt;T&gt;.Count')-1.  

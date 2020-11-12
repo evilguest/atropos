@@ -5,21 +5,51 @@
     <DefaultDocumentationFileNameMode>Name</DefaultDocumentationFileNameMode>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DocumentationFile>C:\Users\azlygostev.SWSOFT\Source\Repos\atropos\Atropos\Atropos.xml</DocumentationFile>
+  <PropertyGroup>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DocumentationFile>./Atropos.xml</DocumentationFile>
+    <DefaultDocumentationFolder>./Documentation</DefaultDocumentationFolder>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>C:\Users\azlygostev.SWSOFT\Source\Repos\atropos\Atropos\Atropos.xml</DocumentationFile>
-  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Container.cs" />
+    <Compile Remove="IListNode.cs" />
+    <Compile Remove="Leaf.cs" />
+    <Compile Remove="Page.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="StructNode.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StructNode.tt</DependentUpon>
+    </None>
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DefaultDocumentation" Version="0.6.12">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="StructNode.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>StructNode.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="StructNode.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>StructNode.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

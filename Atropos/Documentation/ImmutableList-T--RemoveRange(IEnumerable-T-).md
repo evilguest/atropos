@@ -2,7 +2,7 @@
 ## ImmutableList&lt;T&gt;.RemoveRange(System.Collections.Generic.IEnumerable&lt;T&gt;) Method
 Removes the specified objects from the list.  
 ```csharp
-public static Atropos.ImmutableList<T> RemoveRange(System.Collections.Generic.IEnumerable<T> items);
+public Atropos.ImmutableList<T> RemoveRange(System.Collections.Generic.IEnumerable<T> items);
 ```
 #### Parameters
 <a name='Atropos-ImmutableList-T--RemoveRange(System-Collections-Generic-IEnumerable-T-)-items'></a>

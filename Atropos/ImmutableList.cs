@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics;
 
@@ -86,7 +88,17 @@ namespace Atropos
         /// <returns>A new immutable list that includes the specified element.</returns>
         public static ImmutableList<B> Insert<T, B>(this ImmutableList<T> list, int index, B element)
             where T : B
-            => throw new NotImplementedException();
+        {
+            if (list._root.IsFull(list._levels))
+            {
+                var (c1, c2) = list._levels == 0
+                    ? list._root.SplitLeafAndInsert(index, element)
+                    : list._root.SplitNodeAndInsert(index, list._levels, element);
+                return new ImmutableList<B>(new Node<B>(c1, c2), list._levels + 1);
+            }
+            else
+                return new ImmutableList<B>(list._root.InsertDataAt(index, element), list._levels);
+        }
 
         /// <summary>
         /// Inserts the specified elements at the specified index in the immutable list.
@@ -98,8 +110,27 @@ namespace Atropos
         /// <param name="items">The elements to insert.</param>
         /// <returns>A new immutable list that includes the specified elements.</returns>
         public static ImmutableList<B> InsertRange<T, B>(this ImmutableList<T> list, int index, IEnumerable<B> items)
-            where T : B
-            => throw new NotImplementedException();
+            where T : class, B
+        {
+            INode<B> root = list._root;
+            var levels = list._levels;
+            foreach(var item in items)
+            {
+                if (root.IsFull(levels))
+                {
+                    var (c1, c2) = (levels == 0)
+                        ? root.SplitLeafAndInsert(index, item)
+                        : root.SplitNodeAndInsert(index, levels, item);
+                    root = new Node<B>(c1, c2);
+                    levels++;
+                }
+                else
+                    root = root.InsertDataAt(index, item);
+                index += 1;
+            }
+            return new ImmutableList<B>(root, levels);
+        }
+
 
         /// <summary>
         ///  Returns a new list with the first matching element in the list replaced with 
@@ -125,7 +156,7 @@ namespace Atropos
         /// <returns>A new list that contains the new element, even if the element at the specified
         /// location is the same as the new element.</returns>
         public static ImmutableList<B> SetItem<T, B>(this ImmutableList<T> list, int index, B value)
-            where T : class, B 
+            where T : class, B
             => new ImmutableList<B>(list._root.ReplaceDataAt(index, list._levels, value), list._levels);
 
     }
@@ -180,6 +211,7 @@ namespace Atropos
         /// <returns>The zero-based index of the last occurrence of item within the range of elements
         /// in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
         /// of elements if found; otherwise -1.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="ImmutableList{T}.Count"/>-1.</exception>
         public int LastIndexOf(T item, int index, int count)
         {
             if (index < 0 || index + count > Count)
@@ -195,7 +227,7 @@ namespace Atropos
         /// <param name="value">The object to remove from the list.</param>
         /// <returns>A new immutable list with the specified object removed</returns>
         public ImmutableList<T> Remove(T value)
-            => throw new NotImplementedException();
+            => RemoveAt(IndexOf(value, 0, Count));
 
         /// <summary>
         /// Removes all the elements that match the conditions defined by the specified predicate.
@@ -203,22 +235,66 @@ namespace Atropos
         /// <param name="match">The delegate that defines the conditions of the elements to remove.</param>
         /// <returns>A new immutable list with the elements removed.</returns>
         public ImmutableList<T> RemoveAll(Predicate<T> match)
-            => throw new NotImplementedException();
+        {
+            var i = 0;
+            var list = this;
+            while (i < list.Count)
+            {
+                if (match(list[i]))
+                    list = list.RemoveAt(i);
+                else
+                    i++;
+            }
+            return list;
+        }
 
         /// <summary>
         /// Removes the element at the specified index of the immutable list.
         /// </summary>
         /// <param name="index">The index of the element to remove.</param>
         /// <returns>A new immutable list with the element removed.</returns>
-        public static ImmutableList<T> RemoveAt(int index)
-            => throw new NotImplementedException();
+        public ImmutableList<T> RemoveAt(int index)
+        {
+            var (root, levels) = _root.RemoveAt(index, _levels);
+            return new ImmutableList<T>(root, levels);
+        }
+        /// <summary>
+        /// Inserts the specified value at the specified index
+        /// </summary>
+        /// <param name="index">Location of the element to insert</param>
+        /// <param name="value">Value of the element to insert</param>
+        /// <returns>a new <see cref="ImmutableList{T}"/> with the specified <paramref name="value"/> inserted at the specified <paramref name="index"/></returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown in case <paramref name="index"/> is outside of the list bounds.</exception> 
+        public ImmutableList<T> Insert(int index, T value)
+        {
+            if (index < 0 || index >= Count)
+                throw new IndexOutOfRangeException();
+
+            // if root is full then split
+            if (_root.IsFull(_levels)) // split the root
+            {
+                var (l, r) = (_levels == 0)
+                    ? _root.SplitLeafAndInsert(index, value) // split as leaf
+                    : _root.SplitNodeAndInsert(index, _levels, value); // split as node
+                return new ImmutableList<T>(new Node<T>(l, r), _levels + 1);
+
+            }
+            else //just insert
+                return new ImmutableList<T>(_root.InsertDataAt(index, _levels, value), _levels);
+        }
+
         /// <summary>
         /// Removes the specified objects from the list.
         /// </summary>
         /// <param name="items">The objects to remove from the list.</param>
         /// <returns> A new immutable list with the specified objects removed, if items matched objects in the list.</returns>
-        public static ImmutableList<T> RemoveRange(IEnumerable<T> items)
-            => throw new NotImplementedException();
+        public ImmutableList<T> RemoveRange(IEnumerable<T> items)
+        {
+            var list = this;
+            foreach (var item in items)
+                list = list.RemoveAt(list.IndexOf(item, 0, list.Count));
+            return list;
+        }
 
         /// <summary>
         /// Removes a range of elements from the <see cref="ImmutableList{T}"/>
@@ -226,8 +302,16 @@ namespace Atropos
         /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
         /// <param name="count">The number of elements to remove.</param>
         /// <returns>A new immutable list with the elements removed.</returns>
-        public static ImmutableList<T> RemoveRange(int index, int count)
-            => throw new NotImplementedException();
+        /// <exception cref="IndexOutOfRangeException">Thrown when the requested range crosses the list boundaries.</exception>
+        public ImmutableList<T> RemoveRange(int index, int count)
+        {
+            if (index < 0 || index + count > Count)
+                throw new IndexOutOfRangeException();
+            var list = this;
+            for (var i = 0; i < count; i++)
+                list = list.RemoveAt(index);
+            return list;
+        }
 
         /// <summary>
         /// Returns an element from the list. Asympthotic is O(log(<see cref="ImmutableList{T}.Count"/>)).
@@ -241,10 +325,7 @@ namespace Atropos
             {
                 if (index < 0 || index >= _root.SubtreeCount)
                     throw new IndexOutOfRangeException();
-                var n = _root;
-                for (int l = _levels; l > 0; l--)
-                    n = n.Children[(index >> (l * logBrf + logPageSize)) & maskBrf];
-                return n.Data[index & maskPageSize];
+                return _root.Get(index, _levels);
             }
         }
         internal int _levels;
@@ -260,6 +341,12 @@ namespace Atropos
         /// <returns>The list enumerator</returns>
         public IEnumerator<T> GetEnumerator()
             => GetEnumerator(-1);
+        /// <summary>
+        /// Returns the list enumerator that starts at the specific index
+        /// </summary>
+        /// <param name="index">Index where to start</param>
+        /// <returns>A new enumerator that is positioned immediately before the element at <paramref name="index"/> position.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown if the index requested is outside of the list.</exception>
         public IEnumerator<T> GetEnumerator(int index)
         {
             return new ImmutableListEnumerator<T>(this, index);
@@ -267,7 +354,7 @@ namespace Atropos
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         internal INode<T> _root;
-        
+
         /// <summary>
         /// Constructs a list from the value
         /// </summary>
@@ -288,14 +375,12 @@ namespace Atropos
                 _levels++;
 
             (_root, _levels) = Node.Fill(value, count);
-            
-            //_root = new Node<T>(value);
         }
         /// <summary>
         /// Creates a new empty immutable list
         /// </summary>
-        public ImmutableList() => _root = new Node<T>();
-        internal ImmutableList(INode<T> root, int levels) 
+        public ImmutableList() => _root = new Node<T>(new T[0]);
+        internal ImmutableList(INode<T> root, int levels)
             => (_root, _levels) = (root, levels);
 
         internal const int logBrf = 3;
@@ -363,211 +448,53 @@ namespace Atropos
 
     internal struct ImmutableListEnumerator<T> : IEnumerator<T>
     {
-        private ImmutableList<T> _list;
-        private INode<T> _leaf;
+        private readonly ImmutableList<T> _list;
+        //private INode<T> _leaf;
         private int _index;
 
         public ImmutableListEnumerator(ImmutableList<T> list, int index)
         {
             _list = list;
-            _leaf = index >= 0 ? FindLeaf(_list, index) : null;
+            //_leaf = index >= 0 ? FindLeaf(_list, index) : null;
             _index = index;
         }
 
-        public T Current => _leaf.Data[_index & ImmutableList<T>.maskPageSize];
+        public T Current => _list._root.Get(_index, _list._levels); //_leaf.Data[_index & ImmutableList<T>.maskPageSize];
 
         object IEnumerator.Current => Current;
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public bool MoveNext()
         {
             var index = _index + 1;
             if (index >= _list.Count)
                 return false;
-            if ((index & ImmutableList<T>.maskBrf) == 0) 
-                _leaf = FindLeaf(_list, index); // wrap to the next leaf
+            //if ((index & ImmutableList<T>.maskBrf) == 0) 
+            //    _leaf = FindLeaf(_list, index); // wrap to the next leaf
             _index = index;
             return true;
         }
 
-        private static INode<T> FindLeaf(ImmutableList<T> list, int index)
-        {
-            var node = list._root;
-            for (var level = list._levels; level > 0; level--)
-                node = node.Children[(index >> (ImmutableList<T>.logPageSize + (level - 1) * ImmutableList<T>.logBrf)) & ImmutableList<T>.maskBrf];
-            return node; 
-        }
+        //private static INode<T> FindLeaf(ImmutableList<T> list, int index)
+        //{
+        //    var node = list._root;
+        //    for (var level = list._levels; level > 0; level--)
+        //        node = node.Children[(index >> (ImmutableList<T>.logPageSize + (level - 1) * ImmutableList<T>.logBrf)) & ImmutableList<T>.maskBrf];
+        //    return node; 
+        //}
         public void Reset()
         {
             _index = -1;
         }
     }
 
-    internal static class Node
-    {
-        internal static int IndexAtLevel<T>(int index, int level)
-            => level > 0 
-                ? (index >> (ImmutableList<T>.logPageSize + (level - 1) * ImmutableList<T>.logBrf)) & ImmutableList<T>.maskBrf 
-                : index & ImmutableList<T>.maskPageSize;
-        internal static Node<B> ReplaceChildAt<B, T>(this INode<T> node, int index, INode<B> newNode)
-            where T : B
-        {
-            var children = new INode<B>[node.Children.Length];
-            node.Children.CopyTo(children, 0);
-            children[index] = newNode;
-            return new Node<B>(children, node.SubtreeCount);
-        }
-
-        internal static Node<B> ReplaceDataAt<B, T>(this INode<T> node, int index, int level, B value)
-            where T: B
-        {
-            if (level == 0)
-                return node.ReplaceDataAt(IndexAtLevel<B>(index, level), value);
-            else
-            {
-                var newNode = node.Children[IndexAtLevel<B>(index, level)].ReplaceDataAt(index, level - 1, value);
-                    return node.ReplaceChildAt(IndexAtLevel<B>(index, level), newNode);
-            }
-        }
-
-        internal static Node<B> ReplaceDataAt<B, T>(this INode<T> node, int index, B value)
-            where T : B
-        {
-            B[] data = new B[node.Data.Length];
-            node.Data.CopyTo(data, 0);
-            data[index] = value;
-            return new Node<B>(data, node.SubtreeCount);
-        }
-        private static Node<B> AddData<B, T>(this INode<T> node, B value)
-            where T : B
-        {
-            B[] data = new B[node.Data.Length + 1];
-            node.Data.CopyTo(data, 0);
-            data[node.Data.Length] = value;
-            return new Node<B>(data, node.SubtreeCount + 1);
-        }
-        internal static (Node<B>, bool add) AddData<B, T>(this INode<T> node, int level, B value)
-            where T : B
-        {
-            if (level == 0)
-            {
-                var add = node.Data.Length == ImmutableList<B>.pageSize;
-                return (add ? new Node<B>(value) : node.AddData(value), add);
-            }
-            else
-            {
-                var (newNode, add) = node.Children[node.Children.Length - 1].AddData(level - 1, value);
-                if (!add) // the node fits into the existing one
-                    return (node.ReplaceChildAt(node.Children.Length - 1, newNode), false);
-                else
-                {
-                    add = node.Children.Length == ImmutableList<B>.Brf;
-                    return (add ? new Node<B>(newNode) : node.AddChild(newNode), add);
-                }
-            }
-        }
-        internal static Node<B> AddChild<T, B>(this INode<T> node, INode<B> child)
-        {
-            var children = new INode<B>[node.Children.Length + 1];
-            node.Children.CopyTo(children, 0);
-            children[node.Children.Length] = child;
-            return new Node<B>(children, node.SubtreeCount + child.SubtreeCount);
-        }
-
-        internal static (INode<T> node, int _levels) Fill<T>(T value, int count)
-        {
-            if (count <= ImmutableList<T>.pageSize)
-            {
-                var data = new T[count];
-                Array.Fill(data, value);
-                return (new Node<T>(data, count), 0);
-            }
-            else
-            {
-                var levels = 0;
-                for (var cnt = count >> ImmutableList<T>.logPageSize; cnt > 0; cnt >>= ImmutableList<T>.logBrf)
-                    levels++;
-                
-                var blockSize = 1 << ((levels-1)*ImmutableList<T>.logBrf + ImmutableList<T>.logPageSize);
-                var blockCount = count >> ((levels - 1) * ImmutableList<T>.logBrf + ImmutableList<T>.logPageSize);
-                var excess = count & (blockSize - 1);
-                var children = new INode<T>[blockCount + (excess == 0 ? 0 : 1)];
-                var fullChildren = children.AsSpan(0, blockCount);
-                var (fullNode, _) = Fill(value, blockSize);
-
-                fullChildren.Fill(fullNode);
-                if (excess != 0)
-                    (children[children.Length - 1], _) = Fill(value, excess);
-
-                return (new Node<T>(children, count), levels);
-
-            }
-
-        }
-    }
     interface INode<out T>
     {
         T[] Data { get; }
         INode<T>[] Children { get; }
         int SubtreeCount { get; }
+        T Get(int index, int level);
     }
-    internal class Node<T> : INode<T>
-    {
-        public T[] Data { get; }
 
-        public INode<T>[] Children { get; }
-
-        public int SubtreeCount { get; }
-
-        internal Node()
-        {
-            Children = null;
-            Data = null;
-            SubtreeCount = 0;
-        }
-        internal Node(T[] data, int subtreeCount) 
-            => (Data, SubtreeCount) = (data, subtreeCount);
-        internal Node(INode<T>[] children, int subtreeCount) 
-            => (Children, SubtreeCount) = (children, subtreeCount);
-        
-        internal Node(T data)
-        {
-            SubtreeCount = 1;
-            Data = new T[1];
-            Data[0] = data;
-        }
-        internal Node(INode<T> child)
-        {
-            SubtreeCount = child.SubtreeCount;
-            Children = new Node<T>[1];
-            Children[0] = child;
-        }
-        internal Node(INode<T> child1, INode<T> child2)
-        {
-            SubtreeCount = child1.SubtreeCount + child2.SubtreeCount;
-            Children = new Node<T>[2];
-            Children[0] = child1;
-            Children[1] = child2;
-        }
-
-    }
-    /*
-    internal unsafe class Leaf<T>
-    {
-        private static readonly int Size = 256 / (typeof(T).IsByRef ? sizeof(IntPtr) : Marshal.SizeOf<T>());
-        private int _count;
-        private Block256 data;
-
-    }
-    [StructLayout(LayoutKind.Explicit)]
-    internal unsafe struct Block256
-    {
-        [FieldOffset(0)]
-        private fixed int data[8];
-        [FieldOffset(0)]
-        private Vector256<int> vdata;
-    }*/
 }

@@ -2,7 +2,7 @@
 ## ImmutableList&lt;T&gt;.RemoveAt(int) Method
 Removes the element at the specified index of the immutable list.  
 ```csharp
-public static Atropos.ImmutableList<T> RemoveAt(int index);
+public Atropos.ImmutableList<T> RemoveAt(int index);
 ```
 #### Parameters
 <a name='Atropos-ImmutableList-T--RemoveAt(int)-index'></a>

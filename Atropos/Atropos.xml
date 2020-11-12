@@ -161,6 +161,7 @@
             <returns>The zero-based index of the last occurrence of item within the range of elements
             in the <see cref="T:Atropos.ImmutableList`1"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
             of elements if found; otherwise -1.</returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="P:Atropos.ImmutableList`1.Count"/>-1.</exception>
         </member>
         <member name="M:Atropos.ImmutableList`1.Remove(`0)">
             <summary>
@@ -183,6 +184,15 @@
             <param name="index">The index of the element to remove.</param>
             <returns>A new immutable list with the element removed.</returns>
         </member>
+        <member name="M:Atropos.ImmutableList`1.Insert(System.Int32,`0)">
+            <summary>
+            Inserts the specified value at the specified index
+            </summary>
+            <param name="index">Location of the element to insert</param>
+            <param name="value">Value of the element to insert</param>
+            <returns>a new <see cref="T:Atropos.ImmutableList`1"/> with the specified <paramref name="value"/> inserted at the specified <paramref name="index"/></returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown in case <paramref name="index"/> is outside of the list bounds.</exception> 
+        </member>
         <member name="M:Atropos.ImmutableList`1.RemoveRange(System.Collections.Generic.IEnumerable{`0})">
             <summary>
             Removes the specified objects from the list.
@@ -197,6 +207,7 @@
             <param name="index">The zero-based starting index of the range of elements to remove.</param>
             <param name="count">The number of elements to remove.</param>
             <returns>A new immutable list with the elements removed.</returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown when the requested range crosses the list boundaries.</exception>
         </member>
         <member name="P:Atropos.ImmutableList`1.Item(System.Int32)">
             <summary>
@@ -216,6 +227,14 @@
             Returns the list enumerator
             </summary>
             <returns>The list enumerator</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.GetEnumerator(System.Int32)">
+            <summary>
+            Returns the list enumerator that starts at the specific index
+            </summary>
+            <param name="index">Index where to start</param>
+            <returns>A new enumerator that is positioned immediately before the element at <paramref name="index"/> position.</returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown if the index requested is outside of the list.</exception>
         </member>
         <member name="M:Atropos.ImmutableList`1.#ctor(`0,System.Int32)">
             <summary>
