@@ -4,6 +4,14 @@ using System.Linq;
 
 namespace Atropos
 {
+    interface INode<out T>
+    {
+        T[] Data { get; }
+        INode<T>[] Children { get; }
+        int SubtreeCount { get; }
+        T Get(int index, int level);
+    }
+
     internal static class Node
     {
         internal static INode<B> InsertDataAt<B, T>(this INode<T> node, int index, B value)

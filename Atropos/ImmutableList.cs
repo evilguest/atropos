@@ -165,7 +165,7 @@ namespace Atropos
     /// Immutable list
     /// </summary>
     /// <typeparam name="T">Type of the list elements</typeparam>
-    public class ImmutableList<T> : IReadOnlyList<T>, IReadOnlyCollection<T>
+    public class ImmutableList<T> : IReadOnlyList<T>, IReadOnlyCollection<T>, IImmutableList<T>
     {
         /// <summary>
         /// Returns an empty <see cref="ImmutableList{T}"/>
@@ -186,16 +186,19 @@ namespace Atropos
         /// <param name="item">Object to find</param>
         /// <param name="index">Zero-based start index</param>
         /// <param name="count">The length of the search range</param>
+        /// <param name="equalityComparer">The comparer to use for comparing items with <paramref name="item"/></param>
         /// <returns>The zero-based index of the first occurrence of item within the range of elements
         /// in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
         /// of elements if found; otherwise -1.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="ImmutableList{T}.Count"/>-1.</exception>
-        public int IndexOf(T item, int index, int count)
+        public int IndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer = null)
         {
+            equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
+
             if (index < 0 || index + count > Count)
                 throw new IndexOutOfRangeException();
             for (var i = index; i < index + count; i++)
-                if (this[index].Equals(item))
+                if (equalityComparer.Equals(this[index], item))
                     return i;
             return -1;
         }
@@ -208,16 +211,18 @@ namespace Atropos
         /// <param name="item">The object to locate in the list. The value can be null for reference types.</param>
         /// <param name="index">The zero-based starting index of the search. 0 (zero) is valid in an empty list.</param>
         /// <param name="count"> The number of elements in the section to search.</param>
+        /// <param name="equalityComparer">The equality comparer to use when searching for the <paramref name="item"/>.</param>
         /// <returns>The zero-based index of the last occurrence of item within the range of elements
         /// in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
         /// of elements if found; otherwise -1.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="ImmutableList{T}.Count"/>-1.</exception>
-        public int LastIndexOf(T item, int index, int count)
+        public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer=null)
         {
+            equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
             if (index < 0 || index + count > Count)
                 throw new IndexOutOfRangeException();
             for (var i = index + count - 1; i >= index; i--)
-                if (this[index].Equals(item))
+                if (equalityComparer.Equals(this[index], item))
                     return i;
             return -1;
         }
@@ -225,9 +230,13 @@ namespace Atropos
         /// Removes the first occurrence of a specified object from this immutable list.
         /// </summary>
         /// <param name="value">The object to remove from the list.</param>
+        /// <param name="equalityComparer">Equality comparer to use when searching for <paramref name="value"/>.</param>
         /// <returns>A new immutable list with the specified object removed</returns>
-        public ImmutableList<T> Remove(T value)
-            => RemoveAt(IndexOf(value, 0, Count));
+        public ImmutableList<T> Remove(T value, IEqualityComparer<T> equalityComparer = null)
+        {
+            var index = IndexOf(value, 0, Count, equalityComparer);
+            return index >= 0 ? RemoveAt(index) : this;
+        }
 
         /// <summary>
         /// Removes all the elements that match the conditions defined by the specified predicate.
@@ -258,6 +267,25 @@ namespace Atropos
             var (root, levels) = _root.RemoveAt(index, _levels);
             return new ImmutableList<T>(root, levels);
         }
+
+        /// <summary>
+        /// Returns a new list with the first matching element in the list replaced with the specified element.
+        /// </summary>
+        /// <param name="oldValue">The element to be replaced.</param>
+        /// <param name="newValue">The element to replace the first occurrence of <paramref name="oldValue"/> with</param>
+        /// <param name="equalityComparer"> The equality comparer to use for matching <paramref name="oldValue"/>.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"><paramref name="oldValue"/> does not exist in the list.</exception>
+        public ImmutableList<T> Replace(T oldValue, T newValue, IEqualityComparer<T> equalityComparer = null)
+        {
+            equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
+            var index = IndexOf(oldValue, 0, Count, equalityComparer);
+            if (index < 0)
+                throw new ArgumentException("The original value not found", nameof(oldValue));
+
+            return SetItem(index, newValue);
+        }
+
         /// <summary>
         /// Inserts the specified value at the specified index
         /// </summary>
@@ -284,12 +312,44 @@ namespace Atropos
         }
 
         /// <summary>
+        /// Inserts the specified elements at the specified index in the immutable list.
+        /// </summary>
+        /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
+        /// <param name="items">The elements to insert.</param>
+        /// <returns>A new immutable list that includes the specified elements.</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when <paramref name="index"/>is out of list bounds.</exception>
+        public ImmutableList<T> InsertRange(int index, IEnumerable<T> items)
+        {
+            if (index < 0 || index >= Count)
+                throw new IndexOutOfRangeException();
+            var (root, levels) = (_root, _levels);
+            // if root is full then split
+            foreach (var item in items)
+            {
+                if (root.IsFull(levels)) // split the root
+                {
+                    var (l, r) = (levels == 0)
+                        ? root.SplitLeafAndInsert(index, item) // split as leaf
+                        : root.SplitNodeAndInsert(index, levels, item); // split as node
+                    root = new Node<T>(l, r);
+                    levels += 1;
+                }
+                else //just insert
+                    root = root.InsertDataAt(index, levels, item);
+                index++;
+            }
+            return new ImmutableList<T>(root, levels);
+        }
+
+        /// <summary>
         /// Removes the specified objects from the list.
         /// </summary>
         /// <param name="items">The objects to remove from the list.</param>
+        /// <param name="equalityComparer">The comparer to use when searchign for <paramref name="items"/>.</param>
         /// <returns> A new immutable list with the specified objects removed, if items matched objects in the list.</returns>
-        public ImmutableList<T> RemoveRange(IEnumerable<T> items)
+        public ImmutableList<T> RemoveRange(IEnumerable<T> items, IEqualityComparer<T> equalityComparer = null)
         {
+            equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
             var list = this;
             foreach (var item in items)
                 list = list.RemoveAt(list.IndexOf(item, 0, list.Count));
@@ -444,6 +504,48 @@ namespace Atropos
         /// location is the same as the new element.</returns>
         public ImmutableList<T> SetItem(int index, T value)
             => this[index].Equals(value) ? this : new ImmutableList<T>(_root.ReplaceDataAt(index, _levels, value), _levels);
+
+        IImmutableList<T> IImmutableList<T>.Add(T value)
+            => Add(value);
+
+        IImmutableList<T> IImmutableList<T>.AddRange(IEnumerable<T> items)
+            => AddRange(items);
+
+        IImmutableList<T> IImmutableList<T>.Clear()
+            => Clear();
+
+        int IImmutableList<T>.IndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
+            => IndexOf(item, index, count, equalityComparer);
+
+        IImmutableList<T> IImmutableList<T>.Insert(int index, T element)
+            => Insert(index, element);
+
+        IImmutableList<T> IImmutableList<T>.InsertRange(int index, IEnumerable<T> items)
+            => InsertRange(index, items);
+
+        int IImmutableList<T>.LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
+            => LastIndexOf(item, index, count, equalityComparer);
+
+        IImmutableList<T> IImmutableList<T>.Remove(T value, IEqualityComparer<T> equalityComparer)
+            => Remove(value, equalityComparer);
+
+        IImmutableList<T> IImmutableList<T>.RemoveAll(Predicate<T> match)
+            => RemoveAll(match);
+
+        IImmutableList<T> IImmutableList<T>.RemoveAt(int index)
+            => RemoveAt(index);
+
+        IImmutableList<T> IImmutableList<T>.RemoveRange(IEnumerable<T> items, IEqualityComparer<T> equalityComparer)
+            => RemoveRange(items, equalityComparer);
+
+        IImmutableList<T> IImmutableList<T>.RemoveRange(int index, int count)
+            => RemoveRange(index, count);
+
+        IImmutableList<T> IImmutableList<T>.Replace(T oldValue, T newValue, IEqualityComparer<T> equalityComparer)
+            => Replace(oldValue, newValue, equalityComparer);
+
+        IImmutableList<T> IImmutableList<T>.SetItem(int index, T value)
+            => SetItem(index, value);
     }
 
     internal struct ImmutableListEnumerator<T> : IEnumerator<T>
@@ -489,12 +591,5 @@ namespace Atropos
         }
     }
 
-    interface INode<out T>
-    {
-        T[] Data { get; }
-        INode<T>[] Children { get; }
-        int SubtreeCount { get; }
-        T Get(int index, int level);
-    }
 
 }

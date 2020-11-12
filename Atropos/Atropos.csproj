@@ -16,14 +16,11 @@
     <Compile Remove="IListNode.cs" />
     <Compile Remove="Leaf.cs" />
     <Compile Remove="Page.cs" />
+    <Compile Remove="StructNode.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="StructNode.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>StructNode.tt</DependentUpon>
-    </None>
+    <None Remove="StructNode.tt" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,22 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="StructNode.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>StructNode.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="StructNode.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>StructNode.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>
