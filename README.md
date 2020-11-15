@@ -1,6 +1,6 @@
 # atropos
 The immutable (persistent) data structures for .Net.
-See the [Documentation](./Atropos/Atropos.md) for more detail
+See the [Documentation](./Atropos/Documentation/Atropos.md) for more detail
 ## Project overview
 Atropos is an attempt to improve over the default implementation of the immutable collections offered by System.Collections.Immutable.
 The following collections are provided:

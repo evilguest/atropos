@@ -36,19 +36,12 @@ namespace Atropos
         public static ImmutableList<B> Add<T, B>(this ImmutableList<T> list, B value)
             where T : class, B
         {
-            INode<B> root = list._root;
-            var levels = list._levels;
+            var root = list._root;
 
-            // ImmutableList<B> result = new ImmutableList<B>();
-            var (page, add) = root.AddData(levels, value);
-            if (add)
-            {
-                root = new Node<B>(root, page);
-                levels++;
-            }
-            else
-                root = page;
-            return new ImmutableList<B>(root, levels);
+            if (root.IsFull)
+                root = new InternalNode<T>(root.Split());
+            var newRoot = Node.AddData(root, value);
+            return new ImmutableList<B>(newRoot);
         }
         /// <summary>
         /// Adds a range of items to the immutable list
@@ -60,21 +53,25 @@ namespace Atropos
         /// <returns>A new immutable list equal to the original list with the <paramref name="items"/> added at the end.</returns>
         public static ImmutableList<B> AddRange<T, B>(this ImmutableList<T> list, IEnumerable<B> items)
             where T : class, B
+            where B: class
         {
-            INode<B> root = list._root;
-            var levels = list._levels;
+            var root = list._root;
+            if (root.IsFull)
+                root = new InternalNode<T>(root.Split());
+
+            INode<B> newRoot = null;
             foreach (var item in items)
             {
-                var (page, add) = root.AddData(levels, item);
-                if (add)
-                {
-                    root = new Node<B>(root, page);
-                    levels++;
-                }
+                if (newRoot == null)
+                    newRoot = root.AddData(item);
                 else
-                    root = page;
+                {
+                    if (newRoot.IsFull)
+                        newRoot = new InternalNode<B>(newRoot.Split());
+                    newRoot = newRoot.AddData<B, B>(item);
+                }
             }
-            return new ImmutableList<B>(root, levels);
+            return new ImmutableList<B>(root);
         }
 
         /// <summary>
@@ -87,17 +84,14 @@ namespace Atropos
         /// <param name="element">The object to insert.</param>
         /// <returns>A new immutable list that includes the specified element.</returns>
         public static ImmutableList<B> Insert<T, B>(this ImmutableList<T> list, int index, B element)
-            where T : B
+            where T : class, B
         {
-            if (list._root.IsFull(list._levels))
-            {
-                var (c1, c2) = list._levels == 0
-                    ? list._root.SplitLeafAndInsert(index, element)
-                    : list._root.SplitNodeAndInsert(index, list._levels, element);
-                return new ImmutableList<B>(new Node<B>(c1, c2), list._levels + 1);
-            }
-            else
-                return new ImmutableList<B>(list._root.InsertDataAt(index, element), list._levels);
+            INode<B> root = list._root;
+            if (root.IsFull)
+                root = new InternalNode<B>(root.Split());
+
+            root = root.InsertDataAt(index, element);
+            return new ImmutableList<B>(root);
         }
 
         /// <summary>
@@ -113,22 +107,14 @@ namespace Atropos
             where T : class, B
         {
             INode<B> root = list._root;
-            var levels = list._levels;
             foreach(var item in items)
             {
-                if (root.IsFull(levels))
-                {
-                    var (c1, c2) = (levels == 0)
-                        ? root.SplitLeafAndInsert(index, item)
-                        : root.SplitNodeAndInsert(index, levels, item);
-                    root = new Node<B>(c1, c2);
-                    levels++;
-                }
-                else
-                    root = root.InsertDataAt(index, item);
+                if (root.IsFull)
+                    root = new InternalNode<B>(root.Split());
+                root = root.InsertDataAt(index, item);
                 index += 1;
             }
-            return new ImmutableList<B>(root, levels);
+            return new ImmutableList<B>(root);
         }
 
 
@@ -157,7 +143,7 @@ namespace Atropos
         /// location is the same as the new element.</returns>
         public static ImmutableList<B> SetItem<T, B>(this ImmutableList<T> list, int index, B value)
             where T : class, B
-            => new ImmutableList<B>(list._root.ReplaceDataAt(index, list._levels, value), list._levels);
+            => new ImmutableList<B>(list._root.ReplaceDataAt(index, value));
 
     }
 
@@ -263,10 +249,7 @@ namespace Atropos
         /// <param name="index">The index of the element to remove.</param>
         /// <returns>A new immutable list with the element removed.</returns>
         public ImmutableList<T> RemoveAt(int index)
-        {
-            var (root, levels) = _root.RemoveAt(index, _levels);
-            return new ImmutableList<T>(root, levels);
-        }
+            => new ImmutableList<T>(_root.RemoveAt(index));
 
         /// <summary>
         /// Returns a new list with the first matching element in the list replaced with the specified element.
@@ -295,20 +278,15 @@ namespace Atropos
         /// <exception cref="IndexOutOfRangeException">Thrown in case <paramref name="index"/> is outside of the list bounds.</exception> 
         public ImmutableList<T> Insert(int index, T value)
         {
-            if (index < 0 || index >= Count)
+            if (index < 0 || index > Count)
                 throw new IndexOutOfRangeException();
 
-            // if root is full then split
-            if (_root.IsFull(_levels)) // split the root
-            {
-                var (l, r) = (_levels == 0)
-                    ? _root.SplitLeafAndInsert(index, value) // split as leaf
-                    : _root.SplitNodeAndInsert(index, _levels, value); // split as node
-                return new ImmutableList<T>(new Node<T>(l, r), _levels + 1);
+            var root = _root;
 
-            }
-            else //just insert
-                return new ImmutableList<T>(_root.InsertDataAt(index, _levels, value), _levels);
+            if (root.IsFull) // split the root
+                root = new InternalNode<T>(_root.Split());
+
+            return new ImmutableList<T>(root.InsertDataAt(index, value));
         }
 
         /// <summary>
@@ -322,23 +300,17 @@ namespace Atropos
         {
             if (index < 0 || index >= Count)
                 throw new IndexOutOfRangeException();
-            var (root, levels) = (_root, _levels);
+            var root = _root;
+
             // if root is full then split
             foreach (var item in items)
             {
-                if (root.IsFull(levels)) // split the root
-                {
-                    var (l, r) = (levels == 0)
-                        ? root.SplitLeafAndInsert(index, item) // split as leaf
-                        : root.SplitNodeAndInsert(index, levels, item); // split as node
-                    root = new Node<T>(l, r);
-                    levels += 1;
-                }
-                else //just insert
-                    root = root.InsertDataAt(index, levels, item);
+                if (root.IsFull) // split the root
+                    root = new InternalNode<T>(root.Split());
+                root = root.InsertDataAt(index, item);
                 index++;
             }
-            return new ImmutableList<T>(root, levels);
+            return new ImmutableList<T>(root);
         }
 
         /// <summary>
@@ -385,10 +357,9 @@ namespace Atropos
             {
                 if (index < 0 || index >= _root.SubtreeCount)
                     throw new IndexOutOfRangeException();
-                return _root.Get(index, _levels);
+                return _root.Get(index);
             }
         }
-        internal int _levels;
 
         /// <summary>
         /// Returns count of the elements in the <see cref="ImmutableList{T}"/>
@@ -426,22 +397,18 @@ namespace Atropos
                 throw new ArgumentOutOfRangeException(nameof(count), "Count must be above zero");
             if (count == 0)
             {
-                _root = new Node<T>();
+                _root = new LeafNode<T>();
                 return;
             }
 
-            // figure out the levels count
-            for (var cnt = count >> logPageSize; cnt > 0; cnt >>= logBrf)
-                _levels++;
-
-            (_root, _levels) = Node.Fill(value, count);
+            _root = Node.Fill(value, count);
         }
         /// <summary>
         /// Creates a new empty immutable list
         /// </summary>
-        public ImmutableList() => _root = new Node<T>(new T[0]);
-        internal ImmutableList(INode<T> root, int levels)
-            => (_root, _levels) = (root, levels);
+        public ImmutableList() => _root = new LeafNode<T>(new T[0]);
+        internal ImmutableList(INode<T> root)
+            => _root = root;
 
         internal const int logBrf = 3;
         internal const int Brf = 1 << logBrf;
@@ -456,22 +423,13 @@ namespace Atropos
         /// </summary>
         /// <param name="value">The object to add to the list</param>
         /// <returns>A new list with the object added</returns>
-        public ImmutableList<T> Add(T value)
-        {
-            var root = _root;
-            var levels = _levels;
+        public ImmutableList<T> Add(T value) 
+            => new ImmutableList<T>(
+                (_root.IsFull 
+                    ? new InternalNode<T>(_root.Split()) 
+                    : _root)
+                .AddData(value));
 
-            // ImmutableList<B> result = new ImmutableList<B>();
-            var (page, add) = root.AddData(levels, value);
-            if (add)
-            {
-                root = new Node<T>(root, page);
-                levels++;
-            }
-            else
-                root = page;
-            return new ImmutableList<T>(root, levels);
-        }
         /// <summary>
         /// Adds a range of items to the immutable list
         /// </summary>
@@ -480,19 +438,13 @@ namespace Atropos
         public ImmutableList<T> AddRange(IEnumerable<T> values)
         {
             var root = _root;
-            var levels = _levels;
             foreach (var value in values)
             {
-                var (page, add) = root.AddData(levels, value);
-                if (add)
-                {
-                    root = new Node<T>(root, page);
-                    levels++;
-                }
-                else
-                    root = page;
+                if (root.IsFull)
+                    root = new InternalNode<T>(root.Split());
+                root = root.AddData(value);
             }
-            return new ImmutableList<T>(root, levels);
+            return new ImmutableList<T>(root);
         }
 
         /// <summary>
@@ -503,7 +455,7 @@ namespace Atropos
         /// <returns>A new list that contains the new element, even if the element at the specified
         /// location is the same as the new element.</returns>
         public ImmutableList<T> SetItem(int index, T value)
-            => this[index].Equals(value) ? this : new ImmutableList<T>(_root.ReplaceDataAt(index, _levels, value), _levels);
+            => this[index].Equals(value) ? this : new ImmutableList<T>(_root.ReplaceDataAt(index, value));
 
         IImmutableList<T> IImmutableList<T>.Add(T value)
             => Add(value);
@@ -561,7 +513,7 @@ namespace Atropos
             _index = index;
         }
 
-        public T Current => _list._root.Get(_index, _list._levels); //_leaf.Data[_index & ImmutableList<T>.maskPageSize];
+        public T Current => _list._root.Get(_index); //_leaf.Data[_index & ImmutableList<T>.maskPageSize];
 
         object IEnumerator.Current => Current;
 

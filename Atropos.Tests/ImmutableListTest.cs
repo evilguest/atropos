@@ -1,4 +1,7 @@
 using Newtonsoft.Json.Bson;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -6,11 +9,22 @@ namespace Atropos.Tests
 {
     public class ImmutableListTest
     {
-        [Fact]
-        public void TestInit()
+        public static IEnumerable<object[]> Sizes()
         {
-            var t = ImmutableList.Init(42, 5);
-            Assert.Equal(Enumerable.Repeat(42, 5), t);
+            foreach(var i in Enumerable.Range(1, 20))
+            {
+                yield return new object[] { (1 << i) - 1};
+                yield return new object[] { (1 << i) };
+                yield return new object[] { (1 << i) + 1 };
+            }
+        }
+        [Theory]
+       
+        [MemberData(nameof(Sizes))]
+        public void TestInit(int size)
+        {
+            var t = ImmutableList.Init(42, size);
+            Assert.Equal(Enumerable.Repeat(42, size), t);
         }
 
         [Fact]
@@ -35,6 +49,16 @@ namespace Atropos.Tests
 
             Assert.Equal("DerivedElement(Foo, 5), BaseElement(Bar)", s);
         }
+
+        [Theory]
+        [InlineData(100)]
+        public void TestAddRange(int size)
+        {
+            var r = Enumerable.Range(0, size);
+            var t = new ImmutableList<int>().AddRange(r);
+            Assert.Equal(r, t);
+        }
+
         [Fact]
         public void TestSetStructValue()
         {
@@ -66,5 +90,38 @@ namespace Atropos.Tests
             var t2 = t.SetItem(2, newVal);
             Assert.Equal(newVal, t2[2]);
         }
+
+        [Theory]
+        [InlineData(16, 5, 42)]
+        public void InsertLast(int size, int iterations, int seed)
+        {
+            var t = ImmutableList.Init(seed, size);
+            for (int i = 0; i < iterations; i++)
+                t = t.Insert(t.Count, i);
+        }
+
+
+        [Theory]
+        [InlineData(10, 50, 42)]
+        [InlineData(15, 5, 42)]
+        [InlineData(16, 5, 42)]
+        [InlineData(17, 5, 42)]
+        [InlineData(33, 5, 42)]
+        [InlineData(129, 5, 42)]
+        [InlineData(524288, 100000, 42)]
+        public void TestIntegerListContinuously(int size, int iterations, int seed)
+        {
+            var t = new ImmutableList<int>();
+            t = t.AddRange(Enumerable.Range(0, size));
+            var r = new Random(seed);
+            for(int i=0; i<iterations;i++)
+            {
+                var p = r.Next(size);
+                var e = t[p];
+                t = t.RemoveAt(p).Insert(r.Next(size - 1), e);
+            }
+            Assert.Equal((long)size * (size - 1) / 2, t.LongSum());
+        }
+
     }
 }
