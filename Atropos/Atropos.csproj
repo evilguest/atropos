@@ -11,6 +11,11 @@
     <DefaultDocumentationFolder>./Documentation</DefaultDocumentationFolder>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Container.cs" />
     <Compile Remove="IListNode.cs" />

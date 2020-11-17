@@ -39,7 +39,7 @@ namespace Atropos.Tests
             Assert.Equal(newVal, t[len]);
         }
 
-        [Fact]
+/*        [Fact]
         public void TestAddBaseType()
         {
             var t1 = ImmutableList.Init(new DerivedElement("Foo", 5));
@@ -49,7 +49,7 @@ namespace Atropos.Tests
 
             Assert.Equal("DerivedElement(Foo, 5), BaseElement(Bar)", s);
         }
-
+*/
         [Theory]
         [InlineData(100)]
         public void TestAddRange(int size)
@@ -80,6 +80,7 @@ namespace Atropos.Tests
             Assert.Equal(newVal, t2[2]);
         }
 
+        /*
         [Fact]
         public void TestSetBaseValue()
         {
@@ -89,7 +90,7 @@ namespace Atropos.Tests
             var t = ImmutableList.Init(oldVal, len);
             var t2 = t.SetItem(2, newVal);
             Assert.Equal(newVal, t2[2]);
-        }
+        }*/
 
         [Theory]
         [InlineData(16, 5, 42)]
@@ -121,6 +122,19 @@ namespace Atropos.Tests
                 t = t.RemoveAt(p).Insert(r.Next(size - 1), e);
             }
             Assert.Equal((long)size * (size - 1) / 2, t.LongSum());
+        }
+        [Theory]
+        [InlineData(524288, 100000, 42)]
+        public void TestIntegerListIndexContinuously(int size, int iterations, int value)
+        {
+            // 1. Init
+            var t = ImmutableList<int>.Empty.AddRange(Enumerable.Range(0, size));
+            t = t.SetItem(size / 2, value);
+            var s = 0;
+            // 2. Test
+            for (int i = 0; i < iterations; i++)
+                s += t[size / 2];
+            Assert.Equal(iterations * value, s);
         }
 
     }

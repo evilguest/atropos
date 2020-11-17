@@ -6,8 +6,8 @@ using SImmutableListInt = System.Collections.Immutable.ImmutableList<int>;
 
 namespace Atropos.Benchmarks.List
 {
-    [InProcess]
-    [RPlotExporter]
+    //[InProcess]
+    //[RPlotExporter]
     [MemoryDiagnoser]
     public abstract class ImmutableListBenchmarkBase
     {
@@ -17,11 +17,21 @@ namespace Atropos.Benchmarks.List
         [GlobalSetup]
         public virtual void Initialize()
         {
-            _Alist = ImmutableList.Init(42, Size);
-            _Clist = SImmutableList.CreateRange(Enumerable.Repeat(42, Size));
+            _Alist = ImmutableList<int>.Empty.AddRange(Enumerable.Range(0, Size));
+            _Clist = SImmutableList.CreateRange(Enumerable.Range(0, Size));
             //_Llist = new List<int>(Enumerable.Repeat(42, Size));
         }
-        [Params(1, 2, 16, 256, 2048, 16384, 65536, 2 << 18, 2 << 20)]
+        [Params(
+            //1 << 0, 
+            //1 << 1, 
+            1 << 4, 
+            //1 << 8, 
+            //1 << 12, 
+            //1 << 14, 
+            //1 << 16, 
+            1 << 18
+            //1 << 20,
+            )]
         public int Size { get; set; } = 1;
 
 

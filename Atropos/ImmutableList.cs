@@ -24,127 +24,6 @@ namespace Atropos
         public static ImmutableList<T> Init<T>(T item, int count = 1)
             => new ImmutableList<T>(item, count);
 
-
-        /// <summary>
-        /// Makes a copy of the list, and adds the specified object to the end of the copied list.
-        /// </summary>
-        /// <typeparam name="T">Element type of the original list</typeparam>
-        /// <typeparam name="B">Added item type. Must be an ancestor of <typeparamref name="T"/></typeparam>
-        /// <param name="list">Original immutable list</param>
-        /// <param name="value">The object to add to the list</param>
-        /// <returns>A new list with the object added</returns>
-        public static ImmutableList<B> Add<T, B>(this ImmutableList<T> list, B value)
-            where T : class, B
-        {
-            var root = list._root;
-
-            if (root.IsFull)
-                root = new InternalNode<T>(root.Split());
-            var newRoot = Node.AddData(root, value);
-            return new ImmutableList<B>(newRoot);
-        }
-        /// <summary>
-        /// Adds a range of items to the immutable list
-        /// </summary>
-        /// <typeparam name="T">Element type of the original list</typeparam>
-        /// <typeparam name="B">Added item type. Must be an ancestor of <typeparamref name="T"/></typeparam>
-        /// <param name="list">Original immutable list</param>
-        /// <param name="items">The list of items to add</param>
-        /// <returns>A new immutable list equal to the original list with the <paramref name="items"/> added at the end.</returns>
-        public static ImmutableList<B> AddRange<T, B>(this ImmutableList<T> list, IEnumerable<B> items)
-            where T : class, B
-            where B: class
-        {
-            var root = list._root;
-            if (root.IsFull)
-                root = new InternalNode<T>(root.Split());
-
-            INode<B> newRoot = null;
-            foreach (var item in items)
-            {
-                if (newRoot == null)
-                    newRoot = root.AddData(item);
-                else
-                {
-                    if (newRoot.IsFull)
-                        newRoot = new InternalNode<B>(newRoot.Split());
-                    newRoot = newRoot.AddData<B, B>(item);
-                }
-            }
-            return new ImmutableList<B>(root);
-        }
-
-        /// <summary>
-        /// Inserts the specified element at the specified index in the immutable list.
-        /// </summary>
-        /// <typeparam name="T">Element type of the original list</typeparam>
-        /// <typeparam name="B">Added item type</typeparam>
-        /// <param name="list">Original immutable list</param>
-        /// <param name="index">The zero-based index at which to insert the value.</param>
-        /// <param name="element">The object to insert.</param>
-        /// <returns>A new immutable list that includes the specified element.</returns>
-        public static ImmutableList<B> Insert<T, B>(this ImmutableList<T> list, int index, B element)
-            where T : class, B
-        {
-            INode<B> root = list._root;
-            if (root.IsFull)
-                root = new InternalNode<B>(root.Split());
-
-            root = root.InsertDataAt(index, element);
-            return new ImmutableList<B>(root);
-        }
-
-        /// <summary>
-        /// Inserts the specified elements at the specified index in the immutable list.
-        /// </summary>
-        /// <typeparam name="T">Element type of the original list</typeparam>
-        /// <typeparam name="B">Added item type</typeparam>
-        /// <param name="list">Original immutable list</param>
-        /// <param name="index">The zero-based index at which the new elements should be inserted.</param>
-        /// <param name="items">The elements to insert.</param>
-        /// <returns>A new immutable list that includes the specified elements.</returns>
-        public static ImmutableList<B> InsertRange<T, B>(this ImmutableList<T> list, int index, IEnumerable<B> items)
-            where T : class, B
-        {
-            INode<B> root = list._root;
-            foreach(var item in items)
-            {
-                if (root.IsFull)
-                    root = new InternalNode<B>(root.Split());
-                root = root.InsertDataAt(index, item);
-                index += 1;
-            }
-            return new ImmutableList<B>(root);
-        }
-
-
-        /// <summary>
-        ///  Returns a new list with the first matching element in the list replaced with 
-        ///  the specified element.
-        /// </summary>
-        /// <typeparam name="T">Element type of the original list</typeparam>
-        /// <typeparam name="B">Added item type</typeparam>
-        /// <param name="list">Original immutable list</param>
-        /// <param name="oldValue">The element to be replaced.</param>
-        /// <param name="newValue">The element to replace the first occurrence of oldValue with</param>
-        /// <returns>A new list that contains newValue, even if oldvalue is the same as newValue.</returns>
-        public static ImmutableList<B> Replace<T, B>(ImmutableList<T> list, T oldValue, B newValue)
-            where T : class, B
-            => list.SetItem(list.IndexOf(oldValue, 0, list.Count), newValue);
-        /// <summary>
-        /// Replaces an element in the list at a given position with the specified element.
-        /// </summary>
-        /// <typeparam name="T">Element type of the original list</typeparam>
-        /// <typeparam name="B">The type of the replacement value. Must be an ancestor of <typeparamref name="T"/>.</typeparam>
-        /// <param name="list">Original immutable list</param>
-        /// <param name="index">The position in the list of the element to replace.</param>
-        /// <param name="value">The element to replace the old element with.</param>
-        /// <returns>A new list that contains the new element, even if the element at the specified
-        /// location is the same as the new element.</returns>
-        public static ImmutableList<B> SetItem<T, B>(this ImmutableList<T> list, int index, B value)
-            where T : class, B
-            => new ImmutableList<B>(list._root.ReplaceDataAt(index, value));
-
     }
 
     /// <summary>
@@ -202,7 +81,7 @@ namespace Atropos
         /// in the <see cref="ImmutableList{T}"/> that starts at <paramref name="index"/> and contains <paramref name="count"/> number 
         /// of elements if found; otherwise -1.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="ImmutableList{T}.Count"/>-1.</exception>
-        public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer=null)
+        public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer = null)
         {
             equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
             if (index < 0 || index + count > Count)
@@ -284,7 +163,7 @@ namespace Atropos
             var root = _root;
 
             if (root.IsFull) // split the root
-                root = new InternalNode<T>(_root.Split());
+                root = new Node<T>(_root.Split());
 
             return new ImmutableList<T>(root.InsertDataAt(index, value));
         }
@@ -306,7 +185,7 @@ namespace Atropos
             foreach (var item in items)
             {
                 if (root.IsFull) // split the root
-                    root = new InternalNode<T>(root.Split());
+                    root = new Node<T>(root.Split());
                 root = root.InsertDataAt(index, item);
                 index++;
             }
@@ -357,7 +236,7 @@ namespace Atropos
             {
                 if (index < 0 || index >= _root.SubtreeCount)
                     throw new IndexOutOfRangeException();
-                return _root.Get(index);
+                return _root[index];
             }
         }
 
@@ -384,7 +263,7 @@ namespace Atropos
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal INode<T> _root;
+        internal Node<T> _root;
 
         /// <summary>
         /// Constructs a list from the value
@@ -397,7 +276,7 @@ namespace Atropos
                 throw new ArgumentOutOfRangeException(nameof(count), "Count must be above zero");
             if (count == 0)
             {
-                _root = new LeafNode<T>();
+                _root = new Node<T>();
                 return;
             }
 
@@ -406,8 +285,8 @@ namespace Atropos
         /// <summary>
         /// Creates a new empty immutable list
         /// </summary>
-        public ImmutableList() => _root = new LeafNode<T>(new T[0]);
-        internal ImmutableList(INode<T> root)
+        public ImmutableList() => _root = new Node<T>(new T[0]);
+        internal ImmutableList(Node<T> root)
             => _root = root;
 
         internal const int logBrf = 3;
@@ -423,10 +302,10 @@ namespace Atropos
         /// </summary>
         /// <param name="value">The object to add to the list</param>
         /// <returns>A new list with the object added</returns>
-        public ImmutableList<T> Add(T value) 
+        public ImmutableList<T> Add(T value)
             => new ImmutableList<T>(
-                (_root.IsFull 
-                    ? new InternalNode<T>(_root.Split()) 
+                (_root.IsFull
+                    ? new Node<T>(_root.Split())
                     : _root)
                 .AddData(value));
 
@@ -441,7 +320,7 @@ namespace Atropos
             foreach (var value in values)
             {
                 if (root.IsFull)
-                    root = new InternalNode<T>(root.Split());
+                    root = new Node<T>(root.Split());
                 root = root.AddData(value);
             }
             return new ImmutableList<T>(root);
@@ -513,7 +392,7 @@ namespace Atropos
             _index = index;
         }
 
-        public T Current => _list._root.Get(_index); //_leaf.Data[_index & ImmutableList<T>.maskPageSize];
+        public T Current => _list._root[_index]; //_leaf.Data[_index & ImmutableList<T>.maskPageSize];
 
         object IEnumerator.Current => Current;
 
@@ -542,6 +421,5 @@ namespace Atropos
             _index = -1;
         }
     }
-
 
 }

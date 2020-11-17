@@ -1,24 +1,39 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnostics.Windows.Configs;
 
 namespace Atropos.Benchmarks.List
 {
+    //[EtwProfiler]
     public class Index: ImmutableListBenchmarkBase
     {
+        [Params(1000, 10000)]
+        public int Repetitions { get; set; } = 10;
+
         [Benchmark]
         public int Atropos()
-            => _Alist[Size / 2];
+        {
+            var s = 0;
+            for(int i=0; i<Repetitions;i++)
+                unchecked { s += _Alist[i % Size]; }
+            return s;
+        }
 
         [Benchmark(Baseline = true)]
         public int Official()
-            => _Clist[Size / 2];
-
-/*        [Benchmark()]
-        public void Mutable()
-            => _Llist.Add(50);
-        [IterationSetup]
-        public void InitializeMutable()
         {
-            _Llist = new List<int>(Enumerable.Repeat(42, Size));
-        }*/
+            var s = 0;
+            for (int i = 0; i < Repetitions; i++)
+                unchecked { s += _Clist[i % Size]; }
+            return s;
+        }
+
+        /*        [Benchmark()]
+                public void Mutable()
+                    => _Llist.Add(50);
+                [IterationSetup]
+                public void InitializeMutable()
+                {
+                    _Llist = new List<int>(Enumerable.Repeat(42, Size));
+                }*/
     }
 }
