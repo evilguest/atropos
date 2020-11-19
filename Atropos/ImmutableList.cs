@@ -280,7 +280,7 @@ namespace Atropos
                 return;
             }
 
-            _root = Node.Fill(value, count);
+            _root = Node<T>.Fill(value, count);
         }
         /// <summary>
         /// Creates a new empty immutable list

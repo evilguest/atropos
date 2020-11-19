@@ -6,10 +6,17 @@ using System.Runtime.Intrinsics.X86;
 
 namespace Atropos
 {
-    internal class Node<T>
+
+    internal class Node
+    {
+        internal int[] ChildrenIndices { get; }
+        public Node(int[] childrenIndices) => ChildrenIndices = childrenIndices;
+
+    }
+    internal class Node<T>:Node
     {
         private static readonly int BranchFactor = 64 / Marshal.SizeOf<IntPtr>();
-        internal int SubtreeCount => IsLeaf ? Data.Length : ChildrenIndices[Children.Length - 1] + 1;
+        internal int SubtreeCount => IsLeaf ? Data.Length : ChildrenIndices[Children.Length]; // takes the value from the stop-node
         internal bool IsFull => IsLeaf ? SubtreeCount == ImmutableList<T>.pageSize : Children.Length == BranchFactor;
         bool IsEmpty => IsLeaf ? SubtreeCount <= ImmutableList<T>.pageSize / 2 : Children.Length <= BranchFactor / 2;
         internal (Node<T>, Node<T>) Split() => IsLeaf ? SplitLeaf() : SplitBranch();
@@ -17,7 +24,6 @@ namespace Atropos
         bool IsLeaf => ChildrenIndices == null;
         Node<T>[] Children { get; } // works only for IsLeaf == false
         public T[] Data { get; }
-        private int[] ChildrenIndices { get; }
 
         public T this[int index]
         {
@@ -27,13 +33,13 @@ namespace Atropos
                 while(!node.IsLeaf)
                 {
                     int child;
-                    (child, index) = FindChildIndexSIMD(node.ChildrenIndices, index);
+                    (child, index) = FindChildIndexSIMD(node, index);
                     node = node.Children[child];
                 }
                 return node.Data[index];
             }
         }
-        internal Node(T[] data)
+        internal Node(T[] data) : base(null)
             => Data = data;
 
         internal Node((Node<T> left, Node<T> right) children): this(new[] { children.left, children.right }) { }
@@ -73,8 +79,9 @@ namespace Atropos
             Array.Copy(Children, start, children, 0, count);
             if (start == 0)
             {
-                var indices = new int[BranchFactor];
+                var indices = new int[BranchFactor+1];
                 Array.Copy(ChildrenIndices, start, indices, 0, count);
+                indices[count] = ChildrenIndices[count] + 1; // stop-node
                 return new Node<T>(children, indices);
             }
             else // indices have to be regenerated
@@ -157,15 +164,15 @@ namespace Atropos
             int len = Data.Length / 2;
             return (SplitLeaf(0, len), SplitLeaf(len));
         }
-        public static (int child, int index) FindChildIndex(int[] childrenIndices, int index)
+        public static (int child, int index) FindChildIndex(Node node, int index)
         {
-            return FindChildIndexSIMD(childrenIndices, index);
+            return FindChildIndexSIMD(node, index);
             // TODO: compare with the SIMD implementation
-            int child = Array.BinarySearch(childrenIndices, index);
+            int child = Array.BinarySearch(node.ChildrenIndices, index);
             if (child < 0)
                 child = ~child;
             if (child > 0)
-                index -= (childrenIndices[child - 1] + 1);
+                index -= (node.ChildrenIndices[child - 1] + 1);
             return (child, index);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -177,39 +184,33 @@ namespace Atropos
             if (index == SubtreeCount)
             {
                 var child = Children.Length - 1;
-                if (child > 0) index -= (ChildrenIndices[child - 1] + 1);
+                index -= (ChildrenIndices[child] + 1);
                 return (child, index);
             }
 
-            return FindChildIndexSIMD(ChildrenIndices, index);
+            return FindChildIndexSIMD(this, index);
         }
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int FindChildIndexSIMD(int[] childrenIndices, Vector256<int> indexVector)
+        private static (int child, int index) FindChildIndexSIMD(Node node, int index)
         {
-            var children = MemoryMarshal.Cast<int, Vector256<int>>(childrenIndices.AsSpan());
-            for (int i = 0; i < children.Length; i++)
+            var indexVector = Vector256.Create(index);
+            var children = MemoryMarshal.Cast<int, Vector256<int>>(node.ChildrenIndices.AsSpan());
+            uint child = 8;
+            for (int i = 0; i < children.Length && child == 8; i++)
             {
-                var compare = ~unchecked((uint)Avx2.MoveMask(Avx2.CompareGreaterThan(indexVector, children[i]).AsByte()));
-                var child = Bmi1.TrailingZeroCount(compare) >> 2;
-                if (child == 8)
-                    continue; // not found here
-                return (int)child;
+                var compare = ~unchecked((uint)Avx2.MoveMask(Avx2.CompareGreaterThan(indexVector, children[0]).AsByte()));
+                child = Bmi1.TrailingZeroCount(compare) >> 2;
             }
-            throw new IndexOutOfRangeException();
+            child -= 1;
+            index -= node.ChildrenIndices[child] + 1;
+            return ((int)child, index);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static (int child, int index) FindChildIndexSIMD(int[] childrenIndices, int index)
-        {
-            var child = FindChildIndexSIMD(childrenIndices, Vector256.Create(index));
-            if (child > 0)
-                index -= (childrenIndices[child - 1] + 1);
-            return (child, index);
-        }
+       
 
-        internal Node(Node<T>[] children, int[] childrenIndices)
-        => (Children, ChildrenIndices) = (children, childrenIndices);
+        internal Node(Node<T>[] children, int[] childrenIndices) : base(childrenIndices)
+            => Children = children;
         internal Node(Node<T>[] children) : this(children, GetChildIndices(children)) { }
-        public Node(T[] data, int index, T value)
+        public Node(T[] data, int index, T value): base(null)
         {
             Data = new T[data.Length];
             data.CopyTo(Data, 0);
@@ -233,6 +234,7 @@ namespace Atropos
                 (c, index) = FindChildIndex(index);
                 if (c == Children.Length)
                 {
+                    throw new InvalidOperationException("fell of the cliff");
                     c--;
                     index = Children[c].SubtreeCount;
                 }
@@ -257,13 +259,14 @@ namespace Atropos
 
         private static int[] GetChildIndices(Node<T>[] children)
         {
-            var result = new int[BranchFactor];
+            var result = new int[BranchFactor+1];
             var s = 0;
             for (int i = 0; i < children.Length; i++)
             {
+                result[i] = s - 1;
                 s += children[i].SubtreeCount;
-                result[i] = s-1;
             }
+            result[children.Length] = s; // stop-node should have one more item so the search for the "last+1" index finds the last branch
             return result;
         }
 
@@ -352,11 +355,7 @@ namespace Atropos
             }
         }
 
-    }
-    internal static class Node
-    {
-
-        internal static Node<T> Fill<T>(T value, int count)
+        internal static Node<T> Fill(T value, int count)
         {
             if (count <= ImmutableList<T>.pageSize)
             {
