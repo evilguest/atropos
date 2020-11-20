@@ -8,7 +8,7 @@ The following collections are provided:
 to be executed within O(Log(Count)) with sufficiently large logaritm base. Insertions/Removals and list splits/merges are supposed to also work with O(Log(Count)) asymptotics.
 *Note*: immutable arrays that have this[index] done with O(1) time perform much worse at modifications. Therefore the choice is made in favor of the B+ -tree implementation.
 2. ImmutableDictionary<K, T> - the immutable dictionary. Optimized for acessing and modifying the values by key. 
-3. ImmutableDoubleList<T> - the immutable 2-linked list. Optimized for fast O(1) insertion/update of the list, and bidirectional traversing.
+3. ImmutableDoubleList<T> - the immutable 2-linked list. Optimized for fast O(1) insertion/update of the list, and bidirectional traversing. Presumably, based on http://www.math.tau.ac.il/~haimk/adv-ds-2000/jacm-final.pdf
 
 ## Authors
 1. Anton Zlygostev a.zlygostev@g.nsu.ru - ImmutableList&lt;T&gt; and ImmutableDictionary<K, T>.
