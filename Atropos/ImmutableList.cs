@@ -374,7 +374,7 @@ namespace Atropos
         /// <param name="list">The immutable list</param>
         /// <param name="index">Index of an item to remove from the list</param>
         /// <remarks>Note that for ImmutableList&lt;<see cref="int"/>&gt; this operator overlaps with the <see cref="operator -(ImmutableList{T}, T)"/> and wins.
-        /// To remove some value from an <see cref="ImmutableList{T}"/> where T is <see cref="int"/> use the <see cref="RemoveAt"/> method explicitly.
+        /// To remove some value from an <see cref="ImmutableList{T}"/> where T is <see cref="int"/> use the <see cref="RemoveAt"/> method explicitly.</remarks>
         /// <returns>A new <see cref="ImmutableList{T}"/> with the specified item removed.</returns>
         public static ImmutableList<T> operator -(ImmutableList<T> list, int index)
             => list.RemoveAt(index);

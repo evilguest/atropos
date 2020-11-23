@@ -239,7 +239,18 @@
             To remove some value from an <see cref="T:Atropos.ImmutableList`1"/> where T is <see cref="T:System.Int32"/> use the <see cref="M:Atropos.ImmutableList`1.RemoveAt(System.Int32)"/> method explicitly.
             </remarks>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Atropos.ImmutableList`1.op_Subtraction(Atropos.ImmutableList{`0},System.Int32)" -->
+        <member name="M:Atropos.ImmutableList`1.op_Subtraction(Atropos.ImmutableList{`0},System.Int32)">
+            <summary>
+            Removal operator - removes item at the specified position. 
+            Convenient in the compound assignment operator:
+            list = list.RemoveAt(index) &lt;=&gt; list -= index;
+            </summary>
+            <param name="list">The immutable list</param>
+            <param name="index">Index of an item to remove from the list</param>
+            <remarks>Note that for ImmutableList&lt;<see cref="T:System.Int32"/>&gt; this operator overlaps with the <see cref="M:Atropos.ImmutableList`1.op_Subtraction(Atropos.ImmutableList{`0},`0)"/> and wins.
+            To remove some value from an <see cref="T:Atropos.ImmutableList`1"/> where T is <see cref="T:System.Int32"/> use the <see cref="M:Atropos.ImmutableList`1.RemoveAt(System.Int32)"/> method explicitly.</remarks>
+            <returns>A new <see cref="T:Atropos.ImmutableList`1"/> with the specified item removed.</returns>
+        </member>
         <member name="M:Atropos.ImmutableList`1.op_Addition(Atropos.ImmutableList{`0},System.Collections.Generic.IEnumerable{`0})">
             <summary>
             Addition operator - adds the specified range of items to the immutable list.
