@@ -51,11 +51,11 @@ namespace Atropos.Tests
         }
 */
         [Theory]
-        [InlineData(100)]
+        [MemberData(nameof(Sizes))]
         public void TestAddRange(int size)
         {
             var r = Enumerable.Range(0, size);
-            var t = new ImmutableList<int>().AddRange(r);
+            var t = ImmutableList<int>.Empty.AddRange(r);
             Assert.Equal(r, t);
         }
 
@@ -76,8 +76,8 @@ namespace Atropos.Tests
             var oldVal = new BaseElement("Foo");
             var newVal = new BaseElement("Bar");
             var t = ImmutableList.Init(oldVal, len);
-            var t2 = t.SetItem(2, newVal);
-            Assert.Equal(newVal, t2[2]);
+            t |= (2, newVal);
+            Assert.Equal(newVal, t[2]);
         }
 
         /*
@@ -98,7 +98,7 @@ namespace Atropos.Tests
         {
             var t = ImmutableList.Init(seed, size);
             for (int i = 0; i < iterations; i++)
-                t = t.Insert(t.Count, i);
+                t += i;
         }
 
 
@@ -112,14 +112,20 @@ namespace Atropos.Tests
         [InlineData(524288, 100000, 42)]
         public void TestIntegerListContinuously(int size, int iterations, int seed)
         {
-            var t = new ImmutableList<int>();
-            t = t.AddRange(Enumerable.Range(0, size));
+            var t = ImmutableList<int>.Empty.AddRange(Enumerable.Range(0, size));
             var r = new Random(seed);
             for(int i=0; i<iterations;i++)
             {
                 var p = r.Next(size);
                 var e = t[p];
-                t = t.RemoveAt(p).Insert(r.Next(size - 1), e);
+                try
+                {
+                    t = t - p + (r.Next(size - 1), e);
+                }
+                catch(Exception exc)
+                {
+                    throw new InvalidOperationException($"Failed at i={i}", exc);
+                }
             }
             Assert.Equal((long)size * (size - 1) / 2, t.LongSum());
         }

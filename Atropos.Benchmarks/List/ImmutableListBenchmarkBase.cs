@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using System.Collections.Generic;
 using System.Linq;
 
 using SImmutableList = System.Collections.Immutable.ImmutableList;
@@ -6,11 +7,22 @@ using SImmutableListInt = System.Collections.Immutable.ImmutableList<int>;
 
 namespace Atropos.Benchmarks.List
 {
-    //[InProcess]
+    [InProcess]
     //[RPlotExporter]
     [MemoryDiagnoser]
     public abstract class ImmutableListBenchmarkBase
     {
+        public static IEnumerable<int> Sizes()
+        {
+            foreach (var i in Enumerable.Range(1, 16))
+            {
+                var p = (1 << i);
+                yield return p - p / (2 * i);
+                yield return p;
+                if (i > 2)
+                    yield return p + p / (2 * i);
+            }
+        }
         protected ImmutableList<int> _Alist;
         protected SImmutableListInt _Clist;
         //private List<int> _Llist;
@@ -21,18 +33,10 @@ namespace Atropos.Benchmarks.List
             _Clist = SImmutableList.CreateRange(Enumerable.Range(0, Size));
             //_Llist = new List<int>(Enumerable.Repeat(42, Size));
         }
-        [Params(
-            //1 << 0, 
-            //1 << 1, 
-            1 << 4, 
-            //1 << 8, 
-            //1 << 12, 
-            //1 << 14, 
-            //1 << 16, 
-            1 << 18
-            //1 << 20,
-            )]
+        [ParamsSource(nameof(Sizes))]
         public int Size { get; set; } = 1;
+        [Params(1000)]
+        public int Repetitions { get; set; } = 10;
 
 
     }

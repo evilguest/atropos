@@ -10,11 +10,21 @@ namespace Atropos.Benchmarks.List
     {
         [Benchmark]
         public IImmutableList<int> Atropos()
-            => _Alist.Insert(Size/2, 42);
+        {
+            var t = _Alist; 
+            for (var i = 0; i < Repetitions; i++)
+                t = _Alist.Insert(Size / 2, 42);
+            return t;
+        }
 
         [Benchmark(Baseline = true)]
         public IImmutableList<int> Official()
-            => _Clist.Insert(Size / 2, 42);
+        {
+            var t = _Clist;
+            for (var i = 0; i < Repetitions; i++)
+                t = _Clist.Insert(Size / 2, 42);
+            return t;
+        }
 
 
     }

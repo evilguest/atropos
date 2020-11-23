@@ -6,9 +6,6 @@ namespace Atropos.Benchmarks.List
     //[EtwProfiler]
     public class Index: ImmutableListBenchmarkBase
     {
-        [Params(1000, 10000)]
-        public int Repetitions { get; set; } = 10;
-
         [Benchmark]
         public int Atropos()
         {

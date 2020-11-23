@@ -29,7 +29,6 @@ Type of the list elements
 - [AddRange(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-T--AddRange(IEnumerable-T-).md 'Atropos.ImmutableList&lt;T&gt;.AddRange(System.Collections.Generic.IEnumerable&lt;T&gt;)')
 - [Clear()](./ImmutableList-T--Clear().md 'Atropos.ImmutableList&lt;T&gt;.Clear()')
 - [GetEnumerator()](./ImmutableList-T--GetEnumerator().md 'Atropos.ImmutableList&lt;T&gt;.GetEnumerator()')
-- [GetEnumerator(int)](./ImmutableList-T--GetEnumerator(int).md 'Atropos.ImmutableList&lt;T&gt;.GetEnumerator(int)')
 - [IndexOf(T, int, int, System.Collections.Generic.IEqualityComparer&lt;T&gt;)](./ImmutableList-T--IndexOf(T_int_int_IEqualityComparer-T-).md 'Atropos.ImmutableList&lt;T&gt;.IndexOf(T, int, int, System.Collections.Generic.IEqualityComparer&lt;T&gt;)')
 - [Insert(int, T)](./ImmutableList-T--Insert(int_T).md 'Atropos.ImmutableList&lt;T&gt;.Insert(int, T)')
 - [InsertRange(int, System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-T--InsertRange(int_IEnumerable-T-).md 'Atropos.ImmutableList&lt;T&gt;.InsertRange(int, System.Collections.Generic.IEnumerable&lt;T&gt;)')
@@ -41,3 +40,8 @@ Type of the list elements
 - [RemoveRange(int, int)](./ImmutableList-T--RemoveRange(int_int).md 'Atropos.ImmutableList&lt;T&gt;.RemoveRange(int, int)')
 - [Replace(T, T, System.Collections.Generic.IEqualityComparer&lt;T&gt;)](./ImmutableList-T--Replace(T_T_IEqualityComparer-T-).md 'Atropos.ImmutableList&lt;T&gt;.Replace(T, T, System.Collections.Generic.IEqualityComparer&lt;T&gt;)')
 - [SetItem(int, T)](./ImmutableList-T--SetItem(int_T).md 'Atropos.ImmutableList&lt;T&gt;.SetItem(int, T)')
+### Operators
+- [operator +(Atropos.ImmutableList&lt;T&gt;, T)](./ImmutableList-T--op_Addition(ImmutableList-T-_T).md 'Atropos.ImmutableList&lt;T&gt;.op_Addition(Atropos.ImmutableList&lt;T&gt;, T)')
+- [operator +(Atropos.ImmutableList&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-T--op_Addition(ImmutableList-T-_IEnumerable-T-).md 'Atropos.ImmutableList&lt;T&gt;.op_Addition(Atropos.ImmutableList&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;)')
+- [operator -(Atropos.ImmutableList&lt;T&gt;, T)](./ImmutableList-T--op_Subtraction(ImmutableList-T-_T).md 'Atropos.ImmutableList&lt;T&gt;.op_Subtraction(Atropos.ImmutableList&lt;T&gt;, T)')
+- [operator -(Atropos.ImmutableList&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-T--op_Subtraction(ImmutableList-T-_IEnumerable-T-).md 'Atropos.ImmutableList&lt;T&gt;.op_Subtraction(Atropos.ImmutableList&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;)')
