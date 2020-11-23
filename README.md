@@ -11,8 +11,8 @@ to be executed within O(Log(Count)) with sufficiently large logaritm base. Inser
 3. ImmutableDoubleList<T> - the immutable 2-linked list. Optimized for fast O(1) insertion/update of the list, and bidirectional traversing. Presumably, based on http://www.math.tau.ac.il/~haimk/adv-ds-2000/jacm-final.pdf
 
 ## Authors
-1. Anton Zlygostev a.zlygostev@g.nsu.ru - ImmutableList&lt;T&gt; and ImmutableDictionary<K, T>.
-2. Dmitry Seleznev <d.seleznev6@g.nsu.ru> - ImmutableDoubleList&lt;T&gt; and ImmutableDictionary<K, T>.
+1. Anton Zlygostev a.zlygostev@g.nsu.ru - ImmutableList&lt;T&gt; and ImmutableDoubleList.
+2. Dmitry Seleznev <d.seleznev6@g.nsu.ru> - ImmutableDictionary<K, T>&lt;T&gt; and ImmutableDoubleList.
 
 ## Calendar plan
 
