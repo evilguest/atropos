@@ -1,3 +1,4 @@
+![Build Status](https://github.com/evilguest/atropos/workflows/.NET%20Core/badge.svg?branch=main) [![Coverage Status](https://coveralls.io/repos/github/evilguest/atropos/badge.svg?branch=main)](https://coveralls.io/github/evilguest/atropos?branch=main)
 # atropos
 The immutable (persistent) data structures for .Net.
 See the [Documentation](./Atropos/Documentation/Atropos.md) for more detail
