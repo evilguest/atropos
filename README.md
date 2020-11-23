@@ -12,7 +12,7 @@ to be executed within O(Log(Count)) with sufficiently large logaritm base. Inser
 
 ## Authors
 1. Anton Zlygostev a.zlygostev@g.nsu.ru - ImmutableList&lt;T&gt; and ImmutableDoubleList.
-2. Dmitry Seleznev <d.seleznev6@g.nsu.ru> - ImmutableDictionary<K, T>&lt;T&gt; and ImmutableDoubleList.
+2. Dmitry Seleznev <d.seleznev6@g.nsu.ru> - ImmutableDictionary<K, T>&lt;&gt; and ImmutableDoubleList.
 
 ## Calendar plan
 
