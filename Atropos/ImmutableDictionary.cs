@@ -101,17 +101,19 @@ namespace Atropos
 
         public ImmutableDictionary<TKey, TValue> AddRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
         {
-            throw new NotImplementedException();
+            var result = this;
+            return pairs.Aggregate(result, (current, kv) => current.Add(kv.Key, kv.Value));
         }
 
         public ImmutableDictionary<TKey, TValue> Clear()
         {
-            throw new NotImplementedException();
+            return new ImmutableDictionary<TKey, TValue>();
         }
 
         public bool Contains(KeyValuePair<TKey, TValue> pair)
         {
-            throw new NotImplementedException();
+            var node = _rootNode?.FindNode(new ComparableKeyValuePair(pair.Key, pair.Value));
+            return node != null && node.Value.Value.Equals(pair.Value);
         }
 
         [Pure]
@@ -155,27 +157,6 @@ namespace Atropos
             }
 
             return new ImmutableDictionary<TKey, TValue>(nodeWithoutKey, Count - 1);
-        }
-
-
-        public ImmutableDictionary<TKey, TValue> RemoveRange(IEnumerable<TKey> keys)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ImmutableDictionary<TKey, TValue> SetItem(TKey key, TValue value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ImmutableDictionary<TKey, TValue> SetItems(IEnumerable<KeyValuePair<TKey, TValue>> items)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryGetKey(TKey equalKey, out TKey actualKey)
-        {
-            throw new NotImplementedException();
         }
 
         [Pure]
