@@ -23,3 +23,6 @@ to be executed within O(Log(Count)) with sufficiently large logaritm base. Inser
 | 3 | Extended functions (Merge, Split, mass-initialization, etc) | 4.12.2020 |
 | 4 | Benchmarks | 11.12.2020 |
 | 5 | Performance optimizations | 25.12.2020 |
+
+## Benchmarks
+![Index](./Atropos.Benchmarks/Atropos.Benchmarks.List.Index.png)

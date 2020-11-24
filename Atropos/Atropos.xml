@@ -4,6 +4,12 @@
         <name>Atropos</name>
     </assembly>
     <members>
+        <member name="T:Atropos.IImmutableDeque`1">
+            <summary>
+            Represents an immutable Deque - i.e. the two-ended queue that supports push/pop operations from both ends with an amortized cost ot O(1) per operation.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
         <member name="T:Atropos.ImmutableDictionary`2">
             <summary>
             Represents an immutable dictionary

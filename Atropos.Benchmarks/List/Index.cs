@@ -24,6 +24,15 @@ namespace Atropos.Benchmarks.List
             return s;
         }
 
+        [Benchmark]
+        public int Tunnel()
+        {
+            var s = 0;
+            for(int i=0; i<Repetitions;i++)
+                unchecked { s += _Tlist[i % Size]; }
+            return s;
+        }
+
         /*        [Benchmark()]
                 public void Mutable()
                     => _Llist.Add(50);

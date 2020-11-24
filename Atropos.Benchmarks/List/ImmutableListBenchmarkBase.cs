@@ -25,12 +25,15 @@ namespace Atropos.Benchmarks.List
         }
         protected ImmutableList<int> _Alist;
         protected SImmutableListInt _Clist;
+        protected TunnelVisionLabs.Collections.Trees.Immutable.ImmutableTreeList<int> _Tlist;
         //private List<int> _Llist;
         [GlobalSetup]
         public virtual void Initialize()
         {
-            _Alist = ImmutableList<int>.Empty.AddRange(Enumerable.Range(0, Size));
-            _Clist = SImmutableList.CreateRange(Enumerable.Range(0, Size));
+            var r = Enumerable.Range(0, Size);
+            _Alist = ImmutableList<int>.Empty.AddRange(r);
+            _Clist = SImmutableList.CreateRange(r);
+            _Tlist = TunnelVisionLabs.Collections.Trees.Immutable.ImmutableTreeList.CreateRange(r);
             //_Llist = new List<int>(Enumerable.Repeat(42, Size));
         }
         [ParamsSource(nameof(Sizes))]
