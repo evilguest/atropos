@@ -275,7 +275,10 @@ namespace Atropos
             
             var root = _root;
             foreach (var item in items)
-                root = root.RemoveAt(root.IndexOf(item, 0, root.Count, equalityComparer));
+            {
+                var i = root.IndexOf(item, 0, root.Count, equalityComparer);
+                if (i>=0) root = root.RemoveAt(i);
+            }
             return new ImmutableList<T>(root.Freeze());
         }
 

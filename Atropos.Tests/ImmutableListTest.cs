@@ -25,6 +25,11 @@ namespace Atropos.Tests
         {
             var t = ImmutableList.Init(42, size);
             Assert.Equal(Enumerable.Repeat(42, size), t);
+        }
+        [Theory]
+        [MemberData(nameof(Sizes))]
+        public void TestInitNegative(int size)
+        {
             Assert.Throws<ArgumentOutOfRangeException>("count", () => ImmutableList.Init(42, -size));
         }
         [Fact]
