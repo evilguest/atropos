@@ -11,3 +11,4 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 - [InitRange&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-InitRange-T-(IEnumerable-T-).md 'Atropos.ImmutableList.InitRange&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)')
 - [Insert&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, int, B)](./ImmutableList-Insert-T_B-(thisImmutableList-T-_int_B).md 'Atropos.ImmutableList.Insert&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, int, B)')
 - [SetItem&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, int, B)](./ImmutableList-SetItem-T_B-(thisImmutableList-T-_int_B).md 'Atropos.ImmutableList.SetItem&lt;T,B&gt;(Atropos.ImmutableList&lt;T&gt;, int, B)')
+- [ToImmutableList&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableList-ToImmutableList-T-(thisIEnumerable-T-).md 'Atropos.ImmutableList.ToImmutableList&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)')

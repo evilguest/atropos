@@ -26,14 +26,24 @@ namespace Atropos
             => new ImmutableList<T>(item, count);
 
         /// <summary>
-        /// Initializes a new <see cref="ImmutableList{T}"/> with the specified <paramref name="enumerable"/>.
+        /// Initializes a new <see cref="ImmutableList{T}"/> with the specified <paramref name="items"/>.
         /// </summary>
         /// <typeparam name="T">Type of the list items</typeparam>
-        /// <param name="enumerable">Collection of items to initialize</param>
-        /// <returns>A new <see cref="ImmutableList{T}"/> that contais all the items from <paramref name="enumerable"/> in the same order.</returns>
-        public static ImmutableList<T> InitRange<T>(IEnumerable<T> enumerable) 
-            => enumerable is ImmutableList<T> list ? list : ImmutableList<T>.Empty.AddRange(enumerable);
+        /// <param name="items">Collection of items to initialize</param>
+        /// <returns>A new <see cref="ImmutableList{T}"/> that contais all the items from <paramref name="items"/> in the same order.</returns>
+        public static ImmutableList<T> InitRange<T>(IEnumerable<T> items) 
+            => items is ImmutableList<T> list ? list : ImmutableList<T>.Empty.AddRange(items);
 
+        /// <summary>
+        /// Creates an <see cref="ImmutableList{T}"/> from <see cref="IEnumerable{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the list items</typeparam>
+        /// <param name="items">Collection of items to initialize</param>
+        /// <returns>An <see cref="ImmutableList{T}"/> that contais all the elements of the input sequence.</returns>
+        /// <remarks>Implementation is eager. Do not call on the infinite sequences.</remarks>
+        public static ImmutableList<T> ToImmutableList<T>(this IEnumerable<T> items)
+            => InitRange(items);
+            
         /// <summary>
         /// Makes a copy of the list, and adds the specified <paramref name="value"/> to the end of the copied list.
         /// </summary>
@@ -434,6 +444,21 @@ namespace Atropos
         /// </remarks>
         public static ImmutableList<T> operator -(ImmutableList<T> list, T value)
             => list.Remove(value);
+
+        /// <summary>
+        /// Removal operator - removes the first occurence of the specified value from the list, using the specified equality comparer.
+        /// Convenient in the compound assignment operator:
+        /// list = list.Remove(item, comparer) &lt;=&gt; list -= (item, comparer);
+        /// </summary>
+        /// <param name="list">The immutable list</param>
+        /// <param name="param">Item to remove from the list:
+        /// - <paramref name="param"/>.value - the value to remove
+        /// - <paramref name="param"/>.comparer - the comparer to use
+        /// </param>
+        /// <returns>A new list with the first occurence of <paramref name="param"/>. removed.</returns>
+        public static ImmutableList<T> operator -(ImmutableList<T> list, (T value, IEqualityComparer<T> comparer) param)
+            => list.Remove(param.value, param.comparer);
+
         /// <summary>
         /// Removal operator - removes item at the specified position. 
         /// Convenient in the compound assignment operator:

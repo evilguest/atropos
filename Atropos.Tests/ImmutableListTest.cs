@@ -25,6 +25,7 @@ namespace Atropos.Tests
         {
             var t = ImmutableList.Init(42, size);
             Assert.Equal(Enumerable.Repeat(42, size), t);
+            Assert.Throws<ArgumentOutOfRangeException>("count", () => ImmutableList.Init(42, -size));
         }
         [Fact]
         public void TestClear()
@@ -98,6 +99,16 @@ namespace Atropos.Tests
 
             Assert.Equal("DerivedElement(Foo, 5), BaseElement(Bar)", s);
         }
+
+        [Fact]
+        void TestInsertOutOfRange()
+        {
+            var t = (new[] { 0, 1, 2 }).ToImmutableList();
+            Assert.Throws<IndexOutOfRangeException>(() => t + (-1, -1));
+            Assert.Throws<IndexOutOfRangeException>(() => t + (4, 4));
+        }
+
+
         [Fact]
         public void TestInsertBaseType()
         {
@@ -107,6 +118,17 @@ namespace Atropos.Tests
             var s = string.Join(", ", t2);
 
             Assert.Equal("BaseElement(Bar), DerivedElement(Foo, 5)", s);
+        }
+
+        [Theory]
+        [MemberData(nameof(Sizes))]
+        public void TestIndex(int size)
+        {
+            var t = Enumerable.Range(0, size).ToImmutableList();
+            Assert.Throws<IndexOutOfRangeException>(() => t[-1]);
+            for (int i = 0; i < size; i++)
+                Assert.Equal(i, t[i]);
+            Assert.Throws<IndexOutOfRangeException>(() => t[size]);
         }
 
         [Theory]
@@ -121,12 +143,11 @@ namespace Atropos.Tests
         [Fact]
         public void TestSetIntValue()
         {
-            var len = 5;
-            var oldVal = 42;
             var newVal = 56;
-            var t = ImmutableList.Init(oldVal, len);
+            var t = ImmutableList.Init(42, 5);
             t |= (2, newVal);
             Assert.Equal(newVal, t[2]);
+            Assert.Equal(t, t | (2, newVal)); // re-assignment should preserve the list 
         }
         [Fact]
         public void TestSetRefValue()
@@ -217,5 +238,39 @@ namespace Atropos.Tests
             Assert.Equal(from a in Enumerable.Range(0, (size + 1) / 2) select 2 * a, t);
         }
 
+        [Fact]
+        public void TestRemoveInt()
+        {
+            var t = Enumerable.Range(0, 100).ToImmutableList();
+            t = t.Remove(2);
+            Assert.Equal(-1, t.IndexOf(2));
+            var t2 = t.Remove(2);
+            Assert.Equal(t, t2);
+        }
+        [Fact] 
+        public void TestRemoveString()
+        {
+            var t = (new[] { "Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" }).ToImmutableList();
+            t -= "One";
+            Assert.Equal(new[] { "Zero", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" }, t);
+            t -= ("one", StringComparer.InvariantCultureIgnoreCase);
+            Assert.Equal(new[] { "Zero", "Two", "Three", "Four", "Zero", "Two", "Three", "Four" }, t);
+            t -= "One";
+            Assert.Equal(new[] { "Zero", "Two", "Three", "Four", "Zero", "Two", "Three", "Four" }, t);
+        }
+
+        [Fact]
+        public void TestReplace()
+        {
+            var t = (new[] { "Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" }).ToImmutableList();
+            t = t.Replace("Zero", "Nothing");
+            Assert.Equal(new[] { "Nothing", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" }, t);
+            
+            t = t.Replace("zero", "Nothing", StringComparer.InvariantCultureIgnoreCase);
+            Assert.Equal(new[] { "Nothing", "One", "Two", "Three", "Four", "Nothing", "One", "Two", "Three", "Four" }, t);
+
+            Assert.Throws<ArgumentException>("oldValue", ()=>t.Replace("Zero", "Nothing"));
+
+        }
     }
 }

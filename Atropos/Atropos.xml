@@ -46,11 +46,20 @@
         </member>
         <member name="M:Atropos.ImmutableList.InitRange``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
-            Initializes a new <see cref="T:Atropos.ImmutableList`1"/> with the specified <paramref name="enumerable"/>.
+            Initializes a new <see cref="T:Atropos.ImmutableList`1"/> with the specified <paramref name="items"/>.
             </summary>
             <typeparam name="T">Type of the list items</typeparam>
-            <param name="enumerable">Collection of items to initialize</param>
-            <returns>A new <see cref="T:Atropos.ImmutableList`1"/> that contais all the items from <paramref name="enumerable"/> in the same order.</returns>
+            <param name="items">Collection of items to initialize</param>
+            <returns>A new <see cref="T:Atropos.ImmutableList`1"/> that contais all the items from <paramref name="items"/> in the same order.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableList.ToImmutableList``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Creates an <see cref="T:Atropos.ImmutableList`1"/> from <see cref="T:System.Collections.Generic.IEnumerable`1"/>.
+            </summary>
+            <typeparam name="T">Type of the list items</typeparam>
+            <param name="items">Collection of items to initialize</param>
+            <returns>An <see cref="T:Atropos.ImmutableList`1"/> that contais all the elements of the input sequence.</returns>
+            <remarks>Implementation is eager. Do not call on the infinite sequences.</remarks>
         </member>
         <member name="M:Atropos.ImmutableList.Add``2(Atropos.ImmutableList{``0},``1)">
             <summary>
@@ -314,6 +323,19 @@
             <remarks>Note that for ImmutableList&lt;<see cref="T:System.Int32"/>&gt; this operator overlaps with the <see cref="M:Atropos.ImmutableList`1.op_Subtraction(Atropos.ImmutableList{`0},System.Int32)"/> and loses.
             To remove some value from an <see cref="T:Atropos.ImmutableList`1"/> where T is <see cref="T:System.Int32"/> use the <see cref="M:Atropos.ImmutableList`1.Remove(`0,System.Collections.Generic.IEqualityComparer{`0})"/> method explicitly.
             </remarks>
+        </member>
+        <member name="M:Atropos.ImmutableList`1.op_Subtraction(Atropos.ImmutableList{`0},System.ValueTuple{`0,System.Collections.Generic.IEqualityComparer{`0}})">
+            <summary>
+            Removal operator - removes the first occurence of the specified value from the list, using the specified equality comparer.
+            Convenient in the compound assignment operator:
+            list = list.Remove(item, comparer) &lt;=&gt; list -= (item, comparer);
+            </summary>
+            <param name="list">The immutable list</param>
+            <param name="param">Item to remove from the list:
+            - <paramref name="param"/>.value - the value to remove
+            - <paramref name="param"/>.comparer - the comparer to use
+            </param>
+            <returns>A new list with the first occurence of <paramref name="param"/>. removed.</returns>
         </member>
         <member name="M:Atropos.ImmutableList`1.op_Subtraction(Atropos.ImmutableList{`0},System.Int32)">
             <summary>
