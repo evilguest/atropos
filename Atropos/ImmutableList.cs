@@ -25,6 +25,44 @@ namespace Atropos
         public static ImmutableList<T> Init<T>(T item, int count = 1)
             => new ImmutableList<T>(item, count);
 
+        /// <summary>
+        /// Initializes a new <see cref="ImmutableList{T}"/> with the specified <paramref name="enumerable"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the list items</typeparam>
+        /// <param name="enumerable">Collection of items to initialize</param>
+        /// <returns>A new <see cref="ImmutableList{T}"/> that contais all the items from <paramref name="enumerable"/> in the same order.</returns>
+        public static ImmutableList<T> InitRange<T>(IEnumerable<T> enumerable) 
+            => enumerable is ImmutableList<T> list ? list : ImmutableList<T>.Empty.AddRange(enumerable);
+
+        /// <summary>
+        /// Makes a copy of the list, and adds the specified <paramref name="value"/> to the end of the copied list.
+        /// </summary>
+        /// <typeparam name="T">Type of the original list items</typeparam>
+        /// <typeparam name="B">Type of the value to add</typeparam>
+        /// <param name="list">Original list</param>
+        /// <param name="value">The object to add to the list</param>
+        /// <returns>A new list with the object added</returns>
+        /// <remarks>Warning: the operation asymptotic is O(<paramref name="list"/>.Count), as we have to clone the list.
+        /// Reusing the nodes of the original list is impossible due to the limitations of the C# type system: Node&lt;<typeparamref name="T"/>&gt; cannot be made covariant, and 
+        /// storing INode&lt;<typeparamref name="T"/>&gt; would kill the performance due to the indirect call.</remarks>
+        public static ImmutableList<B> Add<T, B>(this ImmutableList<T> list, B value)
+            where T : class, B => InitRange<B>(list) + value;
+        /// <summary>
+        /// Makes a copy of the list, and inserts the specified <paramref name="value"/> at the specified <paramref name="index"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the original list items</typeparam>
+        /// <typeparam name="B">Type of the value to add</typeparam>
+        /// <param name="list">Original list</param>
+        /// <param name="index">Position of the insertion</param>
+        /// <param name="value">The object to insert into the list</param>
+        /// <returns>A new list with the object added</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when <paramref name="index"/> is outside of the <paramref name="list"/> bounds.</exception>
+        /// <remarks>Warning: the operation asymptotic is O(<paramref name="list"/>.Count), as we have to clone the list.
+        /// Reusing the nodes of the original list is impossible due to the limitations of the C# type system: Node&lt;<typeparamref name="T"/>&gt; cannot be made covariant, and 
+        /// storing INode&lt;<typeparamref name="T"/>&gt; would kill the performance due to the indirect call.</remarks>
+
+        public static ImmutableList<B> Insert<T, B>(this ImmutableList<T> list, int index, B value)
+            where T : class, B => InitRange<B>(list) + (index, value);
     }
 
     /// <summary>
@@ -58,7 +96,19 @@ namespace Atropos
         /// of elements if found; otherwise -1.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="ImmutableList{T}.Count"/>-1.</exception>
         public int IndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer = null) 
-            => _root.IndexOf(item, index, count, equalityComparer ?? EqualityComparer<T>.Default);
+            => _root.IndexOf(item, index, count, equalityComparer);
+
+
+        /// <summary>
+        /// Searches for the specified object and returns the zero-based index of the first 
+        /// occurrence within the range of elements in the list
+        /// that starts at the specified index and contains the specified number of elements.
+        /// </summary>
+        /// <param name="item">Object to find</param>
+        /// <param name="equalityComparer">The comparer to use for comparing items with <paramref name="item"/></param>
+        /// <returns>The zero-based index of the first occurrence of item within the <see cref="ImmutableList{T}"/> if found; otherwise -1.</returns>
+        public int IndexOf(T item, IEqualityComparer<T> equalityComparer = null)
+            => IndexOf(item, 0, Count, equalityComparer);
 
         /// <summary>
         /// Searches for the specified object and returns the zero-based index of the last occurrence within 
@@ -74,15 +124,18 @@ namespace Atropos
         /// of elements if found; otherwise -1.</returns>
         /// <exception cref="IndexOutOfRangeException">Thrown when requested <paramref name="index"/> is below zero or (<paramref name="index"/>+<paramref name="count"/>) is above <see cref="ImmutableList{T}.Count"/>-1.</exception>
         public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer = null)
-        {
-            equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
-            if (index < 0 || index + count > Count)
-                throw new IndexOutOfRangeException();
-            for (var i = index + count - 1; i >= index; i--)
-                if (equalityComparer.Equals(this[index], item))
-                    return i;
-            return -1;
-        }
+            => _root.LastIndexOf(item, index, count, equalityComparer);
+
+        /// <summary>
+        /// Searches for the specified object and returns the zero-based index of the last occurrence within 
+        /// the <see cref="ImmutableList{T}"/>.
+        /// </summary>
+        /// <param name="item">The object to locate in the list. The value can be null for reference types.</param>
+        /// <param name="equalityComparer">The equality comparer to use when searching for the <paramref name="item"/>.</param>
+        /// <returns>The zero-based index of the last occurrence of item within the <see cref="ImmutableList{T}"/> if found; otherwise -1.</returns>
+        public int LastIndexOf(T item, IEqualityComparer<T> equalityComparer = null)
+            => LastIndexOf(item, 0, Count, equalityComparer);
+
         /// <summary>
         /// Removes the first occurrence of a specified object from this immutable list.
         /// </summary>
@@ -193,7 +246,7 @@ namespace Atropos
         /// <returns> A new immutable list with the specified objects removed, if items matched objects in the list.</returns>
         public ImmutableList<T> RemoveRange(IEnumerable<T> items, IEqualityComparer<T> equalityComparer = null)
         {
-            equalityComparer = equalityComparer ?? EqualityComparer<T>.Default;
+            
             var root = _root;
             foreach (var item in items)
                 root = root.RemoveAt(root.IndexOf(item, 0, root.Count, equalityComparer));

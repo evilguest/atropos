@@ -81,10 +81,21 @@ namespace Atropos
 
         public int IndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
         {
+            equalityComparer ??= EqualityComparer<T>.Default;
             if (index < 0 || index + count > Count)
                 throw new IndexOutOfRangeException();
             for (var i = index; i < index + count; i++)
-                if (equalityComparer.Equals(this[index], item))
+                if (equalityComparer.Equals(this[i], item))
+                    return i;
+            return -1;
+        }
+        public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
+        {
+            equalityComparer ??= EqualityComparer<T>.Default;
+            if (index < 0 || index + count > Count)
+                throw new IndexOutOfRangeException();
+            for (var i = index + count - 1; i >= index; i--)
+                if (equalityComparer.Equals(this[i], item))
                     return i;
             return -1;
         }

@@ -18,13 +18,62 @@ namespace Atropos.Tests
                 yield return new object[] { (1 << i) + 1 };
             }
         }
+
         [Theory]
-       
         [MemberData(nameof(Sizes))]
         public void TestInit(int size)
         {
             var t = ImmutableList.Init(42, size);
             Assert.Equal(Enumerable.Repeat(42, size), t);
+        }
+        [Fact]
+        public void TestClear()
+        {
+            var t = ImmutableList.Init(42, 10000);
+            var c = t.Clear();
+            Assert.Empty(c);
+        }
+
+        [Theory]
+        [InlineData(5, 2)]
+        [InlineData(15, 6)]
+        [InlineData(31, 19)]
+        [InlineData(63, 60)]
+        [InlineData(127, 100)]
+        public void TestIndexOfInt(int size, int value)
+        {
+            var c = Enumerable.Range(0, size);
+            var t = ImmutableList.InitRange(c);
+            t += c;
+            Assert.Equal(value, t.IndexOf(value, 0, 2*size));
+        }
+        [Theory]
+        [InlineData(5, 2)]
+        [InlineData(15, 6)]
+        [InlineData(31, 19)]
+        [InlineData(63, 60)]
+        [InlineData(127, 100)]
+        public void TestLastIndexOfInt(int size, int value)
+        {
+            var c = Enumerable.Range(0, size);
+            var t = ImmutableList.InitRange(c);
+            t += c;
+            Assert.Equal(size+value, t.LastIndexOf(value, 0, 2*size));
+        }
+        [Fact]
+        public void TestIndexOfString()
+        {
+            var t = ImmutableList.InitRange(new[] {"Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" });
+            Assert.Equal(2, t.IndexOf("Two"));
+            Assert.Equal(-1, t.IndexOf("two"));
+            Assert.Equal(3, t.IndexOf("three", StringComparer.InvariantCultureIgnoreCase));
+        }
+
+        [Fact]
+        public void TestLastIndexOfString()
+        {
+            var t = ImmutableList.InitRange(new[] { "Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" });
+            Assert.Equal(2, t.IndexOf("Two"));
         }
 
         [Fact]
