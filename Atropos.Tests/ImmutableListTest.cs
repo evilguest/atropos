@@ -272,5 +272,30 @@ namespace Atropos.Tests
             Assert.Throws<ArgumentException>("oldValue", ()=>t.Replace("Zero", "Nothing"));
 
         }
+        [Theory]
+        [MemberData(nameof(Sizes))]
+        public void TestInsertRange(int size)
+        {
+            var t = Enumerable.Range(0, size).ToImmutableList();
+            int[] items = new[] { 8, 15, 16, 23, 42 };
+            t = t.InsertRange(size / 2, items);
+            for (var i = 0; i < items.Length; i++)
+                Assert.Equal(items[i], t[size / 2 + i]);
+        }
+        [Fact]
+        public void TestRemoveRangeEmpty()
+        {
+            var t = Enumerable.Range(0, 512).ToImmutableList();
+            Assert.Equal(t, t - Enumerable.Empty<int>());
+        }
+        [Theory]
+        [MemberData(nameof(Sizes))]
+        public void TestRemoveRangeInt(int size)
+        {
+            var t = Enumerable.Range(0, size).ToImmutableList();
+            var t2 = t -= Enumerable.Range(-1, 2);
+            Assert.Equal(t2.Count, size - 1); // we've removed 0, and skipped -1, so net delta of Count should be -1.
+            Assert.Equal(-1, t2.IndexOf(0));
+        }
     }
 }
