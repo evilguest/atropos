@@ -45,7 +45,7 @@ namespace Atropos.Tests
             var c = Enumerable.Range(0, size);
             var t = ImmutableList.InitRange(c);
             t += c;
-            Assert.Equal(value, t.IndexOf(value, 0, 2*size));
+            Assert.Equal(value, t.IndexOf(value));
         }
         [Theory]
         [InlineData(5, 2)]
@@ -58,7 +58,7 @@ namespace Atropos.Tests
             var c = Enumerable.Range(0, size);
             var t = ImmutableList.InitRange(c);
             t += c;
-            Assert.Equal(size+value, t.LastIndexOf(value, 0, 2*size));
+            Assert.Equal(size+value, t.LastIndexOf(value));
         }
         [Fact]
         public void TestIndexOfString()
@@ -88,7 +88,7 @@ namespace Atropos.Tests
             Assert.Equal(newVal, t[len]);
         }
 
-/*        [Fact]
+        [Fact]
         public void TestAddBaseType()
         {
             var t1 = ImmutableList.Init(new DerivedElement("Foo", 5));
@@ -98,7 +98,17 @@ namespace Atropos.Tests
 
             Assert.Equal("DerivedElement(Foo, 5), BaseElement(Bar)", s);
         }
-*/
+        [Fact]
+        public void TestInsertBaseType()
+        {
+            var t1 = ImmutableList.Init(new DerivedElement("Foo", 5));
+            var t2 = t1.Insert(0, new BaseElement("Bar"));
+
+            var s = string.Join(", ", t2);
+
+            Assert.Equal("BaseElement(Bar), DerivedElement(Foo, 5)", s);
+        }
+
         [Theory]
         [MemberData(nameof(Sizes))]
         public void TestAddRange(int size)
@@ -109,13 +119,13 @@ namespace Atropos.Tests
         }
 
         [Fact]
-        public void TestSetStructValue()
+        public void TestSetIntValue()
         {
             var len = 5;
             var oldVal = 42;
             var newVal = 56;
             var t = ImmutableList.Init(oldVal, len);
-            t = t.SetItem(2, newVal);
+            t |= (2, newVal);
             Assert.Equal(newVal, t[2]);
         }
         [Fact]
@@ -129,7 +139,7 @@ namespace Atropos.Tests
             Assert.Equal(newVal, t[2]);
         }
 
-        /*
+        
         [Fact]
         public void TestSetBaseValue()
         {
@@ -139,7 +149,7 @@ namespace Atropos.Tests
             var t = ImmutableList.Init(oldVal, len);
             var t2 = t.SetItem(2, newVal);
             Assert.Equal(newVal, t2[2]);
-        }*/
+        }
 
         [Theory]
         [InlineData(16, 5, 42)]
@@ -190,6 +200,21 @@ namespace Atropos.Tests
             for (int i = 0; i < iterations; i++)
                 s += t[size / 2];
             Assert.Equal(iterations * value, s);
+        }
+        [Fact]
+        public void TestRemoveAt()
+        {
+            var t = ImmutableList.InitRange(Enumerable.Range(5, 5));
+            t -= 2;
+            Assert.Equal(new[] { 5, 6, 8, 9 }, t);
+        }
+        [Theory]
+        [MemberData(nameof(Sizes))]
+        public void TestRemoveAll(int size)
+        {
+            var t = ImmutableList.InitRange(Enumerable.Range(0, size));
+            t = t.RemoveAll(p => p % 2 == 1); // remove all odds
+            Assert.Equal(from a in Enumerable.Range(0, (size + 1) / 2) select 2 * a, t);
         }
 
     }

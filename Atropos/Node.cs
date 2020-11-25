@@ -122,6 +122,8 @@ namespace Atropos
         {
             get
             {
+                Debug.Assert(index >= 0);
+                Debug.Assert(index < Count);
                 var node = this;
                 while(!node.IsLeaf)
                 {
@@ -491,12 +493,19 @@ namespace Atropos
             var s = start == 0 ? 0 : GetChildIndex(start - 1);
             int i = start;
             fixed (int* indices = &_indexes.childIndex0)
-            while(i < Children.Length-1)
             {
-                indices[i] = s += Children[i].Count;
-                i++;
+                while (i < Children.Length - 1)
+                {
+                    indices[i] = s += Children[i].Count;
+                    i++;
+                }
+                _count = s + Children[i].Count;
+                while (i < Indexes.Length)
+                {
+                    indices[i] = 0;
+                    i++;
+                }
             }
-            _count = s + Children[i].Count; 
         }
 
         internal Node<T> ReplaceDataAt(int index, T value)
@@ -585,16 +594,8 @@ namespace Atropos
 
         }
         internal Node<T> AddData(T value)
-        {
-            try
-            {
-                return InsertDataAt(Count, value);
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException($"Error while adding {value} at {Count}", e);
-            }
-        }
+            => InsertDataAt(Count, value);
+        
 
         public static (U[] left, U[] right) Balance<U>(U[] left, U[] right)
         {
@@ -634,7 +635,7 @@ namespace Atropos
 
         internal static Node<T> Fill(T value, int count)
         {
-            if (count <= 16)
+            if (count <= PageSize)
             {
                 var data = new T[count];
                 Array.Fill(data, value);

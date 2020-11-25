@@ -15,5 +15,4 @@ The element to replace the old element with.
   
 #### Returns
 [Atropos.ImmutableList&lt;](./ImmutableList-T-.md 'Atropos.ImmutableList&lt;T&gt;')[T](./ImmutableList-T-.md#Atropos-ImmutableList-T--T 'Atropos.ImmutableList&lt;T&gt;.T')[&gt;](./ImmutableList-T-.md 'Atropos.ImmutableList&lt;T&gt;')  
-A new list that contains the new element, even if the element at the specified  
-            location is the same as the new element.  
+A new list that contains the new element  

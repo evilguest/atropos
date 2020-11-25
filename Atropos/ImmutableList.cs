@@ -60,9 +60,25 @@ namespace Atropos
         /// <remarks>Warning: the operation asymptotic is O(<paramref name="list"/>.Count), as we have to clone the list.
         /// Reusing the nodes of the original list is impossible due to the limitations of the C# type system: Node&lt;<typeparamref name="T"/>&gt; cannot be made covariant, and 
         /// storing INode&lt;<typeparamref name="T"/>&gt; would kill the performance due to the indirect call.</remarks>
-
         public static ImmutableList<B> Insert<T, B>(this ImmutableList<T> list, int index, B value)
             where T : class, B => InitRange<B>(list) + (index, value);
+        /// <returns>A new list that contains the new element</returns>
+
+        /// <summary>
+        /// Makes a copy of the list, and replaces an element in the list at a given position with the specified element.
+        /// </summary>
+        /// <typeparam name="T">Type of the original list items</typeparam>
+        /// <typeparam name="B">Type of the new element</typeparam>
+        /// <param name="list">Original list</param>
+        /// <param name="index">The position in the list of the element to replace.</param>
+        /// <param name="value">The element to replace the old element with.</param>
+        /// <returns>A new list with the object added</returns>
+        /// <exception cref="IndexOutOfRangeException">Thrown when <paramref name="index"/> is outside of the <paramref name="list"/> bounds.</exception>
+        /// <remarks>Warning: the operation asymptotic is O(<paramref name="list"/>.Count), as we have to clone the list.
+        /// Reusing the nodes of the original list is impossible due to the limitations of the C# type system: Node&lt;<typeparamref name="T"/>&gt; cannot be made covariant, and 
+        /// storing INode&lt;<typeparamref name="T"/>&gt; would kill the performance due to the indirect call.</remarks>
+        public static ImmutableList<B> SetItem<T, B>(this ImmutableList<T> list, int index, B value)
+            where T : class, B => InitRange<B>(list).SetItem(index, value);
     }
 
     /// <summary>
@@ -379,8 +395,7 @@ namespace Atropos
         /// </summary>
         /// <param name="index">The position in the list of the element to replace.</param>
         /// <param name="value">The element to replace the old element with.</param>
-        /// <returns>A new list that contains the new element, even if the element at the specified
-        /// location is the same as the new element.</returns>
+        /// <returns>A new list that contains the new element</returns>
         public ImmutableList<T> SetItem(int index, T value)
             => this[index].Equals(value) ? this : new ImmutableList<T>(_root.ReplaceDataAt(index, value).Freeze());
 
@@ -415,7 +430,7 @@ namespace Atropos
         /// <param name="value">Value to remove from the list</param>
         /// <returns>A new list with the first occurence of <paramref name="value"/> removed.</returns>
         /// <remarks>Note that for ImmutableList&lt;<see cref="int"/>&gt; this operator overlaps with the <see cref="operator -(ImmutableList{T}, int)"/> and loses.
-        /// To remove some value from an <see cref="ImmutableList{T}"/> where T is <see cref="int"/> use the <see cref="RemoveAt"/> method explicitly.
+        /// To remove some value from an <see cref="ImmutableList{T}"/> where T is <see cref="int"/> use the <see cref="Remove"/> method explicitly.
         /// </remarks>
         public static ImmutableList<T> operator -(ImmutableList<T> list, T value)
             => list.Remove(value);
@@ -427,7 +442,7 @@ namespace Atropos
         /// <param name="list">The immutable list</param>
         /// <param name="index">Index of an item to remove from the list</param>
         /// <remarks>Note that for ImmutableList&lt;<see cref="int"/>&gt; this operator overlaps with the <see cref="operator -(ImmutableList{T}, T)"/> and wins.
-        /// To remove some value from an <see cref="ImmutableList{T}"/> where T is <see cref="int"/> use the <see cref="RemoveAt"/> method explicitly.</remarks>
+        /// To remove some value from an <see cref="ImmutableList{T}"/> where T is <see cref="int"/> use the <see cref="Remove"/> method explicitly.</remarks>
         /// <returns>A new <see cref="ImmutableList{T}"/> with the specified item removed.</returns>
         public static ImmutableList<T> operator -(ImmutableList<T> list, int index)
             => list.RemoveAt(index);
