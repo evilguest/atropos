@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Atropos
 {
-    public class TreeNode<T> : IEnumerable<T> where T : IComparable<T>
+    internal class TreeNode<T> : IEnumerable<T> where T : IComparable<T>
     {
         public readonly TreeNode<T> Left;
 
