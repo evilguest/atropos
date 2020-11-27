@@ -12,23 +12,140 @@
         </member>
         <member name="T:Atropos.ImmutableDictionary`2">
             <summary>
-            Represents an immutable dictionary
+            Represents an immutable key-value dictionary.
             </summary>
-            <typeparam name="TKey">Type of the key</typeparam>
-            <typeparam name="TValue">Type of the value</typeparam>
+            <typeparam name="TKey">Type of the key.</typeparam>
+            <typeparam name="TValue">Type of the value.</typeparam>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.#ctor">
+            <summary>
+            Constructs an immutable dictionary.
+            </summary>
         </member>
         <member name="P:Atropos.ImmutableDictionary`2.Item(`0)">
             <summary>
-            Returns the value by the given key
+            Returns the value by the given key.
             </summary>
-            <param name="key">The key</param>
+            <param name="key">The key.</param>
             <returns></returns>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the given key is not present in the dictionary</exception>
+            <exception cref="T:System.ArgumentNullException">Thrown when the given key is null.</exception>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">Thrown when the given key is not present in the dictionary.</exception>
         </member>
         <member name="P:Atropos.ImmutableDictionary`2.Keys">
             <summary>
-            Returns an enumeration of all the keys in this dictionary
+            Returns an enumeration of all the keys in this dictionary.
             </summary>
+        </member>
+        <member name="P:Atropos.ImmutableDictionary`2.Count">
+            <summary>
+            Returns count of the elements in the <see cref="T:Atropos.ImmutableDictionary`2"/>
+            </summary>
+        </member>
+        <member name="P:Atropos.ImmutableDictionary`2.Values">
+            <summary>
+            Returns an enumeration of all the values in this dictionary.
+            </summary>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.Add(`0,`1)">
+            <summary>
+            Adds an element with the specified key and value to the immutable dictionary.
+            </summary>
+            <param name="key">The key of the element to add.</param>
+            <param name="value">The value of the element to add. The value can be null for reference types.</param>
+            <returns>A new immutable dictionary that contains the additional key/value pair.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the given key is null</exception>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.AddRange(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}})">
+            <summary>
+            Adds the specified key/value pairs to the immutable dictionary.
+            </summary>
+            <param name="pairs">The key/value pairs to add.</param>
+            <returns>A new immutable dictionary that contains the additional key/value pairs.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.SetItem(`0,`1)">
+            <summary>
+            Sets the specified key and value to the dictionary, possibly overwriting an existing value for the given key.
+            </summary>
+            <param name="key">The key of the entry to add.</param>
+            <param name="value">The value of the entry to add.</param>
+            <returns>The new dictionary containing the additional key-value pair.</returns>
+            <remarks>
+            If the given key-value pair are already in the dictionary, the existing instance is returned.
+            If the key already exists but with a different value, a new instance with the overwritten value will be returned.
+            </remarks>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.SetItems(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{`0,`1}})">
+            <summary>
+            Applies a given set of key=value pairs to an immutable dictionary, replacing any conflicting keys in the resulting dictionary.
+            </summary>
+            <param name="items">The key=value pairs to set on the dictionary.  Any keys that conflict with existing keys will overwrite the previous values.</param>
+            <returns>An immutable dictionary.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.Clear">
+            <summary>
+            Retrieves an empty immutable dictionary.
+            </summary>
+            <returns>An empty immutable dictionary.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.Remove(`0)">
+            <summary>
+            Removes the specified key from the dictionary with its associated value.
+            </summary>
+            <param name="key">The key to remove.</param>
+            <returns>A new dictionary with the matching entry removed; or this instance if the key is not in the dictionary.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.RemoveRange(System.Collections.Generic.IEnumerable{`0})">
+            <summary>
+            Removes the specified keys from the dictionary with their associated values.
+            </summary>
+            <param name="keys">The keys to remove.</param>
+            <returns>A new dictionary with those keys removed; or this instance if those keys are not in the dictionary.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.Contains(System.Collections.Generic.KeyValuePair{`0,`1})">
+            <summary>
+            Determines whether this immutable dictionary contains the specified key/value pair.
+            </summary>
+            <param name="pair">TThe key/value pair to locate.</param>
+            <returns><c>true</c> if the specified key/value pair is found in the dictionary; otherwise, <c>false</c>.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.ContainsKey(`0)">
+            <summary>
+            Determines whether the immutable dictionary contains an element with the specified key.
+            </summary>
+            <param name="key">The key to locate.</param>
+            <returns>
+            <c>true</c> if the immutable dictionary contains an element with the specified key; otherwise, <c>false</c>.
+            </returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.GetEnumerator">
+            <summary>
+            Returns an enumerator that iterates through the immutable dictionary.
+            </summary>
+            <returns>
+            An enumerator that can be used to iterate through the dictionary.
+            </returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.TryGetValue(`0,`1@)">
+            <summary>
+            Searches the dictionary for the value by the given key.
+            </summary>
+            <param name="key">The key.</param>
+            <param name="value">The value.</param>
+            <returns>A value indicating whether the search was successful.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDictionary`2.TryGetKey(`0,`0@)">
+            <summary>
+            Searches the dictionary for a given key and returns the equal key it finds, if any.
+            </summary>
+            <param name="equalKey">The key to search for.</param>
+            <param name="actualKey">The key from the dictionary that the search found, or <paramref name="equalKey"/> if the search yielded no match.</param>
+            <returns>A value indicating whether the search was successful.</returns>
+            <remarks>
+            This can be useful when you want to reuse a previously stored reference instead of
+            a newly constructed one (so that more sharing of references can occur) or to look up
+            the canonical value, or a value that has more complete data than the value you currently have,
+            although their comparer functions indicate they are equal.
+            </remarks>
         </member>
         <member name="T:Atropos.ImmutableList">
             <summary>
