@@ -17,14 +17,28 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
     - name: Publish coverage report to coveralls.io
       uses: coverallsapp/github-action@v1.0.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./Atropos.Tests/TestResults/coverage.info   
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    - name: Run all benchmarks
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*";
+    - name: Setup R
+      uses: r-lib/actions/setup-r@v1
+    - name: Process benchmarks output
+      run: rscript RibbonGraph.R
+    - name: Update benchmark charts
+      uses: EndBug/add-and-commit@v5
+      with:
+        message: 'Updating the benchmark charts'
+        add: "*.png"
+      env:
+      # This is necessary in order to push a commit to the repo
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged

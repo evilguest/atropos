@@ -54,6 +54,118 @@ namespace Atropos.Tests
         }
 
         [Test]
+        public void SetItem_AddElement_WhenNotExists()
+        {
+            var dictionary = new ImmutableDictionary<int, int>().SetItem(1, 2);
+            Assert.AreEqual(2, dictionary[1]);
+        }
+
+        [Test]
+        public void SetItem_Overwritten_WhenValueExists()
+        {
+            var dictionary = new ImmutableDictionary<int, int>().SetItem(1, 2).SetItem(1, 3);
+            Assert.AreEqual(3, dictionary[1]);
+        }
+
+        [Test]
+        public void SetItems_AddElements_WhenNotExists()
+        {
+            var dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary = dictionary.SetItems(pairs);
+            Assert.AreEqual(2, dictionary[1]);
+            Assert.AreEqual(3, dictionary[2]);
+            Assert.AreEqual(4, dictionary[3]);
+        }
+
+        [Test]
+        public void SetItems_AddElements_WhenValuesExists()
+        {
+            var dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary = dictionary.SetItems(pairs);
+
+            var pairsWithNewValues = new[]
+            {
+                new KeyValuePair<int, int>(1, 5),
+                new KeyValuePair<int, int>(2, 6),
+                new KeyValuePair<int, int>(3, 7)
+            };
+            dictionary = dictionary.SetItems(pairsWithNewValues);
+
+            Assert.AreEqual(5, dictionary[1]);
+            Assert.AreEqual(6, dictionary[2]);
+            Assert.AreEqual(7, dictionary[3]);
+        }
+
+        [Test]
+        public void Clear_ReturnsEmpty_WhenHasElements()
+        {
+            var dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary.AddRange(pairs);
+            dictionary = dictionary.Clear();
+
+            Assert.True(dictionary.Count == 0);
+        }
+
+        [Test]
+        public void Clear_ReturnsThis_WhenEmpty()
+        {
+            var dictionary = new ImmutableDictionary<int, int>();
+            var clearDictionary = dictionary.Clear();
+
+            Assert.AreSame(dictionary, clearDictionary);
+        }
+
+        [Test]
+        public void RemoveRange_ReturnsEmpty_WhenRemoveAllElements()
+        {
+            var dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary.AddRange(pairs);
+            dictionary = dictionary.RemoveRange(pairs.Select(it => it.Key));
+
+            Assert.True(dictionary.Count == 0);
+        }
+
+        [Test]
+        public void TryGetKey_ReturnsTrue_WhenExists()
+        {
+            var dictionary = new ImmutableDictionary<int, int>().Add(1, 2);
+            Assert.True(dictionary.TryGetKey(1, out var actualKey));
+            Assert.AreEqual(1, actualKey);
+        }
+
+        [Test]
+        public void TryGetKey_ReturnsFalse_WhenNotExists()
+        {
+            var dictionary = new ImmutableDictionary<int, int>().Add(1, 2);
+            Assert.False(dictionary.TryGetKey(3, out var actualKey));
+            Assert.AreEqual(3, actualKey);
+        }
+
+        [Test]
         public void Contains_ReturnsTrue_WhenPairExists()
         {
             var dictionary = new ImmutableDictionary<int, int>().Add(1, 2).Add(2, 3);

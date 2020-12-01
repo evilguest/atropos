@@ -1,6 +1,6 @@
 ### [Atropos](./Atropos.md 'Atropos').[ImmutableDictionary&lt;TKey,TValue&gt;](./ImmutableDictionary-TKey_TValue-.md 'Atropos.ImmutableDictionary&lt;TKey,TValue&gt;')
 ## ImmutableDictionary&lt;TKey,TValue&gt;.Keys Property
-Returns an enumeration of all the keys in this dictionary  
+Returns an enumeration of all the keys in this dictionary.  
 ```csharp
 public System.Collections.Generic.IEnumerable<TKey> Keys { get; }
 ```
