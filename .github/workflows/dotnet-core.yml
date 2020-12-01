@@ -33,7 +33,7 @@ jobs:
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Process benchmarks output
-      run: rscript RibbonGraph.R
+      run: Rscript RibbonGraph.R
     - name: Update benchmark charts
       uses: EndBug/add-and-commit@v5
       with:
