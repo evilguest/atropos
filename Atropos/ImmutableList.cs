@@ -557,47 +557,47 @@ namespace Atropos
         #endregion
     }
 
-    internal struct ImmutableListEnumerator<T> : IEnumerator<T>
-    {
-        private readonly ImmutableList<T> _list;
-        //private INode<T> _leaf;
-        private int _index;
+    //internal struct ImmutableListEnumerator<T> : IEnumerator<T>
+    //{
+    //    private readonly ImmutableList<T> _list;
+    //    //private INode<T> _leaf;
+    //    private int _index;
 
-        public ImmutableListEnumerator(ImmutableList<T> list, int index)
-        {
-            _list = list;
-            //_leaf = index >= 0 ? FindLeaf(_list, index) : null;
-            _index = index;
-        }
+    //    public ImmutableListEnumerator(ImmutableList<T> list, int index)
+    //    {
+    //        _list = list;
+    //        //_leaf = index >= 0 ? FindLeaf(_list, index) : null;
+    //        _index = index;
+    //    }
 
-        public T Current => _list._root[_index]; //_leaf.Data[_index & ImmutableList<T>.maskPageSize];
+    //    public T Current => _list._root[_index]; //_leaf.Data[_index & ImmutableList<T>.maskPageSize];
 
-        object IEnumerator.Current => Current;
+    //    object IEnumerator.Current => Current;
 
-        public void Dispose() { }
+    //    public void Dispose() { }
 
-        public bool MoveNext()
-        {
-            var index = _index + 1;
-            if (index >= _list.Count)
-                return false;
-            //if ((index & ImmutableList<T>.maskBrf) == 0) 
-            //    _leaf = FindLeaf(_list, index); // wrap to the next leaf
-            _index = index;
-            return true;
-        }
+    //    public bool MoveNext()
+    //    {
+    //        var index = _index + 1;
+    //        if (index >= _list.Count)
+    //            return false;
+    //        //if ((index & ImmutableList<T>.maskBrf) == 0) 
+    //        //    _leaf = FindLeaf(_list, index); // wrap to the next leaf
+    //        _index = index;
+    //        return true;
+    //    }
 
-        //private static INode<T> FindLeaf(ImmutableList<T> list, int index)
-        //{
-        //    var node = list._root;
-        //    for (var level = list._levels; level > 0; level--)
-        //        node = node.Children[(index >> (ImmutableList<T>.logPageSize + (level - 1) * ImmutableList<T>.logBrf)) & ImmutableList<T>.maskBrf];
-        //    return node; 
-        //}
-        public void Reset()
-        {
-            _index = -1;
-        }
-    }
+    //    //private static INode<T> FindLeaf(ImmutableList<T> list, int index)
+    //    //{
+    //    //    var node = list._root;
+    //    //    for (var level = list._levels; level > 0; level--)
+    //    //        node = node.Children[(index >> (ImmutableList<T>.logPageSize + (level - 1) * ImmutableList<T>.logBrf)) & ImmutableList<T>.maskBrf];
+    //    //    return node; 
+    //    //}
+    //    public void Reset()
+    //    {
+    //        _index = -1;
+    //    }
+    //}
 
 }

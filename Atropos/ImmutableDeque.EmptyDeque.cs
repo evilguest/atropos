@@ -13,8 +13,8 @@ namespace Atropos
             public IImmutableDeque<T> EnqueueRight(T value) => new SingleDeque(value);
             public IImmutableDeque<T> DequeueLeft() => throw _ioe;
             public IImmutableDeque<T> DequeueRight() => throw _ioe;
-            public T PeekLeft() => throw _ioe;
-            public T PeekRight() => throw _ioe;
+            public T Left => throw _ioe;
+            public T Right => throw _ioe;
         }
     }
 }

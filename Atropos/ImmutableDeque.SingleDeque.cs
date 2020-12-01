@@ -15,8 +15,8 @@
                 => new ImmutableDeque<T>(new One(item), ImmutableDeque<Dequelette>.Empty, new One(value));
             public IImmutableDeque<T> DequeueLeft() => Empty;
             public IImmutableDeque<T> DequeueRight() => Empty;
-            public T PeekLeft() => item;
-            public T PeekRight() => item;
+            public T Left => item;
+            public T Right => item;
         }
     }
 }

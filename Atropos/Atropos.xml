@@ -8,7 +8,105 @@
             <summary>
             Represents an immutable Deque - i.e. the two-ended queue that supports push/pop operations from both ends with an amortized cost ot O(1) per operation.
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">The type of the Deque elements</typeparam>
+        </member>
+        <member name="P:Atropos.IImmutableDeque`1.Left">
+            <summary>
+            Peeks the leftmost element in the deque
+            </summary>
+            <exception cref="T:System.InvalidOperationException">Thrown when the deque is empty</exception>
+        </member>
+        <member name="P:Atropos.IImmutableDeque`1.Right">
+            <summary>
+            Peeks the rightmost element in the deque
+            </summary>
+            <exception cref="T:System.InvalidOperationException">Thrown when the deque is empty</exception>
+        </member>
+        <member name="M:Atropos.IImmutableDeque`1.EnqueueLeft(`0)">
+            <summary>
+            Enqueues the specified element to the left of the deque
+            </summary>
+            <param name="value">The value to enqueue</param>
+            <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains the same elements as this deque, plus the <paramref name="value"/> pushed from the left</returns>
+        </member>
+        <member name="M:Atropos.IImmutableDeque`1.EnqueueRight(`0)">
+            <summary>
+            Enqueues the specified element to the right of the deque
+            </summary>
+            <param name="value">The value to enqueue</param>
+            <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains the same elements as this deque, plus the <paramref name="value"/> pushed from the right</returns>
+        </member>
+        <member name="M:Atropos.IImmutableDeque`1.DequeueLeft">
+            <summary>
+            Removes one element from deque's left
+            </summary>
+            <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the leftmost one</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when the deque is empty</exception>
+        </member>
+        <member name="M:Atropos.IImmutableDeque`1.DequeueRight">
+            <summary>
+            Removes one element from deque's right
+            </summary>
+            <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the rightmost one</returns>
+            <exception cref="T:System.InvalidOperationException">Thrown when the deque is empty</exception>
+        </member>
+        <member name="P:Atropos.IImmutableDeque`1.IsEmpty">
+            <summary>
+            Verifies if the deque is empty
+            </summary>
+        </member>
+        <member name="T:Atropos.ImmutableDeque`1">
+            <summary>
+            An efficient implementation of the <see cref="T:Atropos.IImmutableDeque`1"/> based on the Eric Lippert's deque, which is based on the Hughes lists.
+            See also https://docs.microsoft.com/en-us/archive/blogs/ericlippert/immutability-in-c-part-eleven-a-working-double-ended-queue
+            </summary>
+            <typeparam name="T">The type of deque elements</typeparam>
+        </member>
+        <member name="P:Atropos.ImmutableDeque`1.Empty">
+            <summary>
+            An empty deque of <typeparamref name="T"/>
+            </summary>
+        </member>
+        <member name="P:Atropos.ImmutableDeque`1.IsEmpty">
+            <summary>
+            Implements <see cref="P:Atropos.IImmutableDeque`1.IsEmpty"/>. Always false for this class - we have a separate internal class for an empty deque.
+            </summary>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.EnqueueLeft(`0)">
+            <summary>
+            Enqueues the specified element to the left of the deque
+            </summary>
+            <param name="value">The value to enqueue</param>
+            <returns>A new <see cref="T:Atropos.ImmutableDeque`1"/> that contains the same elements as this deque, plus the <paramref name="value"/> pushed from the left</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.EnqueueRight(`0)">
+            <summary>
+            Enqueues the specified element to the right of the deque
+            </summary>
+            <param name="value">The value to enqueue</param>
+            <returns>A new <see cref="T:Atropos.ImmutableDeque`1"/> that contains the same elements as this deque, plus the <paramref name="value"/> pushed from the right</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.DequeueLeft">
+            <summary>
+            Removes one element from deque's left
+            </summary>
+            <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the leftmost one</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.DequeueRight">
+            <summary>
+            Removes one element from deque's right
+            </summary>
+            <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the rightmost one</returns>
+        </member>
+        <member name="P:Atropos.ImmutableDeque`1.Left">
+            <summary>
+            Peeks the leftmost element of the deque
+            </summary>
+        </member>
+        <member name="P:Atropos.ImmutableDeque`1.Right">
+            <summary>
+            Peeks the rightmost element of the deque
+            </summary>
         </member>
         <member name="T:Atropos.ImmutableDictionary`2">
             <summary>
