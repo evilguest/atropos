@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Atropos
 {
 
     public sealed partial class ImmutableDeque<T>
     {
-        private abstract class Dequelette
+        private abstract class Dequelette: IEnumerable<T>
         {
             public abstract int Size { get; }
             public virtual bool Full { get { return false; } }
@@ -17,6 +19,11 @@ namespace Atropos
             public abstract Dequelette EnqueueRight(T t);
             public abstract Dequelette DequeueLeft();
             public abstract Dequelette DequeueRight();
+
+            public abstract IEnumerator<T> GetEnumerator();
+
+            IEnumerator IEnumerable.GetEnumerator()
+                => GetEnumerator();
         }
         private class One : Dequelette
         {
@@ -28,6 +35,12 @@ namespace Atropos
             public override Dequelette EnqueueRight(T t) => new Two(left, t);
             public override Dequelette DequeueLeft() => throw new Exception("Impossible");
             public override Dequelette DequeueRight() => throw new Exception("Impossible");
+
+            public override IEnumerator<T> GetEnumerator()
+            {
+                yield return left;
+            }
+
             protected readonly T left;
         }
         private class Two : One
@@ -39,6 +52,11 @@ namespace Atropos
             public override Dequelette EnqueueRight(T t) => new Three(left, right, t);
             public override Dequelette DequeueLeft() => new One(right);
             public override Dequelette DequeueRight() => new One(left);
+            public override IEnumerator<T> GetEnumerator()
+            {
+                yield return left;
+                yield return right;
+            }
             protected readonly T right;
         }
         private class Three : Two
@@ -49,6 +67,12 @@ namespace Atropos
             public override Dequelette EnqueueRight(T t) => new Four(left, midLeft, right, t);
             public override Dequelette DequeueLeft() => new Two(midLeft, right);
             public override Dequelette DequeueRight() => new Two(left, midLeft);
+            public override IEnumerator<T> GetEnumerator()
+            {
+                yield return left;
+                yield return midLeft;
+                yield return right;
+            }
             protected readonly T midLeft;
         }
         private class Four : Three
@@ -60,6 +84,13 @@ namespace Atropos
             public override Dequelette EnqueueRight(T t) => throw new Exception("Impossible");
             public override Dequelette DequeueLeft() => new Three(midLeft, midRight, right);
             public override Dequelette DequeueRight() => new Three(left, midLeft, midRight);
+            public override IEnumerator<T> GetEnumerator()
+            {
+                yield return left;
+                yield return midLeft;
+                yield return midRight;
+                yield return right;
+            }
             private readonly T midRight;
         }
 

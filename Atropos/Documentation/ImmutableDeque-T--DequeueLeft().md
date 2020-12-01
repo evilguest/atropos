@@ -7,3 +7,5 @@ public Atropos.IImmutableDeque<T> DequeueLeft();
 #### Returns
 [Atropos.IImmutableDeque&lt;](./IImmutableDeque-T-.md 'Atropos.IImmutableDeque&lt;T&gt;')[T](./ImmutableDeque-T-.md#Atropos-ImmutableDeque-T--T 'Atropos.ImmutableDeque&lt;T&gt;.T')[&gt;](./IImmutableDeque-T-.md 'Atropos.IImmutableDeque&lt;T&gt;')  
 A new [IImmutableDeque&lt;T&gt;](./IImmutableDeque-T-.md 'Atropos.IImmutableDeque&lt;T&gt;') that contains all the elements of this deque, except for the leftmost one  
+### Remarks
+The cost of this operation varies depending on the deque size; but the amortized cost is O(1).  

@@ -18,7 +18,6 @@ namespace Atropos.Benchmarks.List
             {
                 var p = (1 << i);
                 yield return p - p / (2 * i);
-                yield return p;
                 if (i > 2)
                     yield return p + p / (2 * i);
             }

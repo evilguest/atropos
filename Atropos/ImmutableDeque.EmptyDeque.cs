@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Atropos
 {
@@ -13,6 +15,18 @@ namespace Atropos
             public IImmutableDeque<T> EnqueueRight(T value) => new SingleDeque(value);
             public IImmutableDeque<T> DequeueLeft() => throw _ioe;
             public IImmutableDeque<T> DequeueRight() => throw _ioe;
+
+            public IEnumerator<T> GetEnumerator()
+            {
+                yield break;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+                => GetEnumerator();
+
+            public IImmutableDeque<T> Concat(IImmutableDeque<T> right)
+                => right;
+
             public T Left => throw _ioe;
             public T Right => throw _ioe;
         }

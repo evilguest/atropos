@@ -38,7 +38,7 @@
         </member>
         <member name="M:Atropos.IImmutableDeque`1.DequeueLeft">
             <summary>
-            Removes one element from deque's left
+            Removes one element from deque's left.
             </summary>
             <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the leftmost one</returns>
             <exception cref="T:System.InvalidOperationException">Thrown when the deque is empty</exception>
@@ -50,10 +50,33 @@
             <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the rightmost one</returns>
             <exception cref="T:System.InvalidOperationException">Thrown when the deque is empty</exception>
         </member>
+        <member name="M:Atropos.IImmutableDeque`1.Concat(Atropos.IImmutableDeque{`0})">
+            <summary>
+            Concatenates two deques together.
+            </summary>
+            <param name="right">The deque to concatenate to the right</param>
+            <returns></returns>
+        </member>
         <member name="P:Atropos.IImmutableDeque`1.IsEmpty">
             <summary>
             Verifies if the deque is empty
             </summary>
+            
+        </member>
+        <member name="T:Atropos.ImmutableDeque">
+            <summary>
+            Helper class for the <see cref="T:Atropos.ImmutableDeque`1"/>
+            </summary>
+        </member>
+        <member name="M:Atropos.ImmutableDeque.InitRange``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Initializes a new immutable deque to the list of items passed
+            </summary>
+            <typeparam name="T">Type of the deque element</typeparam>
+            <param name="items">The collection to use for initialization</param>
+            <returns>If the passed argument is <see cref="T:Atropos.IImmutableDeque`1"/> then returns it without change.
+            Otherwise a new <see cref="T:Atropos.ImmutableDeque`1"/>  created from the items passed in the <paramref name="items"/> argument.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="items"/> is null</exception>
         </member>
         <member name="T:Atropos.ImmutableDeque`1">
             <summary>
@@ -78,6 +101,9 @@
             </summary>
             <param name="value">The value to enqueue</param>
             <returns>A new <see cref="T:Atropos.ImmutableDeque`1"/> that contains the same elements as this deque, plus the <paramref name="value"/> pushed from the left</returns>
+            <remarks>
+            The cost of this operation varies depending on the deque size; but the amortized cost is O(1).
+            </remarks>
         </member>
         <member name="M:Atropos.ImmutableDeque`1.EnqueueRight(`0)">
             <summary>
@@ -85,18 +111,40 @@
             </summary>
             <param name="value">The value to enqueue</param>
             <returns>A new <see cref="T:Atropos.ImmutableDeque`1"/> that contains the same elements as this deque, plus the <paramref name="value"/> pushed from the right</returns>
+            <remarks>
+            The cost of this operation varies depending on the deque size; but the amortized cost is O(1).
+            </remarks>
         </member>
         <member name="M:Atropos.ImmutableDeque`1.DequeueLeft">
             <summary>
             Removes one element from deque's left
             </summary>
             <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the leftmost one</returns>
+            <remarks>
+            The cost of this operation varies depending on the deque size; but the amortized cost is O(1).
+            </remarks>
         </member>
         <member name="M:Atropos.ImmutableDeque`1.DequeueRight">
             <summary>
             Removes one element from deque's right
             </summary>
             <returns>A new <see cref="T:Atropos.IImmutableDeque`1"/> that contains all the elements of this deque, except for the rightmost one</returns>
+            <remarks>
+            The cost of this operation varies depending on the deque size; but the amortized cost is O(1).
+            </remarks>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.GetEnumerator">
+            <summary>
+            Traverses this deque from left to right
+            </summary>
+            <returns>The enumerator that traverses this deque from left to right</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.Concat(Atropos.IImmutableDeque{`0})">
+            <summary>
+            Concatenates the specified deque to the right of this one.
+            </summary>
+            <param name="other">The other deque</param>
+            <returns></returns>
         </member>
         <member name="P:Atropos.ImmutableDeque`1.Left">
             <summary>

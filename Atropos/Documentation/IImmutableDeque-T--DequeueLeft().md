@@ -1,6 +1,6 @@
 ### [Atropos](./Atropos.md 'Atropos').[IImmutableDeque&lt;T&gt;](./IImmutableDeque-T-.md 'Atropos.IImmutableDeque&lt;T&gt;')
 ## IImmutableDeque&lt;T&gt;.DequeueLeft() Method
-Removes one element from deque's left  
+Removes one element from deque's left.  
 ```csharp
 Atropos.IImmutableDeque<T> DequeueLeft();
 ```
