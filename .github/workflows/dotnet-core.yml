@@ -17,8 +17,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
+    - name: Build
+      run: dotnet build -c Debug 
     - name: Test
-      run: dotnet test --verbosity normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
+      run: dotnet test --no-restore -c Debug -v normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
     - name: Publish coverage report to coveralls.io
       uses: coverallsapp/github-action@v1.0.1
       with:
@@ -27,11 +29,15 @@ jobs:
     - name: Install dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build -c Release --no-restore
     - name: Run all benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*";
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
+    - name: Warm-up R
+      run: cd Atropos.Benchmarks; Rscript Warmup.R
+    - name Check benchmarks output
+      run: cd Atropos.Benchmarks; ls ./bin/release/netcoreapp3.1/BenchmarkDotNet.Artifacts/results
     - name: Process benchmarks output
       run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
     - name: Update benchmark charts
