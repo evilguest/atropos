@@ -8,6 +8,31 @@ namespace Atropos.Tests
     public sealed class ImmutableDictionaryTests
     {
         [Test]
+        public void ImmutableDictionary_WorksAsExpected_WhenValuesAreImmutableLists()
+        {
+            var dictionary = new ImmutableDictionary<int, ImmutableList<int>>()
+                .Add(1, new ImmutableList<int>(10, 70))
+                .Add(2, new ImmutableList<int>(20, 70))
+                .Add(3, new ImmutableList<int>(30, 70))
+                .Add(4, new ImmutableList<int>(40, 70))
+                .Add(5, new ImmutableList<int>(50, 70));
+
+            Assert.True(dictionary.Count == 5);
+
+            foreach (var value in dictionary.Values)
+            {
+                Assert.True(value.Count == 70);
+            }
+
+            dictionary[3].Add(100);
+            Assert.False(dictionary[3].Contains(100));
+
+            dictionary = dictionary.SetItem(4, dictionary[4].Add(200));
+            Assert.True(dictionary[4].Contains(200));
+        }
+
+
+        [Test]
         public void GetValue_Returns()
         {
             var dictionary = new ImmutableDictionary<int, int>().Add(1, 2);
