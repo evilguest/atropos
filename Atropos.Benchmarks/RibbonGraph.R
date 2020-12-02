@@ -28,7 +28,7 @@ ggsaveNice <- function(fileName, p, ...) {
 }
 
 args <- commandArgs(trailingOnly = TRUE)
-resPath <- "./bin/Release/netcoreapp3.1/BenchmarkDotNet.Artifacts/results"
+resPath <- "./BenchmarkDotNet.Artifacts/results"
 
 files <- if (length(args) > 0) args else list.files(resPath)[list.files(resPath) %>% ends_with("-report.csv")]
 
