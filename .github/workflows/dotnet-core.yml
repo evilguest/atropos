@@ -36,7 +36,7 @@ jobs:
       uses: r-lib/actions/setup-r@v1
     - name: Warm-up R
       run: cd Atropos.Benchmarks; Rscript Warmup.R
-    - name Check benchmarks output
+    - name: Check benchmarks output
       run: cd Atropos.Benchmarks; ls ./bin/release/netcoreapp3.1/BenchmarkDotNet.Artifacts/results
     - name: Process benchmarks output
       run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
