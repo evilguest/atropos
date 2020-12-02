@@ -13,10 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup R
-      uses: r-lib/actions/setup-r@v1
-    - name: Process benchmarks output
-      run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -34,6 +30,10 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Run all benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*";
+    - name: Setup R
+      uses: r-lib/actions/setup-r@v1
+    - name: Process benchmarks output
+      run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
     - name: Update benchmark charts
       uses: EndBug/add-and-commit@v5
       with:
