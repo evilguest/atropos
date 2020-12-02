@@ -34,7 +34,7 @@ files <- if (length(args) > 0) args else list.files(resPath)[list.files(resPath)
 
 for (file in files) {
   title <- gsub("-report.csv", "", basename(file))
-
+  cat(paste0("Processing file: ", file, "\n"))
   report <- read.csv(paste(resPath, file, sep="/"), sep=",")
   report$Mean <- as.numeric(gsub(",","", str_sub(report$Mean, end=-5)))
   report$Error <- as.numeric(gsub(",","", str_sub(report$Error, end=-5)))
@@ -44,5 +44,6 @@ for (file in files) {
     geom_line(size=1) +
     geom_point(size=1.5) +
     scale_x_continuous(trans="log2") 
-  ggsaveNice(paste(title, ".png", sep=""), plot, width=13, height=8, dpi=150)
+  cat(paste0("Saving ", title, ".png\n"))
+  ggsaveNice(paste0(title, ".png"), plot, width=13, height=8, dpi=150)
 }
