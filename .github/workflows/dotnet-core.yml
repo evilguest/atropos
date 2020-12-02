@@ -33,12 +33,12 @@ jobs:
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Process benchmarks output
-      run: Rscript RibbonGraph.R
+      run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
     - name: Update benchmark charts
       uses: EndBug/add-and-commit@v5
       with:
         message: 'Updating the benchmark charts'
-        add: "*.png"
+        add: "Atropos.Benchmarks/*.png"
       env:
       # This is necessary in order to push a commit to the repo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
