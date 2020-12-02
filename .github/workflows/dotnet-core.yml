@@ -13,6 +13,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Setup R
+      uses: r-lib/actions/setup-r@v1
+    - name: Process benchmarks output
+      run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
@@ -30,15 +34,11 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Run all benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*";
-    - name: Setup R
-      uses: r-lib/actions/setup-r@v1
-    - name: Process benchmarks output
-      run: Rscript RibbonGraph.R
     - name: Update benchmark charts
       uses: EndBug/add-and-commit@v5
       with:
         message: 'Updating the benchmark charts'
-        add: "*.png"
+        add: "Atropos.Benchmarks/*.png"
       env:
       # This is necessary in order to push a commit to the repo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
