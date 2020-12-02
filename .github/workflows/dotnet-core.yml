@@ -32,10 +32,6 @@ jobs:
       run: dotnet build -c Release --no-restore
     - name: Run all benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*";
-    - name: Check benchmarks output 4 
-      run: cd Atropos.Benchmarks; ls ./BenchmarkDotNet.Artifacts
-    - name: Check benchmarks output 5 
-      run: cd Atropos.Benchmarks; ls ./BenchmarkDotNet.Artifacts/results
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Warm-up R
