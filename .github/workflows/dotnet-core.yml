@@ -30,8 +30,8 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build -c Release --no-restore
-    - name: Run all benchmarks
-      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*Enqueue*";
+    - name: Run Dequeue benchmarks
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*Dequeue*";
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Warm-up R
