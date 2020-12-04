@@ -26,4 +26,16 @@ The [List/Add.cs](./List/Add.cs) benchmark measures the efficiency of a single-i
 There is a more efficient way to add a bunch of items to an immutable list - the idea is to keep the intermediate results mutable until it is time to return the list to the user.
 This saves some (but not all) copying.
 The [List/AddRange.cs](./List/AddRange.cs) benchmark adds 10 items to the list of a given size.
-![Index](Atropos.Benchmarks.List.AddRange.png)
+![AddRange](Atropos.Benchmarks.List.AddRange.png)
+## [ImmutableDeque](../Atropos/Documentation/ImmutableDeque-T-.md 'Atropos.ImmutableDeque&lt;T&gt;')
+The immutable deque is does extend the functionality of the System.Collections.ImmutableQueue by allowing enqueuing and dequeuing from both ends. 
+Since the operations are perfectly symmetric, the benchmarks compare the behavior against the IImmutableQueue implementations offered by the "Official" code from .Net Core and the TunnelVision's ImmutableTreeQueue. Note that the latter does internally rely on the same IImmutableList discussed above, obviously counting on the B+-tree performance that covers the insertions-at-the-end and removals-at-the-start just as well as any other operations.
+Our implementation does attempt to benefit from the fact that the deque is never accessed "in the middle"; so we could choose a different layout than the traditional tree, to improve the asymptotics of the enqueue/dequeue operations over O(log(Size)). This is possible via the finger trees described by Okasaki. 
+Bencmarks for the tree operations are listed below.
+A possible future performance improvement would be to consider a bit larger structures for Dequelette class, to benefit from the cache-friendly alignment. 
+I.e. since each object in .Net contains a header of 12 bytes (8 bytes on x86), and the cache line size is 64 bytes, we should try fitting exactly 52/56 bytes of data, or 116/120 bytes if we're ready to spare 2 cache lines. 
+52 bytes give us space for six 8-byte references + 4 bytes for int32 count; 56 bytes give us space for 13 4-byte references + 4 bytes for int32 count.
+These seem to be the numbers to consider. Note that we'd need to adjust the layout for the value types that can take any number of bytes.
+### Enqueue
+The [Deque/Enqueue.cs](./Deque/Enqueue.cs) benchmark enqueues a single integer to the queue of the specified Size.
+![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.png)
