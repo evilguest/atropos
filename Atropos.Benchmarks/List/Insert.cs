@@ -3,7 +3,7 @@ using System.Collections.Immutable;
 
 namespace Atropos.Benchmarks.List
 {
-    class InsertInt : PreInitedBaseIntCollection
+    public class InsertInt : PreInitedBaseIntCollection
     {
         [Benchmark]
         public override IImmutableList<int> Atropos() => _A.Insert(Size / 2, 42);

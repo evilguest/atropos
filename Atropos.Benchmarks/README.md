@@ -19,9 +19,16 @@ Anyway, the benchmark provides good enough insight on the comparative performanc
 ![Index](Atropos.Benchmarks.List.Index.png)
 Note how Official implementation does feature a gradual degradation somewhere between 256 and 1024 - most likely attributed to the cache effects.
 Also note the stair-like behavior of the Atropos and TunnelVision implementation, reflecting their branch factors. 
+![Insert int32](Atropos.Benchmarks.List.InsertInt.png)
+### Init
+This benchmark measures the time to init the list to a specified size, feeding an IEnumerable<T> into it one element by one.
+![Init](Atropos.Bechmarks.List.InitInt.png)
 ### Add 
-The [List/Add.cs](./List/Add.cs) benchmark measures the efficiency of a single-item insertions. 
-![Index](Atropos.Benchmarks.List.Add.png)
+The [List/Add.cs](./List/Add.cs) benchmark measures the efficiency of a single-item additions to the end of the list. 
+![Index](Atropos.Benchmarks.List.AddInt.png)
+### Insert
+The [List/Insert.cs](./List/Insert.cs) benchmark measures the efficiency of a single-item insertions into the middle of the list. 
+We expect approximately the same behavior as for additions at the end.
 ### AddRange
 There is a more efficient way to add a bunch of items to an immutable list - the idea is to keep the intermediate results mutable until it is time to return the list to the user.
 This saves some (but not all) copying.
