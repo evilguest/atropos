@@ -7,7 +7,7 @@ Some existing work by TunnelVisionLabs published at https://github.com/tunnelvis
 The immutable list is partially inspired by the [Use B+-trees instead of AVL trees for Immutable Collections](https://github.com/dotnet/runtime/issues/14477) proposal for the dotnet/runtime project.
 We use the B+ tree with index page size and data page size = 16. When using the sequential population, this leads to the branch factor of approximately 8, providing a good base for the 
 logarithm in the operations complexity asymptotics. 
-The benchmarks below were taken with the different list sizes - see the [List/ImmutableListBenchmarkBase.cs](./List/ImmutableListBenchmarkBase.cs).
+The benchmarks below were taken with the different list sizes - see the [List/ImmutableListBenchmarkBase.cs](./List/ImmutableListBenchmarkBase.cs#L39).
 In most cases we used 1000 repetitions per invocation (to avoid jitter and noise related to the single operation), so the Y axis displays the single-op execution time measured in nanoseconds. 
 ### Index ([this[i]](../Atropos/Documentation/ImmutableList-T--this-int-.md) operation)
 This is the most common operation for the lists. 

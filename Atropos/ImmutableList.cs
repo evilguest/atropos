@@ -31,7 +31,7 @@ namespace Atropos
         /// <typeparam name="T">Type of the list items</typeparam>
         /// <param name="items">Collection of items to initialize</param>
         /// <returns>A new <see cref="ImmutableList{T}"/> that contais all the items from <paramref name="items"/> in the same order.</returns>
-        public static ImmutableList<T> InitRange<T>(IEnumerable<T> items) 
+        public static ImmutableList<T> CreateRange<T>(IEnumerable<T> items) 
             => items is ImmutableList<T> list ? list : ImmutableList<T>.Empty.AddRange(items);
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Atropos
         /// <returns>An <see cref="ImmutableList{T}"/> that contais all the elements of the input sequence.</returns>
         /// <remarks>Implementation is eager. Do not call on the infinite sequences.</remarks>
         public static ImmutableList<T> ToImmutableList<T>(this IEnumerable<T> items)
-            => InitRange(items);
+            => CreateRange(items);
             
         /// <summary>
         /// Makes a copy of the list, and adds the specified <paramref name="value"/> to the end of the copied list.
@@ -56,7 +56,7 @@ namespace Atropos
         /// Reusing the nodes of the original list is impossible due to the limitations of the C# type system: Node&lt;<typeparamref name="T"/>&gt; cannot be made covariant, and 
         /// storing INode&lt;<typeparamref name="T"/>&gt; would kill the performance due to the indirect call.</remarks>
         public static ImmutableList<B> Add<T, B>(this ImmutableList<T> list, B value)
-            where T : class, B => InitRange<B>(list) + value;
+            where T : class, B => CreateRange<B>(list) + value;
         /// <summary>
         /// Makes a copy of the list, and inserts the specified <paramref name="value"/> at the specified <paramref name="index"/>.
         /// </summary>
@@ -71,7 +71,7 @@ namespace Atropos
         /// Reusing the nodes of the original list is impossible due to the limitations of the C# type system: Node&lt;<typeparamref name="T"/>&gt; cannot be made covariant, and 
         /// storing INode&lt;<typeparamref name="T"/>&gt; would kill the performance due to the indirect call.</remarks>
         public static ImmutableList<B> Insert<T, B>(this ImmutableList<T> list, int index, B value)
-            where T : class, B => InitRange<B>(list) + (index, value);
+            where T : class, B => CreateRange<B>(list) + (index, value);
         /// <returns>A new list that contains the new element</returns>
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace Atropos
         /// Reusing the nodes of the original list is impossible due to the limitations of the C# type system: Node&lt;<typeparamref name="T"/>&gt; cannot be made covariant, and 
         /// storing INode&lt;<typeparamref name="T"/>&gt; would kill the performance due to the indirect call.</remarks>
         public static ImmutableList<B> SetItem<T, B>(this ImmutableList<T> list, int index, B value)
-            where T : class, B => InitRange<B>(list).SetItem(index, value);
+            where T : class, B => CreateRange<B>(list).SetItem(index, value);
     }
 
     /// <summary>

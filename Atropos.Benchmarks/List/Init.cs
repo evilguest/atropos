@@ -1,29 +1,19 @@
 ﻿using BenchmarkDotNet.Attributes;
-using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using TunnelVisionLabs.Collections.Trees.Immutable;
 
 namespace Atropos.Benchmarks.List
 {
-    /* 
-     * Commented out as Unfair benchmark.
-     * 
-    public class Init:ImmutableListBenchmarkBase
+    public class InitInt : ListBase<int, IImmutableList<int>>
     {
-        private int[] feed;
-        public override void Initialize()
-        {
-            //base.Initialize(); we don't need to initialize this one
-            feed = new int[Size];
-            Array.Fill(feed, 42);
-        }
+        private IEnumerable<int> Range => Enumerable.Range(0, Size);
         [Benchmark]
-        public ImmutableList<int> Atropos()
-            => ImmutableList.Init(42, Size);
-
-        [Benchmark(Baseline = true)]
-        public System.Collections.Immutable.IImmutableList<int> Official()
-            => System.Collections.Immutable.ImmutableList.Create(feed);
-
-
+        public override IImmutableList<int> Atropos() => ImmutableList.CreateRange(Range);
+        [Benchmark]
+        public override IImmutableList<int> Official() => System.Collections.Immutable.ImmutableList.CreateRange(Range);
+        [Benchmark]
+        public override IImmutableList<int> Tunnel() => ImmutableTreeList.CreateRange(Range);
     }
-    */
 }

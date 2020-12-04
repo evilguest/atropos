@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Atropos
 {
@@ -7,7 +8,7 @@ namespace Atropos
     /// Represents an immutable Deque - i.e. the two-ended queue that supports push/pop operations from both ends with an amortized cost ot O(1) per operation.
     /// </summary>
     /// <typeparam name="T">The type of the Deque elements</typeparam>
-    public interface IImmutableDeque<T>: IEnumerable<T>
+    public interface IImmutableDeque<T>: IImmutableQueue<T>
     {
         /// <summary>
         /// Peeks the leftmost element in the deque
@@ -51,9 +52,9 @@ namespace Atropos
         /// <returns></returns>
         IImmutableDeque<T> Concat(IImmutableDeque<T> right);
         /// <summary>
-        /// Verifies if the deque is empty
+        /// Returns a new immutable deque with the same element type as this one, but empty
         /// </summary>
-        /// 
-        bool IsEmpty { get; }
+        /// <returns>A new immutable deque with the same element type as this one, but empty</returns>
+        new IImmutableDeque<T> Clear();
     }
 }

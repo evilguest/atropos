@@ -3,24 +3,17 @@ using System.Collections.Immutable;
 
 namespace Atropos.Benchmarks.List
 {
-    public class AddRange: ImmutableListBenchmarkBase
+    public class AddRangeInt : PreInitedBaseIntCollection
     {
         private int[] _range = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, };
+
         [Benchmark]
-        public IImmutableList<int> Atropos()
-            => _Alist.AddRange(_range);
+        public override IImmutableList<int> Atropos() => _A.AddRange(_range);
 
-        [Benchmark(Baseline = true)]
-        public IImmutableList<int> Official()
-            => _Clist.AddRange(_range);
+        [Benchmark]
+        public override IImmutableList<int> Official() => _C.AddRange(_range);
 
-/*        [Benchmark()]
-        public void Mutable()
-            => _Llist.Add(50);
-        [IterationSetup]
-        public void InitializeMutable()
-        {
-            _Llist = new List<int>(Enumerable.Repeat(42, Size));
-        }*/
+        [Benchmark]
+        public override IImmutableList<int> Tunnel() => _T.AddRange(_range);
     }
 }

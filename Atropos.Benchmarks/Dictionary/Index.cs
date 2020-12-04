@@ -1,15 +1,14 @@
 ﻿using BenchmarkDotNet.Attributes;
-
-namespace Atropos.Benchmarks.List
+namespace Atropos.Benchmarks.Dictionary
 {
-    public class IndexInt : PreInitedBaseInt<int>
+    public class IndexIntString : PreInitedDictionaryBaseIntString<int>
     {
         [Benchmark]
         public override int Atropos()
         {
             var s = 0;
             for (int i = 0; i < Repetitions; i++)
-                unchecked { s += _A[i % Size]; }
+                unchecked { s += _A[i % Size].Length; }
             return s;
         }
 
@@ -18,7 +17,7 @@ namespace Atropos.Benchmarks.List
         {
             var s = 0;
             for (int i = 0; i < Repetitions; i++)
-                unchecked { s += _C[i % Size]; }
+                unchecked { s += _C[i % Size].Length; }
             return s;
         }
 
@@ -26,12 +25,9 @@ namespace Atropos.Benchmarks.List
         public override int Tunnel()
         {
             var s = 0;
-            for(int i=0; i<Repetitions;i++)
-                unchecked { s += _T[i % Size]; }
+            for (int i = 0; i < Repetitions; i++)
+                unchecked { s += _T[i % Size].Length; }
             return s;
         }
-
-        [Params(1000)]
-        public int Repetitions { get; set; } = 10;
     }
 }

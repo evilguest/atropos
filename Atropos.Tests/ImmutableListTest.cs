@@ -49,7 +49,7 @@ namespace Atropos.Tests
         public void TestIndexOfInt(int size, int value)
         {
             var c = Enumerable.Range(0, size);
-            var t = ImmutableList.InitRange(c);
+            var t = ImmutableList.CreateRange(c);
             t += c;
             Assert.Equal(value, t.IndexOf(value));
         }
@@ -62,14 +62,14 @@ namespace Atropos.Tests
         public void TestLastIndexOfInt(int size, int value)
         {
             var c = Enumerable.Range(0, size);
-            var t = ImmutableList.InitRange(c);
+            var t = ImmutableList.CreateRange(c);
             t += c;
             Assert.Equal(size+value, t.LastIndexOf(value));
         }
         [Fact]
         public void TestIndexOfString()
         {
-            var t = ImmutableList.InitRange(new[] {"Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" });
+            var t = ImmutableList.CreateRange(new[] {"Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" });
             Assert.Equal(2, t.IndexOf("Two"));
             Assert.Equal(-1, t.IndexOf("two"));
             Assert.Equal(3, t.IndexOf("three", StringComparer.InvariantCultureIgnoreCase));
@@ -78,7 +78,7 @@ namespace Atropos.Tests
         [Fact]
         public void TestLastIndexOfString()
         {
-            var t = ImmutableList.InitRange(new[] { "Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" });
+            var t = ImmutableList.CreateRange(new[] { "Zero", "One", "Two", "Three", "Four", "Zero", "One", "Two", "Three", "Four" });
             Assert.Equal(2, t.IndexOf("Two"));
         }
 
@@ -230,7 +230,7 @@ namespace Atropos.Tests
         [Fact]
         public void TestRemoveAt()
         {
-            var t = ImmutableList.InitRange(Enumerable.Range(5, 5));
+            var t = ImmutableList.CreateRange(Enumerable.Range(5, 5));
             t -= 2;
             Assert.Equal(new[] { 5, 6, 8, 9 }, t);
         }
@@ -238,7 +238,7 @@ namespace Atropos.Tests
         [MemberData(nameof(Sizes))]
         public void TestRemoveAll(int size)
         {
-            var t = ImmutableList.InitRange(Enumerable.Range(0, size));
+            var t = ImmutableList.CreateRange(Enumerable.Range(0, size));
             t = t.RemoveAll(p => p % 2 == 1); // remove all odds
             Assert.Equal(from a in Enumerable.Range(0, (size + 1) / 2) select 2 * a, t);
         }

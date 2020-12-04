@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Atropos
 {
@@ -17,7 +18,7 @@ namespace Atropos
         /// <returns>If the passed argument is <see cref="IImmutableDeque{T}"/> then returns it without change.
         /// Otherwise a new <see cref="ImmutableDeque{T}"/>  created from the items passed in the <paramref name="items"/> argument.</returns>
         /// <exception cref="ArgumentNullException">Thrown when the <paramref name="items"/> is null</exception>
-        public static IImmutableDeque<T> InitRange<T>(IEnumerable<T> items)
+        public static IImmutableDeque<T> CreateRange<T>(IEnumerable<T> items)
         {
             if (items is null)
                 throw new ArgumentNullException(nameof(items));
@@ -29,6 +30,27 @@ namespace Atropos
                 d = d.EnqueueRight(item);
             return d;
         }
+        /// <summary>
+        /// Adds a range of item to the right of this queue
+        /// </summary>
+        /// <typeparam name="T">Type of the deque element</typeparam>
+        /// <param name="deque">The deque</param>
+        /// <param name="items">The list of items to enqueue on the right</param>
+        /// <returns>If the <paramref name="items"/> collection is empty, then the original <paramref name="deque"/> is returned.
+        /// If the <paramref name="items"/> is another <see cref="IImmutableDeque{T}"/>, then the <see cref="IImmutableDeque{T}.Concat(IImmutableDeque{T})"/> method is used.
+        /// Otherwise, <paramref name="items"/> are fed one by one into the <see cref="IImmutableDeque{T}.EnqueueRight(T)"/> method.
+        /// </returns>
+        public static IImmutableDeque<T> AddRange<T>(this IImmutableDeque<T> deque, IEnumerable<T> items)
+        {
+            //if (items is IImmutableDeque<T> otherDeque)
+            //    return deque.Concat(otherDeque);
+            //else
+            //{
+            foreach (var item in items)
+                deque = deque.EnqueueRight(item);
+            return deque;
+            //}
+        }
     }
 
     /// <summary>
@@ -36,7 +58,7 @@ namespace Atropos
     /// See also https://docs.microsoft.com/en-us/archive/blogs/ericlippert/immutability-in-c-part-eleven-a-working-double-ended-queue
     /// </summary>
     /// <typeparam name="T">The type of deque elements</typeparam>
-    public sealed partial class ImmutableDeque<T> : IImmutableDeque<T>, IEnumerable<T>
+    public sealed partial class ImmutableDeque<T> : IImmutableDeque<T>
     {
 
         private static readonly IImmutableDeque<T> empty = new EmptyDeque();
@@ -45,11 +67,6 @@ namespace Atropos
         /// </summary>
         public static IImmutableDeque<T> Empty => empty;
 
-        /// <summary>
-        /// Implements <see cref="IImmutableDeque{T}.IsEmpty"/>. Always false for this class - we have a separate internal class for an empty deque.
-        /// </summary>
-        public bool IsEmpty => false;
-
         private ImmutableDeque(Dequelette left, IImmutableDeque<Dequelette> middle, Dequelette right) 
             => (_left, _middle, _right) = (left, middle, right);
 
@@ -57,6 +74,57 @@ namespace Atropos
         private readonly IImmutableDeque<Dequelette> _middle;
         private readonly Dequelette _right;
 
+        #region IEnumerable<T>
+        /// <summary>
+        /// Traverses this deque from left to right
+        /// </summary>
+        /// <returns>The enumerator that traverses this deque from left to right</returns>
+        public IEnumerator<T> GetEnumerator()
+        {
+            foreach (var item in _left)
+                yield return item;
+
+            foreach (var dequelette in _middle)
+                foreach (var item in dequelette)
+                    yield return item;
+
+            foreach (var item in _right)
+                yield return item;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        #endregion
+
+        #region IImmutableQueue<T>
+        /// <summary>
+        /// Implements <see cref="IImmutableQueue{T}.IsEmpty"/>. Always false for this class - we have a separate internal class for an empty deque.
+        /// </summary>
+        public bool IsEmpty => false;
+
+        /// <summary>
+        /// Implements the <see cref="IImmutableQueue{T}.Dequeue()"/>, synonym for <see cref="IImmutableDeque{T}.DequeueLeft()"/>
+        /// </summary>
+        /// <returns>A new <see cref="ImmutableDeque{T}"/> with the leftmost element removed.</returns>
+        public IImmutableQueue<T> Dequeue() => DequeueLeft();
+
+        /// <summary>
+        /// Implements the <see cref="ImmutableQueue{T}.Enqueue(T)"/>, synonym for <see cref="IImmutableDeque{T}.EnqueueRight(T)"/>
+        /// </summary>
+        /// <param name="value">The value to enqueue</param>
+        /// <returns>A new <see cref="ImmutableQueue{T}"/> that contains the same elements as this queue plus the <paramref name="value"/> as the rightmost element</returns>
+        public IImmutableQueue<T> Enqueue(T value) => EnqueueRight(value);
+
+        /// <summary>
+        /// Peeks the element on the left of the queue without removing it
+        /// </summary>
+        /// <returns></returns>
+        public T Peek() => Left;
+
+        IImmutableQueue<T> IImmutableQueue<T>.Clear() => Empty;
+        #endregion
+
+        #region IImmutableDeque<T>
         /// <summary>
         /// Enqueues the specified element to the left of the deque
         /// </summary>
@@ -66,12 +134,12 @@ namespace Atropos
         /// The cost of this operation varies depending on the deque size; but the amortized cost is O(1).
         /// </remarks>
         public IImmutableDeque<T> EnqueueLeft(T value)
-            => !_left.Full
-                ? new ImmutableDeque<T>(_left.EnqueueLeft(value), _middle, _right)
-                : new ImmutableDeque<T>(
+            => _left.Full
+                ? new ImmutableDeque<T>(
                     new Two(value, _left.Left),
                     _middle.EnqueueLeft(_left.DequeueLeft()),
-                    _right);
+                    _right)
+                : new ImmutableDeque<T>(_left.EnqueueLeft(value), _middle, _right);
         /// <summary>
         /// Enqueues the specified element to the right of the deque
         /// </summary>
@@ -81,12 +149,12 @@ namespace Atropos
         /// The cost of this operation varies depending on the deque size; but the amortized cost is O(1).
         /// </remarks>
         public IImmutableDeque<T> EnqueueRight(T value)
-            => !_right.Full
-                ? new ImmutableDeque<T>(_left, _middle, _right.EnqueueRight(value))
-                : new ImmutableDeque<T>(
+            => _right.Full
+                ? new ImmutableDeque<T>(
                     _left,
                     _middle.EnqueueRight(_right.DequeueRight()),
-                    new Two(_right.Right, value));
+                    new Two(_right.Right, value))
+                : new ImmutableDeque<T>(_left, _middle, _right.EnqueueRight(value));
 
         /// <summary>
         /// Removes one element from deque's left
@@ -123,24 +191,6 @@ namespace Atropos
             return new SingleDeque(_left.Right);
         }
 
-        /// <summary>
-        /// Traverses this deque from left to right
-        /// </summary>
-        /// <returns>The enumerator that traverses this deque from left to right</returns>
-        public IEnumerator<T> GetEnumerator()
-        {
-            foreach (var item in _left)
-                yield return item;
-
-            foreach (var dequelette in _middle)
-                foreach (var item in dequelette)
-                    yield return item;
-
-            foreach (var item in _right)
-                yield return item;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         /// <summary>
         /// Concatenates the specified deque to the right of this one.
@@ -158,42 +208,21 @@ namespace Atropos
             // essentially, everything depends on (this._right.Size + other._left.Size) % 3
             if (other is ImmutableDeque<T> deque)
             {
-                return (_right.Size, deque._left.Size) switch
-                {
-                    (1, 2) => new ImmutableDeque<T>(_left, _middle.EnqueueRight(deque._left.EnqueueLeft(_right.Right)).Concat(deque._middle), deque._right),
-                    (1, 3) => null,
-                    (1, 4) => null,
-                    (2, 1) => new ImmutableDeque<T>(_left, _middle.EnqueueRight(_right.EnqueueRight(deque._left.Left)).Concat(deque._middle), deque._right),
-                    (2, 2) => null,
-                    (2, 4) => new ImmutableDeque<T>(_left, _middle.EnqueueRight(_right.EnqueueRight(deque._left.Left)).EnqueueRight(deque._left.DequeueLeft()).Concat(deque._middle), deque._right),
-                    (3, 1) => null,
-                    (3, 2) => null,
-                    (3, 3) => new ImmutableDeque<T>(_left, _middle.EnqueueRight(_right).EnqueueRight(deque._left).Concat(deque._middle), deque._right),
-                    (3, 4) => null,
-                    (4, 1) => null,
-                    (4, 2) => new ImmutableDeque<T>(_left, _middle.EnqueueRight(_right.DequeueRight()).EnqueueRight(deque._left.EnqueueLeft(_right.Right)).Concat(deque._middle), deque._right),
-                    (4, 3) => null,
-                    (4, 4) => null,
-                    _ => null
-                };
-            }
-            return null;
-            /*            var left = _left;
-            var middle = _middle;
-            var right = _right;
+                return new ImmutableDeque<T>(_left, 
+                    _middle.EnqueueRight(_right).EnqueueRight(deque._left).Concat(deque._middle), 
+                    deque._right);
 
-            if (right.Full)
-            {
-                middle = middle.EnqueueRight(right.DequeueRight());
-                right = new One(right.Right);
             }
-            // ok, now right contains one, two, or three items;
-            if (right.Size == 3)
-            {
-                middle = middle.EnqueueRight(right);
-            }*/
-
+            // fallback: rare case where we've faced a foreign deque
+            return this.AddRange(other);
         }
+
+        /// <summary>
+        /// Returns a new queue with all the elements removed.
+        /// </summary>
+        /// <returns>An empty immutable queue.</returns>
+        public IImmutableDeque<T> Clear() => Empty;
+
 
         /// <summary>
         /// Peeks the leftmost element of the deque
@@ -203,5 +232,6 @@ namespace Atropos
         /// Peeks the rightmost element of the deque
         /// </summary>
         public T Right => _right.Right;
+        #endregion
     }
 }

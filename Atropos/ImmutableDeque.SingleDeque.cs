@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Atropos
 {
@@ -8,9 +9,28 @@ namespace Atropos
     {
         private sealed class SingleDeque : IImmutableDeque<T>
         {
+            public readonly T item;
             public SingleDeque(T t) 
                 => item = t;
-            public readonly T item;
+
+            #region IEnumerable<T>
+            public IEnumerator<T> GetEnumerator()
+            {
+                yield return item;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+                => GetEnumerator();
+            #endregion
+
+            #region IImmutableQueue<T>
+            public IImmutableQueue<T> Enqueue(T value)
+                => EnqueueRight(value);
+            public IImmutableQueue<T> Dequeue() => Empty;
+            IImmutableQueue<T> IImmutableQueue<T>.Clear() => Empty;
+            public T Peek() => Left;
+            #endregion
+            #region IImmutableDeque<T>
             public bool IsEmpty => false;
             public IImmutableDeque<T> EnqueueLeft(T value) 
                 => new ImmutableDeque<T>(new One(value), ImmutableDeque<Dequelette>.Empty, new One(item));
@@ -19,18 +39,15 @@ namespace Atropos
             public IImmutableDeque<T> DequeueLeft() => Empty;
             public IImmutableDeque<T> DequeueRight() => Empty;
 
-            public IEnumerator<T> GetEnumerator()
-            {
-                yield return item;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-                => GetEnumerator();
 
             public IImmutableDeque<T> Concat(IImmutableDeque<T> right) => right.EnqueueLeft(item);
 
+            public IImmutableDeque<T> Clear() => Empty;
+
+
             public T Left => item;
             public T Right => item;
+            #endregion
         }
     }
 }

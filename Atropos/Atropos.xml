@@ -57,18 +57,18 @@
             <param name="right">The deque to concatenate to the right</param>
             <returns></returns>
         </member>
-        <member name="P:Atropos.IImmutableDeque`1.IsEmpty">
+        <member name="M:Atropos.IImmutableDeque`1.Clear">
             <summary>
-            Verifies if the deque is empty
+            Returns a new immutable deque with the same element type as this one, but empty
             </summary>
-            
+            <returns>A new immutable deque with the same element type as this one, but empty</returns>
         </member>
         <member name="T:Atropos.ImmutableDeque">
             <summary>
             Helper class for the <see cref="T:Atropos.ImmutableDeque`1"/>
             </summary>
         </member>
-        <member name="M:Atropos.ImmutableDeque.InitRange``1(System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:Atropos.ImmutableDeque.CreateRange``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Initializes a new immutable deque to the list of items passed
             </summary>
@@ -77,6 +77,18 @@
             <returns>If the passed argument is <see cref="T:Atropos.IImmutableDeque`1"/> then returns it without change.
             Otherwise a new <see cref="T:Atropos.ImmutableDeque`1"/>  created from the items passed in the <paramref name="items"/> argument.</returns>
             <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="items"/> is null</exception>
+        </member>
+        <member name="M:Atropos.ImmutableDeque.AddRange``1(Atropos.IImmutableDeque{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Adds a range of item to the right of this queue
+            </summary>
+            <typeparam name="T">Type of the deque element</typeparam>
+            <param name="deque">The deque</param>
+            <param name="items">The list of items to enqueue on the right</param>
+            <returns>If the <paramref name="items"/> collection is empty, then the original <paramref name="deque"/> is returned.
+            If the <paramref name="items"/> is another <see cref="T:Atropos.IImmutableDeque`1"/>, then the <see cref="M:Atropos.IImmutableDeque`1.Concat(Atropos.IImmutableDeque{`0})"/> method is used.
+            Otherwise, <paramref name="items"/> are fed one by one into the <see cref="M:Atropos.IImmutableDeque`1.EnqueueRight(`0)"/> method.
+            </returns>
         </member>
         <member name="T:Atropos.ImmutableDeque`1">
             <summary>
@@ -90,10 +102,35 @@
             An empty deque of <typeparamref name="T"/>
             </summary>
         </member>
+        <member name="M:Atropos.ImmutableDeque`1.GetEnumerator">
+            <summary>
+            Traverses this deque from left to right
+            </summary>
+            <returns>The enumerator that traverses this deque from left to right</returns>
+        </member>
         <member name="P:Atropos.ImmutableDeque`1.IsEmpty">
             <summary>
-            Implements <see cref="P:Atropos.IImmutableDeque`1.IsEmpty"/>. Always false for this class - we have a separate internal class for an empty deque.
+            Implements <see cref="P:System.Collections.Immutable.IImmutableQueue`1.IsEmpty"/>. Always false for this class - we have a separate internal class for an empty deque.
             </summary>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.Dequeue">
+            <summary>
+            Implements the <see cref="M:System.Collections.Immutable.IImmutableQueue`1.Dequeue"/>, synonym for <see cref="M:Atropos.IImmutableDeque`1.DequeueLeft"/>
+            </summary>
+            <returns>A new <see cref="T:Atropos.ImmutableDeque`1"/> with the leftmost element removed.</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.Enqueue(`0)">
+            <summary>
+            Implements the <see cref="M:System.Collections.Immutable.ImmutableQueue`1.Enqueue(`0)"/>, synonym for <see cref="M:Atropos.IImmutableDeque`1.EnqueueRight(`0)"/>
+            </summary>
+            <param name="value">The value to enqueue</param>
+            <returns>A new <see cref="T:System.Collections.Immutable.ImmutableQueue`1"/> that contains the same elements as this queue plus the <paramref name="value"/> as the rightmost element</returns>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.Peek">
+            <summary>
+            Peeks the element on the left of the queue without removing it
+            </summary>
+            <returns></returns>
         </member>
         <member name="M:Atropos.ImmutableDeque`1.EnqueueLeft(`0)">
             <summary>
@@ -133,18 +170,18 @@
             The cost of this operation varies depending on the deque size; but the amortized cost is O(1).
             </remarks>
         </member>
-        <member name="M:Atropos.ImmutableDeque`1.GetEnumerator">
-            <summary>
-            Traverses this deque from left to right
-            </summary>
-            <returns>The enumerator that traverses this deque from left to right</returns>
-        </member>
         <member name="M:Atropos.ImmutableDeque`1.Concat(Atropos.IImmutableDeque{`0})">
             <summary>
             Concatenates the specified deque to the right of this one.
             </summary>
             <param name="other">The other deque</param>
             <returns></returns>
+        </member>
+        <member name="M:Atropos.ImmutableDeque`1.Clear">
+            <summary>
+            Returns a new queue with all the elements removed.
+            </summary>
+            <returns>An empty immutable queue.</returns>
         </member>
         <member name="P:Atropos.ImmutableDeque`1.Left">
             <summary>
@@ -307,7 +344,7 @@
             <param name="count">The number of times to repeat the provided <paramref name="item"/></param>
             <returns>A new immutable list that contains <paramref name="count"/> instances of <paramref name="item"/></returns>
         </member>
-        <member name="M:Atropos.ImmutableList.InitRange``1(System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:Atropos.ImmutableList.CreateRange``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Initializes a new <see cref="T:Atropos.ImmutableList`1"/> with the specified <paramref name="items"/>.
             </summary>

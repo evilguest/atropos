@@ -3,26 +3,13 @@ using System.Collections.Immutable;
 
 namespace Atropos.Benchmarks.List
 {
-    class Insert: ImmutableListBenchmarkBase
+    class InsertInt : PreInitedBaseIntCollection
     {
         [Benchmark]
-        public IImmutableList<int> Atropos()
-        {
-            var t = _Alist; 
-            for (var i = 0; i < Repetitions; i++)
-                t = _Alist.Insert(Size / 2, 42);
-            return t;
-        }
-
-        [Benchmark(Baseline = true)]
-        public IImmutableList<int> Official()
-        {
-            var t = _Clist;
-            for (var i = 0; i < Repetitions; i++)
-                t = _Clist.Insert(Size / 2, 42);
-            return t;
-        }
-
-
+        public override IImmutableList<int> Atropos() => _A.Insert(Size / 2, 42);
+        [Benchmark]
+        public override IImmutableList<int> Official() => _C.Insert(Size / 2, 42);
+        [Benchmark]
+        public override IImmutableList<int> Tunnel() => _C.Insert(Size / 2, 42);
     }
 }
