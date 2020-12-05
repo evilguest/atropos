@@ -10,7 +10,7 @@
             </summary>
             <typeparam name="T">The type of the Deque elements</typeparam>
         </member>
-        <member name="P:Atropos.IImmutableDeque`1.Left">
+        <member name="M:Atropos.IImmutableDeque`1.PeekLeft">
             <summary>
             Peeks the leftmost element in the deque
             </summary>
@@ -183,7 +183,7 @@
             </summary>
             <returns>An empty immutable queue.</returns>
         </member>
-        <member name="P:Atropos.ImmutableDeque`1.Left">
+        <member name="M:Atropos.ImmutableDeque`1.PeekLeft">
             <summary>
             Peeks the leftmost element of the deque
             </summary>

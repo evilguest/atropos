@@ -41,7 +41,7 @@ namespace Atropos.Tests
             Assert.True(d.IsEmpty);
             Assert.Throws<InvalidOperationException>(() => d.DequeueLeft());
             Assert.Throws<InvalidOperationException>(() => d.DequeueRight());
-            Assert.Throws<InvalidOperationException>(() => d.Left);
+            Assert.Throws<InvalidOperationException>(() => d.PeekLeft());
             Assert.Throws<InvalidOperationException>(() => d.Right);
         }
         [Fact]
@@ -52,47 +52,47 @@ namespace Atropos.Tests
             // 0
             d = d.EnqueueRight(0);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(0, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.Right);
 
             // 0, 1
             d = d.EnqueueRight(1);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(1, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.Right);
 
             // 0, 1, 2
             d = d.EnqueueRight(2);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(2, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.Right);
 
             // 0, 1, 2, 3
             d = d.EnqueueRight(3);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(3, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.Right);
 
             // 0, 1, 2, 3, 4
             d = d.EnqueueRight(4);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(4, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(4, d.Right);
 
             // 1, 2, 3, 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(1, d.Left); Assert.Equal(4, d.Right);
+            Assert.Equal(1, d.PeekLeft()); Assert.Equal(4, d.Right);
 
             // 2, 3, 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(2, d.Left); Assert.Equal(4, d.Right);
+            Assert.Equal(2, d.PeekLeft()); Assert.Equal(4, d.Right);
 
             // 3, 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(3, d.Left); Assert.Equal(4, d.Right);
+            Assert.Equal(3, d.PeekLeft()); Assert.Equal(4, d.Right);
 
             // 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(4, d.Left); Assert.Equal(4, d.Right);
+            Assert.Equal(4, d.PeekLeft()); Assert.Equal(4, d.Right);
 
             //
             d = d.DequeueLeft();
@@ -104,40 +104,40 @@ namespace Atropos.Tests
             var d = ImmutableDeque<int>.Empty;
             // 0
             d = d.EnqueueLeft(0);
-            Assert.Equal(0, d.Right); Assert.Equal(0, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(0, d.PeekLeft());
 
             // 1, 0
             d = d.EnqueueLeft(1);
-            Assert.Equal(0, d.Right); Assert.Equal(1, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(1, d.PeekLeft());
 
             // 2, 1, 0
             d = d.EnqueueLeft(2);
 
-            Assert.Equal(0, d.Right); Assert.Equal(2, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(2, d.PeekLeft());
 
             // 3, 2, 1, 0
             d = d.EnqueueLeft(3);
-            Assert.Equal(0, d.Right); Assert.Equal(3, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(3, d.PeekLeft());
 
             // 4, 3, 2, 1, 0
             d = d.EnqueueLeft(4);
-            Assert.Equal(0, d.Right); Assert.Equal(4, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(4, d.PeekLeft());
 
             // 4, 3, 2, 1
             d = d.DequeueRight();
-            Assert.Equal(1, d.Right); Assert.Equal(4, d.Left);
+            Assert.Equal(1, d.Right); Assert.Equal(4, d.PeekLeft());
 
             // 4, 3, 2
             d = d.DequeueRight();
-            Assert.Equal(2, d.Right); Assert.Equal(4, d.Left);
+            Assert.Equal(2, d.Right); Assert.Equal(4, d.PeekLeft());
 
             // 4, 3
             d = d.DequeueRight();
-            Assert.Equal(3, d.Right); Assert.Equal(4, d.Left);
+            Assert.Equal(3, d.Right); Assert.Equal(4, d.PeekLeft());
 
             // 4
             d = d.DequeueRight();
-            Assert.Equal(4, d.Right); Assert.Equal(4, d.Left);
+            Assert.Equal(4, d.Right); Assert.Equal(4, d.PeekLeft());
 
             //
             d = d.DequeueRight();
@@ -151,47 +151,47 @@ namespace Atropos.Tests
             // 0
             d = d.EnqueueRight(0);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(0, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.Right);
 
             // 0, 1
             d = d.EnqueueRight(1);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(1, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.Right);
 
             // 0, 1, 2
             d = d.EnqueueRight(2);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(2, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.Right);
 
             // 0, 1, 2, 3
             d = d.EnqueueRight(3);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(3, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.Right);
 
             // 0, 1, 2, 3, 4
             d = d.EnqueueRight(4);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(4, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(4, d.Right);
 
             // 0, 1, 2, 3
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(3, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.Right);
 
             // 0, 1, 2 
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(2, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.Right);
 
             // 0, 1
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(1, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.Right);
 
             // 0
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Left); Assert.Equal(0, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.Right);
 
             //
             d = d.DequeueRight();
@@ -205,47 +205,47 @@ namespace Atropos.Tests
             // 0
             d = d.EnqueueLeft(0);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(0, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(0, d.PeekLeft());
 
             // 1, 0
             d = d.EnqueueLeft(1);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(1, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(1, d.PeekLeft());
 
             // 2, 1, 0
             d = d.EnqueueLeft(2);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(2, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(2, d.PeekLeft());
 
             // 3, 2, 1, 0
             d = d.EnqueueLeft(3);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(3, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(3, d.PeekLeft());
 
             // 4, 3, 2, 1, 0
             d = d.EnqueueLeft(4);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(4, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(4, d.PeekLeft());
 
             // 3, 2, 1, 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(3, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(3, d.PeekLeft());
 
             // 2, 1, 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(2, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(2, d.PeekLeft());
 
             // 1, 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(1, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(1, d.PeekLeft());
 
             // 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(0, d.Left);
+            Assert.Equal(0, d.Right); Assert.Equal(0, d.PeekLeft());
 
             //
             d = d.DequeueLeft();

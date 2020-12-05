@@ -119,7 +119,7 @@ namespace Atropos
         /// Peeks the element on the left of the queue without removing it
         /// </summary>
         /// <returns></returns>
-        public T Peek() => Left;
+        public T Peek() => PeekLeft();
 
         IImmutableQueue<T> IImmutableQueue<T>.Clear() => Empty;
         #endregion
@@ -168,7 +168,7 @@ namespace Atropos
             if (_left.Size > 1)
                 return new ImmutableDeque<T>(_left.DequeueLeft(), _middle, _right);
             if (!_middle.IsEmpty)
-                return new ImmutableDeque<T>(_middle.Left, _middle.DequeueLeft(), _right);
+                return new ImmutableDeque<T>(_middle.PeekLeft(), _middle.DequeueLeft(), _right);
             if (_right.Size > 1)
                 return new ImmutableDeque<T>(new One(_right.Left), _middle, _right.DequeueLeft());
             return new SingleDeque(_right.Left);
@@ -227,7 +227,11 @@ namespace Atropos
         /// <summary>
         /// Peeks the leftmost element of the deque
         /// </summary>
-        public T Left => _left.Left;
+        public T PeekLeft()
+        {
+            return _left.Left;
+        }
+
         /// <summary>
         /// Peeks the rightmost element of the deque
         /// </summary>

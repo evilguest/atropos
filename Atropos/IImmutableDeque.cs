@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace Atropos
@@ -14,7 +13,8 @@ namespace Atropos
         /// Peeks the leftmost element in the deque
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the deque is empty</exception>
-        T Left { get; }
+        T PeekLeft();
+
         /// <summary>
         /// Peeks the rightmost element in the deque
         /// </summary>

@@ -28,7 +28,7 @@ namespace Atropos
                 => EnqueueRight(value);
             public IImmutableQueue<T> Dequeue() => Empty;
             IImmutableQueue<T> IImmutableQueue<T>.Clear() => Empty;
-            public T Peek() => Left;
+            public T Peek() => PeekLeft();
             #endregion
             #region IImmutableDeque<T>
             public bool IsEmpty => false;
@@ -44,8 +44,11 @@ namespace Atropos
 
             public IImmutableDeque<T> Clear() => Empty;
 
+            public T PeekLeft()
+            {
+                return item;
+            }
 
-            public T Left => item;
             public T Right => item;
             #endregion
         }

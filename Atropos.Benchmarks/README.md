@@ -43,9 +43,9 @@ A possible future performance improvement would be to consider a bit larger stru
 I.e. since each object in .Net contains a header of 12 bytes (8 bytes on x86), and the cache line size is 64 bytes, we should try fitting exactly 52/56 bytes of data, or 116/120 bytes if we're ready to spare 2 cache lines. 
 52 bytes give us space for six 8-byte references + 4 bytes for int32 count; 56 bytes give us space for 13 4-byte references + 4 bytes for int32 count.
 These seem to be the numbers to consider. Note that we'd need to adjust the layout for the value types that can take any number of bytes.
-### Dequeue
+### Enqueue
 The [Deque/Enqueue.cs](./Deque/Enqueue.cs) benchmark enqueues a single integer to the queue of the specified Size.
 ![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.png)
-### Enqueue
+### Dequeue
 The [Deque/Dequeue.cs](./Deque/Dequeue.cs) benchmark dequeues a singleelement from the int32 queue of the specified Size.
 ![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.png)

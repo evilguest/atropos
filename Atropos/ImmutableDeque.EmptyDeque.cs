@@ -30,7 +30,12 @@ namespace Atropos
             public IImmutableDeque<T> Clear() => this;
             IImmutableQueue<T> IImmutableQueue<T>.Clear() => this;
             public T Peek() => throw _ioe;
-            public T Left => throw _ioe;
+
+            public T PeekLeft()
+            {
+                throw _ioe;
+            }
+
             public T Right => throw _ioe;
         }
     }
