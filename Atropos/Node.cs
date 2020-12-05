@@ -92,9 +92,9 @@ namespace Atropos
         public int LastIndexOf(T item, int index, int count, IEqualityComparer<T> equalityComparer)
         {
             equalityComparer ??= EqualityComparer<T>.Default;
-            if (index < 0 || index + count > Count)
+            if (index >= Count || index - count + 1 < 0)
                 throw new IndexOutOfRangeException();
-            for (var i = index + count - 1; i >= index; i--)
+            for (var i = index; i >= index - count; i--)
                 if (equalityComparer.Equals(this[i], item))
                     return i;
             return -1;

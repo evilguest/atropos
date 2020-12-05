@@ -32,7 +32,9 @@ namespace Atropos
         /// <param name="items">Collection of items to initialize</param>
         /// <returns>A new <see cref="ImmutableList{T}"/> that contais all the items from <paramref name="items"/> in the same order.</returns>
         public static ImmutableList<T> CreateRange<T>(IEnumerable<T> items) 
-            => items is ImmutableList<T> list ? list : ImmutableList<T>.Empty.AddRange(items);
+            => items is ImmutableList<T> list 
+                ? list 
+                : ImmutableList<T>.Empty.AddRange(items);
 
         /// <summary>
         /// Creates an <see cref="ImmutableList{T}"/> from <see cref="IEnumerable{T}"/>.
@@ -160,7 +162,7 @@ namespace Atropos
         /// <param name="equalityComparer">The equality comparer to use when searching for the <paramref name="item"/>.</param>
         /// <returns>The zero-based index of the last occurrence of item within the <see cref="ImmutableList{T}"/> if found; otherwise -1.</returns>
         public int LastIndexOf(T item, IEqualityComparer<T> equalityComparer = null)
-            => LastIndexOf(item, 0, Count, equalityComparer);
+            => LastIndexOf(item, Count-1, Count, equalityComparer);
 
         /// <summary>
         /// Removes the first occurrence of a specified object from this immutable list.
@@ -249,8 +251,10 @@ namespace Atropos
         /// <exception cref="IndexOutOfRangeException">Thrown when <paramref name="index"/>is out of list bounds.</exception>
         public ImmutableList<T> InsertRange(int index, IEnumerable<T> items)
         {
-            if (index < 0 || index >= Count)
+            if (index < 0)
                 throw new IndexOutOfRangeException();
+            if (index >= Count)
+                throw new IndexOutOfRangeException("You're trying to insert after the end of the list. Use AddRange instead.");
             var root = _root;
 
             // if root is full then split

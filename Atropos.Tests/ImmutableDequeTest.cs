@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using Xunit;
@@ -43,6 +44,23 @@ namespace Atropos.Tests
             Assert.Throws<InvalidOperationException>(() => d.DequeueRight());
             Assert.Throws<InvalidOperationException>(() => d.PeekLeft());
             Assert.Throws<InvalidOperationException>(() => d.Right);
+            Assert.Throws<InvalidOperationException>(() => d.Peek());
+            Assert.Same(d, d.Clear());
+            Assert.Same(d, ((IImmutableQueue<int>)d).Clear());
+        }
+        [Fact]
+        public void Single()
+        {
+
+            IImmutableDeque<int> e = ImmutableDeque<int>.Empty;
+            var q = e.Enqueue(42);
+            Assert.False(q.IsEmpty);
+            Assert.Equal(42, q.Peek());
+            Assert.Same(e, q.Clear());
+            var d = e.EnqueueRight(42);
+            Assert.False(d.IsEmpty);
+            Assert.Equal(42, d.PeekLeft());
+            Assert.Same(e, d.Clear());
         }
         [Fact]
         public void RightToLeft()
@@ -197,6 +215,7 @@ namespace Atropos.Tests
             d = d.DequeueRight();
             Assert.True(d.IsEmpty);
         }
+
         [Fact]
         public void LeftToLeft()
         {
