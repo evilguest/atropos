@@ -143,7 +143,7 @@ namespace Atropos.Tests
         {
             var r = Enumerable.Range(0, size);
             var t = ImmutableList<int>.Empty.AddRange(r);
-            Assert.Equal(r, t);
+            Assert.Equal<int>(r, t);
         }
 
         [Fact]
@@ -355,6 +355,8 @@ namespace Atropos.Tests
             Assert.Equal(new[] { 44 }, k);
             k = k.Replace(44, 42);
             Assert.Equal(42, k[0]);
+            k = k.RemoveAt(0);
+            Assert.Equal(0, k.Count);
         }
     }
 }

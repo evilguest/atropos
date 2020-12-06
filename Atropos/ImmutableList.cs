@@ -3,10 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.IO;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics;
 
 namespace Atropos
 {
@@ -351,11 +347,9 @@ namespace Atropos
         /// <param name="count">The count of elements to create</param>
         public ImmutableList(T value, int count)
         {
-            if (count < 0)
+            if (count <= 0)
                 throw new ArgumentOutOfRangeException(nameof(count), "Count must be above zero");
-            _root = count == 0 
-                ? new Node<T>() 
-                : Node<T>.Fill(value, count).Freeze();
+            _root = Node<T>.Fill(value, count).Freeze();
         }
         /// <summary>
         /// Creates a new empty immutable list

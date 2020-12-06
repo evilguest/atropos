@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Atropos
 {
@@ -19,10 +20,8 @@ namespace Atropos
             public IImmutableDeque<T> DequeueRight() => throw _ioe;
             public IImmutableQueue<T> Dequeue() => throw _ioe;
 
-            public IEnumerator<T> GetEnumerator()
-            {
-                yield break;
-            }
+            public IEnumerator<T> GetEnumerator() 
+                => Enumerable.Empty<T>().GetEnumerator();
             IEnumerator IEnumerable.GetEnumerator()
                 => GetEnumerator();
             public IImmutableDeque<T> Concat(IImmutableDeque<T> right)

@@ -61,6 +61,9 @@ namespace Atropos.Tests
             Assert.False(d.IsEmpty);
             Assert.Equal(42, d.PeekLeft());
             Assert.Same(e, d.Clear());
+            Assert.Same(e, d.Dequeue());
+            var d2 = d.Enqueue(43);
+            Assert.Equal(2, d2.Count());
         }
         [Fact]
         public void RightToLeft()
