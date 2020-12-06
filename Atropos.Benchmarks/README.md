@@ -48,5 +48,5 @@ These seem to be the numbers to consider. Note that we'd need to adjust the layo
 The [Deque/Enqueue.cs](./Deque/Enqueue.cs) benchmark enqueues a single integer to the queue of the specified Size.
 ![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.png)
 ### Dequeue
-The [Deque/Dequeue.cs](./Deque/Dequeue.cs) benchmark dequeues a singleelement from the int32 queue of the specified Size.
+The [Deque/Dequeue.cs](./Deque/Dequeue.cs) benchmark dequeues a single element from the integer queue of the specified Size.
 ![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.png)
