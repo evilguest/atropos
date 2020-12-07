@@ -184,7 +184,11 @@ namespace Atropos
             while (i < root.Count)
             {
                 if (match(root[i]))
+                {
+                    var oldCount = root.Count;
                     root = root.RemoveAt(i);
+                    Debug.Assert(root.Count == oldCount - 1);
+                }
                 else
                     i++;
             }

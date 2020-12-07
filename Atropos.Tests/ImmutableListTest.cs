@@ -143,7 +143,7 @@ namespace Atropos.Tests
         {
             var r = Enumerable.Range(0, size);
             var t = ImmutableList<int>.Empty.AddRange(r);
-            Assert.Equal<int>(r, t);
+            Assert.Equal(r, t);
         }
 
         [Fact]

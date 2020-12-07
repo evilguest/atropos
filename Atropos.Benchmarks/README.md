@@ -18,10 +18,9 @@ See the [List/Index.cs](./List/Index.cs) for more detail.
 Anyway, the benchmark provides good enough insight on the comparative performance of the implementations for the various collection sizes.
 ![Index](Atropos.Benchmarks.List.Index.png)
 Note how Official implementation does feature a gradual degradation somewhere between 256 and 1024 - most likely attributed to the cache effects.
-Also note the stair-like behavior of the Atropos and TunnelVision implementation, reflecting their branch factors. 
-![Insert int32](Atropos.Benchmarks.List.InsertInt.png)
+Also note the stair-like behavior of the Atropos and TunnelVision implementation, reflecting their branch factors.
 ### Init
-This benchmark measures the time to init the list to a specified size, feeding an IEnumerable<T> into it one element by one.
+This benchmark measures the time to init the list to a specified size, feeding an IEnumerable&lt;T&gt; into it one element by one.
 ![Init](Atropos.Benchmarks.List.InitInt.png)
 ### Add 
 The [List/Add.cs](./List/Add.cs) benchmark measures the efficiency of a single-item additions to the end of the list. 
