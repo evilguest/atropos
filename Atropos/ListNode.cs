@@ -32,7 +32,7 @@ namespace Atropos
     internal unsafe struct NodeRef<T>
     {
         [FieldOffset(0)]
-        public Node<T> Node;
+        public ListNode<T> Node;
         [FieldOffset(0)]
         public T[] Data;
     }
@@ -55,15 +55,15 @@ namespace Atropos
         //public Node(int[] childrenIndices) => ChildrenIndices = childrenIndices;
 
     }
-    internal class Node<T> : ListNode, IReadOnlyList<T>
+    internal class ListNode<T> : ListNode, IReadOnlyList<T>
     {
         private const int PageSize = 16;
         private static readonly int BranchFactor = 128 / Marshal.SizeOf<IntPtr>();
-        internal static readonly Node<T> Empty = new Node<T>(new T[0], 0);
+        internal static readonly ListNode<T> Empty = new ListNode<T>(new T[0], 0);
         private int _count;
         private int _childrenCount;
 
-        public Node<T> Freeze()
+        public ListNode<T> Freeze()
         {
             if (!Frozen)
             {
@@ -90,7 +90,7 @@ namespace Atropos
             equalityComparer ??= EqualityComparer<T>.Default;
             if (index >= Count || index - count + 1 < 0)
                 throw new IndexOutOfRangeException();
-            for (var i = index; i >= index - count; i--)
+            for (var i = index; i >= index - count + 1; i--)
                 if (equalityComparer.Equals(this[i], item))
                     return i;
             return -1;
@@ -104,11 +104,11 @@ namespace Atropos
                 : _childrenCount == BranchFactor;
         bool IsEmpty 
             => IsLeaf 
-                ? _count <= PageSize/2 
-                : _childrenCount <= BranchFactor / 2;
-        internal (Node<T>, Node<T>) Split() => IsLeaf ? SplitLeaf() : SplitBranch();
+                ? _count < PageSize/2 
+                : _childrenCount < BranchFactor / 2;
+        internal (ListNode<T>, ListNode<T>) Split() => IsLeaf ? SplitLeaf() : SplitBranch();
 
-        Node<T>[] Children { get; set; } // works only for IsLeaf == false
+        ListNode<T>[] Children { get; set; } // works only for IsLeaf == false
         public T[] Data { get; set; }
         internal bool IsLeaf => Children == null;//ChildrenIndices == null;
 
@@ -125,24 +125,12 @@ namespace Atropos
             }
         }
 
-
-        //public static (int child, int index) FindChildIndex(Node node, int index)
-        //{
-        //    int child = Array.BinarySearch(node.ChildrenIndices, index);
-        //    if (child < 0)
-        //        child = ~child;
-        //    if (child > 0)
-        //        index -= (node.ChildrenIndices[child - 1] + 1);
-        //    return (child, index);
-        //}
-
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public (int, int) FindChildIndex(int index)
              => FindChildIndex(this, index);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static (Node<T> child, int localIndex) FindChild(Node<T> node, int index) => 
+        private static (ListNode<T> child, int localIndex) FindChild(ListNode<T> node, int index) => 
             index < node._indexes.childIndex7 || node._indexes.childIndex7 == 0
                 ? index < node._indexes.childIndex3 || node._indexes.childIndex3 == 0
                     ? index < node._indexes.childIndex1 || node._indexes.childIndex1 == 0
@@ -175,7 +163,7 @@ namespace Atropos
                             ? (node.Children[14], index - node._indexes.childIndexD)
                             : (node.Children[15], index - node._indexes.childIndexE);
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static (int child, int index) FindChildIndex(Node<T> node, int index)
+        private static (int child, int index) FindChildIndex(ListNode<T> node, int index)
         {
             if (index < node._indexes.childIndex7 || node._indexes.childIndex7 == 0)
             {
@@ -216,40 +204,21 @@ namespace Atropos
             }
             else // >= child7
             {
-                if (index < node._indexes.childIndexB || node._indexes.childIndexB == 0)
-                {
-                    if (index < node._indexes.childIndex9 || node._indexes.childIndex9 == 0)
-                    {
-                        if (index < node._indexes.childIndex8 || node._indexes.childIndex8 == 0)
-                            return (8, index - node._indexes.childIndex7);
-                        else // >= child8
-                            return (9, index - node._indexes.childIndex8);
-                    }
-                    else // >= child9
-                    {
-                        if (index < node._indexes.childIndexA || node._indexes.childIndexA == 0)
-                            return (10, index - node._indexes.childIndex9);
-                        else // >= childA
-                            return (11, index - node._indexes.childIndexA);
-                    }
-                }
-                else // >= childB
-                {
-                    if (index < node._indexes.childIndexD || node._indexes.childIndexD == 0)
-                    {
-                        if (index < node._indexes.childIndexC || node._indexes.childIndexC == 0)
-                            return (12, index - node._indexes.childIndexB);
-                        else // >= childC
-                            return (13, index - node._indexes.childIndexC);
-                    }
-                    else // > childD
-                    {
-                        if (index < node._indexes.childIndexE || node._indexes.childIndexE == 0)
-                            return (14, index - node._indexes.childIndexD);
-                        else // >= childE
-                            return (15, index - node._indexes.childIndexE);
-                    }
-                }
+                return index < node._indexes.childIndexB || node._indexes.childIndexB == 0
+                    ? index < node._indexes.childIndex9 || node._indexes.childIndex9 == 0
+                        ? index < node._indexes.childIndex8 || node._indexes.childIndex8 == 0
+                            ? (8, index - node._indexes.childIndex7)
+                            : (9, index - node._indexes.childIndex8)
+                        : index < node._indexes.childIndexA || node._indexes.childIndexA == 0
+                            ? (10, index - node._indexes.childIndex9)
+                            : (11, index - node._indexes.childIndexA)
+                    : index < node._indexes.childIndexD || node._indexes.childIndexD == 0
+                        ? index < node._indexes.childIndexC || node._indexes.childIndexC == 0
+                            ? (12, index - node._indexes.childIndexB)
+                            : (13, index - node._indexes.childIndexC)
+                        : index < node._indexes.childIndexE || node._indexes.childIndexE == 0
+                            ? (14, index - node._indexes.childIndexD)
+                            : (15, index - node._indexes.childIndexE);
             }
         }
 
@@ -274,16 +243,16 @@ namespace Atropos
         //    }
         //}
 
-        internal Node(T[] data, int count)
+        internal ListNode(T[] data, int count)
         { 
             Data = data;
             _count = count;
             Frozen = Data.Length == 0;
         }
 
-        internal Node((Node<T> left, Node<T> right) children)
+        internal ListNode((ListNode<T> left, ListNode<T> right) children)
         {
-            Children = new Node<T>[BranchFactor];
+            Children = new ListNode<T>[BranchFactor];
             _childrenCount = 2;
             Children[0] = children.left;
             Children[1] = children.right;
@@ -294,16 +263,16 @@ namespace Atropos
         //internal Node() : this(Array.Empty<T>()) { }
         //internal Node(T data) : this(new T[] { data }) { }
 
-        internal Node<T> Merge(Node<T> other) => IsLeaf ? MergeLeaf(other) : MergeBranch(other);
+        internal ListNode<T> Merge(ListNode<T> other) => IsLeaf ? MergeLeaf(other) : MergeBranch(other);
 
-        private Node<T> MergeLeaf(Node<T> other)
+        private ListNode<T> MergeLeaf(ListNode<T> other)
         {
             if (Frozen)
             {
                 var data = new T[PageSize];
                 Array.Copy(Data, data, Count);
                 Array.Copy(other.Data, 0, data, Count, other.Count);
-                return new Node<T>(data, Count+other.Count);
+                return new ListNode<T>(data, Count+other.Count);
             }
             else
             {
@@ -313,14 +282,14 @@ namespace Atropos
             }
         }
 
-        internal Node<T> MergeBranch(Node<T> other)
+        internal ListNode<T> MergeBranch(ListNode<T> other)
         {
             if (Frozen)
             {
-                var children = new Node<T>[BranchFactor];
+                var children = new ListNode<T>[BranchFactor];
                 Array.Copy(Children, 0, children, 0, _childrenCount);
                 Array.Copy(other.Children, 0, children, _childrenCount, other._childrenCount);
-                return new Node<T>(children, _childrenCount + other._childrenCount);
+                return new ListNode<T>(children, _childrenCount + other._childrenCount);
             }
             else
             {
@@ -333,9 +302,9 @@ namespace Atropos
         }
 
 
-        internal unsafe Node(Node<T> original, int start, int childrenCount)
+        internal unsafe ListNode(ListNode<T> original, int start, int childrenCount)
         {
-            Children = new Node<T>[BranchFactor];
+            Children = new ListNode<T>[BranchFactor];
             Array.Copy(original.Children, start, Children, 0, childrenCount);
             _childrenCount = childrenCount;
             if (start == 0)
@@ -348,17 +317,17 @@ namespace Atropos
             else // indices have to be regenerated
                 InitChildIndicesStartingFrom(0);
         }
-        internal unsafe Node(Node<T> original, int start) 
+        internal unsafe ListNode(ListNode<T> original, int start) 
             : this(original, start, original._childrenCount - start) { }
 
       
-        public (Node<T> left, Node<T> right) SplitBranch()
+        public (ListNode<T> left, ListNode<T> right) SplitBranch()
         {
             int len = _childrenCount / 2;
-            return (new Node<T>(this, 0, len), new Node<T>(this, len));
+            return (new ListNode<T>(this, 0, len), new ListNode<T>(this, len));
         }
 
-        public Node<T> RemoveAt(int index)
+        public ListNode<T> RemoveAt(int index)
         {
             Debug.Assert(index >= 0);
             Debug.Assert(index < Count);
@@ -369,7 +338,7 @@ namespace Atropos
                     var data = new T[PageSize];
                     Array.Copy(Data, 0, data, 0, index);
                     Array.Copy(Data, index + 1, data, index, Count - index - 1);
-                    return new Node<T>(data, Count-1);
+                    return new ListNode<T>(data, Count-1);
                 }
                 else
                 {
@@ -393,7 +362,7 @@ namespace Atropos
                     return ReplaceChildAt(c, child);
                 else
                 {
-                    Node<T> ret;
+                    ListNode<T> ret;
                     if (c > 0) // check the left sibling
                     {
                         var siblingLeft = Children[c - 1];
@@ -427,14 +396,14 @@ namespace Atropos
             }
         }
 
-        private Node<T> SplitLeaf(int start, int count)
+        private ListNode<T> SplitLeaf(int start, int count)
         {
             if (Frozen || start > 0)
             {
                 var data = new T[PageSize];
                 Array.Copy(Data, start, data, 0, count);
 
-                return new Node<T>(data, count);
+                return new ListNode<T>(data, count);
             }
             else
             {
@@ -443,10 +412,10 @@ namespace Atropos
             }
         }
 
-        private Node<T> SplitLeaf(int start)
+        private ListNode<T> SplitLeaf(int start)
             => SplitLeaf(start, Count - start);
 
-        public (Node<T>, Node<T>) SplitLeaf()
+        public (ListNode<T>, ListNode<T>) SplitLeaf()
         {
             int len = Count / 2;
             var second = SplitLeaf(len);
@@ -454,20 +423,20 @@ namespace Atropos
         }
 
 
-        internal Node(Node<T>[] children, int childrenCount)
+        internal ListNode(ListNode<T>[] children, int childrenCount)
         {
             Children = children;
             _childrenCount = childrenCount; 
             InitChildIndicesStartingFrom(0);
         }
-        public Node(Node<T> otherLeaf, int index, T value)
+        public ListNode(ListNode<T> otherLeaf, int index, T value)
         {
             Data = new T[PageSize];
             Array.Copy(otherLeaf.Data, 0, Data, 0, otherLeaf.Count);
             Data[index] = value;
             _count = otherLeaf.Count;
         }
-        internal Node<T> InsertDataAt(int index, T value)
+        internal ListNode<T> InsertDataAt(int index, T value)
         {
             // we need to figure out if this node is a leaf or not
             if (IsLeaf)
@@ -478,7 +447,7 @@ namespace Atropos
                     Array.Copy(Data, 0, data, 0, index);
                     data[index] = value;
                     Array.Copy(Data, index, data, index + 1, Count - index);
-                    return new Node<T>(data, Count+1);
+                    return new ListNode<T>(data, Count+1);
                 }
                 else
                 {
@@ -531,12 +500,12 @@ namespace Atropos
             }
         }
 
-        internal Node<T> ReplaceDataAt(int index, T value)
+        internal ListNode<T> ReplaceDataAt(int index, T value)
         {
             if (IsLeaf)
             {
                 //if (Frozen) // we don't have a code for the group SetItem operations. 
-                return new Node<T>(this, index, value);
+                return new ListNode<T>(this, index, value);
                 //else
                 //{
                 //    Data[index] = value;
@@ -550,16 +519,16 @@ namespace Atropos
             }
         }
 
-        internal Node<T> ReplaceChildAt(int childIndex, Node<T> child)
+        internal ListNode<T> ReplaceChildAt(int childIndex, ListNode<T> child)
         {
             if (child != Children[childIndex])
             {
                 if (Frozen)
                 {
-                    var children = new Node<T>[BranchFactor];
+                    var children = new ListNode<T>[BranchFactor];
                     Array.Copy(Children, 0, children, 0, _childrenCount);
                     children[childIndex] = child; // 
-                    return new Node<T>(children, _childrenCount);
+                    return new ListNode<T>(children, _childrenCount);
                 }
                 else
                     Children[childIndex] = child;
@@ -569,15 +538,15 @@ namespace Atropos
             return this;
         }
 
-        public Node<T> ReplaceChildrenAt(int childIndex, Node<T> newChild)
+        public ListNode<T> ReplaceChildrenAt(int childIndex, ListNode<T> newChild)
         {
             if (Frozen)
             {
-                var children = new Node<T>[BranchFactor];
+                var children = new ListNode<T>[BranchFactor];
                 Array.Copy(Children, 0, children, 0, childIndex);
                 children[childIndex] = newChild;
                 Array.Copy(Children, childIndex + 2, children, childIndex + 1, _childrenCount - childIndex - 2);
-                return new Node<T>(children, _childrenCount - 1);
+                return new ListNode<T>(children, _childrenCount - 1);
             }
             else
             {
@@ -589,15 +558,15 @@ namespace Atropos
             }
         }
 
-        internal Node<T> ReplaceChildrenAt(int childIndex, Node<T> newNode1, Node<T> newNode2)
+        internal ListNode<T> ReplaceChildrenAt(int childIndex, ListNode<T> newNode1, ListNode<T> newNode2)
         {
             if (Frozen)
             {
-                var children = new Node<T>[BranchFactor];
+                var children = new ListNode<T>[BranchFactor];
                 Array.Copy(Children, 0, children, 0, _childrenCount);
                 children[childIndex] = newNode1;
                 children[childIndex + 1] = newNode2;
-                return new Node<T>(children, _childrenCount);
+                return new ListNode<T>(children, _childrenCount);
             }
             else
             {
@@ -608,16 +577,16 @@ namespace Atropos
             }
         }
 
-        internal Node<T> ReplaceChildAt(int childIndex, Node<T> child1, Node<T> child2)
+        internal ListNode<T> ReplaceChildAt(int childIndex, ListNode<T> child1, ListNode<T> child2)
         {
             if (Frozen)
             {
-                var children = new Node<T>[BranchFactor];
+                var children = new ListNode<T>[BranchFactor];
                 Array.Copy(Children, 0, children, 0, childIndex);
                 children[childIndex] = child1;
                 children[childIndex + 1] = child2;
                 Array.Copy(Children, childIndex + 1, children, childIndex + 2, _childrenCount - childIndex - 1);
-                return new Node<T>(children, _childrenCount+1);
+                return new ListNode<T>(children, _childrenCount+1);
             }
             else
             {
@@ -630,23 +599,23 @@ namespace Atropos
             }
 
         }
-        internal Node<T> AddData(T value)
+        internal ListNode<T> AddData(T value)
             => InsertDataAt(Count, value);
         
 
-        private (Node<T>, Node<T>) BalanceLeaf(Node<T> other)
+        private (ListNode<T>, ListNode<T>) BalanceLeaf(ListNode<T> other)
         {
             var originalCount = Count + other.Count;
             var leftLength = originalCount / 2;
             var rightLength = originalCount - leftLength;
-            Node<T> left, right;
+            ListNode<T> left, right;
             if (Frozen)
             {
                 var data = new T[PageSize];
                 Array.Copy(Data, 0, data, 0, Count);
-                if (leftLength>Count) // copy the head of other into data's tail
-                    Array.Copy(other.Data, 0, data, Count, leftLength - Count); 
-                left = new Node<T>(data, leftLength);
+                if (leftLength > Count) // copy the head of other into data's tail
+                    Array.Copy(other.Data, 0, data, Count, leftLength - Count);
+                left = new ListNode<T>(data, leftLength);
             }
             else
             {
@@ -665,7 +634,7 @@ namespace Atropos
                 } 
                 else
                     Array.Copy(other.Data, other.Count - rightLength, data, 0, rightLength);
-                right = new Node<T>(data, rightLength);
+                right = new ListNode<T>(data, rightLength);
             }
             else
             {
@@ -683,21 +652,21 @@ namespace Atropos
             return (left, right);
         }
 
-        public (Node<T>, Node<T>) BalanceBranch(Node<T> other)
+        public (ListNode<T>, ListNode<T>) BalanceBranch(ListNode<T> other)
         {
             var totalChildren = _childrenCount + other._childrenCount;
             var totalCount = Count + other.Count;
 
             var leftLength = totalChildren / 2;
             var rightLength = totalChildren - leftLength;
-            Node<T> left, right;
+            ListNode<T> left, right;
             if (Frozen)
             {
-                var children = new Node<T>[BranchFactor];
+                var children = new ListNode<T>[BranchFactor];
                 Array.Copy(Children, 0, children, 0, _childrenCount);
                 if (leftLength > _childrenCount) // copy the head of other into data's tail
                     Array.Copy(other.Children, 0, children, _childrenCount, leftLength - _childrenCount);
-                left = new Node<T>(children, leftLength);
+                left = new ListNode<T>(children, leftLength);
             }
             else
             {
@@ -714,7 +683,7 @@ namespace Atropos
             }
             if (other.Frozen)
             {
-                var children = new Node<T>[BranchFactor];
+                var children = new ListNode<T>[BranchFactor];
                 if (rightLength > other._childrenCount) // 11+4=>7+8; 
                 {
                     Array.Copy(Children, leftLength, children, 0, rightLength - other._childrenCount);
@@ -722,7 +691,7 @@ namespace Atropos
                 }
                 else
                     Array.Copy(other.Children, other._childrenCount- rightLength, children, 0, rightLength);
-                right = new Node<T>(children, rightLength);
+                right = new ListNode<T>(children, rightLength);
             }
             else
             {
@@ -741,18 +710,18 @@ namespace Atropos
             Debug.Assert(totalCount == left.Count + right.Count);
             return (left, right);
         }
-        public (Node<T>, Node<T>) BalanceWith(Node<T> other) 
+        public (ListNode<T>, ListNode<T>) BalanceWith(ListNode<T> other) 
             => IsLeaf 
                 ? BalanceLeaf(other) 
                 : BalanceBranch(other);
 
-        internal static Node<T> Fill(T value, int count)
+        internal static ListNode<T> Fill(T value, int count)
         {
             if (count <= PageSize)
             {
                 var data = new T[PageSize];
                 Array.Fill(data, value);
-                var n = new Node<T>(data, count);
+                var n = new ListNode<T>(data, count);
                 n.Freeze();
                 return n;
             }
@@ -777,7 +746,7 @@ namespace Atropos
                     blockSize *= BranchFactor;
                     levels++;
                 }
-                var children = new Node<T>[pageCount];
+                var children = new ListNode<T>[pageCount];
                 var pageSize = count / pageCount;
                 var page = Fill(value, pageSize);
                 var largePageCount = count % pageCount;
@@ -789,7 +758,7 @@ namespace Atropos
                     page = Fill(value, pageSize + 1);
                     children.AsSpan(smallPageCount).Fill(page);
                 }
-                var n = new Node<T>(children, pageCount);
+                var n = new ListNode<T>(children, pageCount);
                 n.Freeze();
                 return n;
             }

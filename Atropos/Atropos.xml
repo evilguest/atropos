@@ -16,7 +16,7 @@
             </summary>
             <exception cref="T:System.InvalidOperationException">Thrown when the deque is empty</exception>
         </member>
-        <member name="P:Atropos.IImmutableDeque`1.Right">
+        <member name="M:Atropos.IImmutableDeque`1.PeekRight">
             <summary>
             Peeks the rightmost element in the deque
             </summary>
@@ -188,7 +188,7 @@
             Peeks the leftmost element of the deque
             </summary>
         </member>
-        <member name="P:Atropos.ImmutableDeque`1.Right">
+        <member name="M:Atropos.ImmutableDeque`1.PeekRight">
             <summary>
             Peeks the rightmost element of the deque
             </summary>

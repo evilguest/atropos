@@ -236,7 +236,7 @@ namespace Atropos
             var root = _root;
 
             if (root.IsFull) // split the root
-                root = new Node<T>(_root.Split());
+                root = new ListNode<T>(_root.Split());
             root = root.InsertDataAt(index, value);
             
             return new ImmutableList<T>(root.Freeze());
@@ -261,7 +261,7 @@ namespace Atropos
             foreach (var item in items)
             {
                 if (root.IsFull) // split the root
-                    root = new Node<T>(root.Split());
+                    root = new ListNode<T>(root.Split());
                 root = root.InsertDataAt(index, item);
                 index++;
             }
@@ -342,7 +342,7 @@ namespace Atropos
         }*/
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal Node<T> _root;
+        internal ListNode<T> _root;
 
         /// <summary>
         /// Constructs a list from the value
@@ -353,13 +353,13 @@ namespace Atropos
         {
             if (count <= 0)
                 throw new ArgumentOutOfRangeException(nameof(count), "Count must be above zero");
-            _root = Node<T>.Fill(value, count).Freeze();
+            _root = ListNode<T>.Fill(value, count).Freeze();
         }
         /// <summary>
         /// Creates a new empty immutable list
         /// </summary>
-        public ImmutableList() => _root = Node<T>.Empty;
-        internal ImmutableList(Node<T> root)
+        public ImmutableList() => _root = ListNode<T>.Empty;
+        internal ImmutableList(ListNode<T> root)
         {
             Debug.Assert(root.Frozen);
             _root = root;
@@ -381,7 +381,7 @@ namespace Atropos
         public ImmutableList<T> Add(T value)
         {
             var root = (_root.IsFull
-                    ? new Node<T>(_root.Split())
+                    ? new ListNode<T>(_root.Split())
                     : _root)
                 .AddData(value);
             root.Freeze();
@@ -399,7 +399,7 @@ namespace Atropos
             foreach (var value in values)
             {
                 if (root.IsFull)
-                    root = new Node<T>(root.Split());
+                    root = new ListNode<T>(root.Split());
                 root = root.AddData(value);
             }
             return new ImmutableList<T>(root.Freeze());

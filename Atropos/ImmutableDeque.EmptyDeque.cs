@@ -35,7 +35,10 @@ namespace Atropos
                 throw _ioe;
             }
 
-            public T Right => throw _ioe;
+            public T PeekRight()
+            {
+                throw _ioe;
+            }
         }
     }
 }

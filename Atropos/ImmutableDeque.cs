@@ -185,7 +185,7 @@ namespace Atropos
             if (_right.Size > 1)
                 return new ImmutableDeque<T>(_left, _middle, _right.DequeueRight());
             if (!_middle.IsEmpty)
-                return new ImmutableDeque<T>(_left, _middle.DequeueRight(), _middle.Right);
+                return new ImmutableDeque<T>(_left, _middle.DequeueRight(), _middle.PeekRight());
             if (_left.Size > 1)
                 return new ImmutableDeque<T>(_left.DequeueRight(), _middle, new One(_left.Right));
             return new SingleDeque(_left.Right);
@@ -235,7 +235,10 @@ namespace Atropos
         /// <summary>
         /// Peeks the rightmost element of the deque
         /// </summary>
-        public T Right => _right.Right;
+        public T PeekRight()
+        {
+            return _right.Right;
+        }
         #endregion
     }
 }

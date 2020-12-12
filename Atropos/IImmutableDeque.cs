@@ -19,7 +19,7 @@ namespace Atropos
         /// Peeks the rightmost element in the deque
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when the deque is empty</exception>
-        T Right { get; }
+        T PeekRight();
 
         /// <summary>
         /// Enqueues the specified element to the left of the deque

@@ -53,6 +53,9 @@ namespace Atropos.Tests
             var t = ImmutableList.CreateRange(c);
             t += c;
             Assert.Equal(value, t.IndexOf(value));
+            Assert.Equal(-1, t.IndexOf(size + value));
+            Assert.Throws<IndexOutOfRangeException>(() => t.IndexOf(value, -1, 2 * size));
+            Assert.Throws<IndexOutOfRangeException>(() => t.IndexOf(value, 0, 2 * size + 1));
         }
         [Theory]
         [InlineData(5, 2)]
@@ -66,6 +69,9 @@ namespace Atropos.Tests
             var t = ImmutableList.CreateRange(c);
             t += c;
             Assert.Equal(size+value, t.LastIndexOf(value));
+            Assert.Equal(-1, t.LastIndexOf(size + value));
+            Assert.Throws<IndexOutOfRangeException>(() => t.LastIndexOf(value, 2 * size, 2 * size + 1));
+            Assert.Throws<IndexOutOfRangeException>(() => t.LastIndexOf(value, 2 * size + 1, 2 * size));
         }
         [Fact]
         public void TestIndexOfString()
@@ -308,6 +314,7 @@ namespace Atropos.Tests
         [Theory]
         [InlineData(10, 5, 5)]
         [InlineData(10, 0, 5)]
+        [InlineData(100, 0, 100)]
         public void TestRemoveCountSuccess(int size, int index, int count)
         {
             var t = Enumerable.Range(0, size).ToImmutableList();
@@ -321,6 +328,18 @@ namespace Atropos.Tests
         {
             var t = Enumerable.Range(0, size).ToImmutableList();
             Assert.Throws<IndexOutOfRangeException>(()=>t.RemoveRange(index, count));
+        }
+        [Theory]
+        [InlineData(10, 5, 5, 1)]
+        [InlineData(10, 0, 5, 2)]
+        [InlineData(100, 19, 8, 10)]
+        [InlineData(100, 0, 8, 12)]
+        public void TestRemoveCountBatch(int size, int index, int count, int batches)
+        {
+            var t = Enumerable.Range(0, size).ToImmutableList();
+            for(var i=0; i<batches;i++)
+                t = t.RemoveRange(index, count);
+            Assert.Equal(t.Count, size - count * batches);
         }
         [Fact]
         public void TestClone()

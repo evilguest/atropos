@@ -43,7 +43,7 @@ namespace Atropos.Tests
             Assert.Throws<InvalidOperationException>(() => d.DequeueLeft());
             Assert.Throws<InvalidOperationException>(() => d.DequeueRight());
             Assert.Throws<InvalidOperationException>(() => d.PeekLeft());
-            Assert.Throws<InvalidOperationException>(() => d.Right);
+            Assert.Throws<InvalidOperationException>(() => d.PeekRight());
             Assert.Throws<InvalidOperationException>(() => d.Peek());
             Assert.Same(d, d.Clear());
             Assert.Same(d, ((IImmutableQueue<int>)d).Clear());
@@ -73,51 +73,92 @@ namespace Atropos.Tests
             // 0
             d = d.EnqueueRight(0);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.PeekRight());
 
             // 0, 1
             d = d.EnqueueRight(1);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.PeekRight());
 
             // 0, 1, 2
             d = d.EnqueueRight(2);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.PeekRight());
 
             // 0, 1, 2, 3
             d = d.EnqueueRight(3);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.PeekRight());
 
             // 0, 1, 2, 3, 4
             d = d.EnqueueRight(4);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(4, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(4, d.PeekRight());
+            Assert.Same(ImmutableDeque<int>.Empty, d.Clear());
 
             // 1, 2, 3, 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(1, d.PeekLeft()); Assert.Equal(4, d.Right);
+            Assert.Equal(1, d.PeekLeft()); Assert.Equal(4, d.PeekRight());
 
             // 2, 3, 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(2, d.PeekLeft()); Assert.Equal(4, d.Right);
+            Assert.Equal(2, d.PeekLeft()); Assert.Equal(4, d.PeekRight());
 
             // 3, 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(3, d.PeekLeft()); Assert.Equal(4, d.Right);
+            Assert.Equal(3, d.PeekLeft()); Assert.Equal(4, d.PeekRight());
 
             // 4
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(4, d.PeekLeft()); Assert.Equal(4, d.Right);
+            Assert.Equal(4, d.PeekLeft()); Assert.Equal(4, d.PeekRight());
 
             //
             d = d.DequeueLeft();
             Assert.True(d.IsEmpty);
+        }
+        private class TestImmutableDeque<T> : IImmutableDeque<T>
+        {
+            public TestImmutableDeque(IEnumerable<T> range)
+                => Range = range;
+
+            public T PeekRight()
+            {
+                throw new NotImplementedException();
+            }
+
+            public bool IsEmpty => !Range.Any();
+
+            public IEnumerable<T> Range { get; private set; }
+
+            public IImmutableDeque<T> Clear() => throw new NotImplementedException();
+
+            public IImmutableDeque<T> Concat(IImmutableDeque<T> right) => throw new NotImplementedException();
+
+            public IImmutableQueue<T> Dequeue() => DequeueLeft();
+
+            public IImmutableDeque<T> DequeueLeft() => new TestImmutableDeque<T>(Range.Skip(1));
+
+            public IImmutableDeque<T> DequeueRight() => throw new NotImplementedException();
+
+            public IImmutableQueue<T> Enqueue(T value) => throw new NotImplementedException();
+
+            public IImmutableDeque<T> EnqueueLeft(T value) => new TestImmutableDeque<T>((new T[1] { value }).Concat(Range));
+
+            public IImmutableDeque<T> EnqueueRight(T value) => throw new NotImplementedException();
+
+            public IEnumerator<T> GetEnumerator() => Range.GetEnumerator();
+
+            public T Peek() => Range.First();
+
+
+            public T PeekLeft() => Range.First();
+            IImmutableQueue<T> IImmutableQueue<T>.Clear() => throw new NotImplementedException();
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
         }
         [Fact]
         public void LeftToRight()
@@ -125,40 +166,40 @@ namespace Atropos.Tests
             var d = ImmutableDeque<int>.Empty;
             // 0
             d = d.EnqueueLeft(0);
-            Assert.Equal(0, d.Right); Assert.Equal(0, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(0, d.PeekLeft());
 
             // 1, 0
             d = d.EnqueueLeft(1);
-            Assert.Equal(0, d.Right); Assert.Equal(1, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(1, d.PeekLeft());
 
             // 2, 1, 0
             d = d.EnqueueLeft(2);
 
-            Assert.Equal(0, d.Right); Assert.Equal(2, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(2, d.PeekLeft());
 
             // 3, 2, 1, 0
             d = d.EnqueueLeft(3);
-            Assert.Equal(0, d.Right); Assert.Equal(3, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(3, d.PeekLeft());
 
             // 4, 3, 2, 1, 0
             d = d.EnqueueLeft(4);
-            Assert.Equal(0, d.Right); Assert.Equal(4, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(4, d.PeekLeft());
 
             // 4, 3, 2, 1
             d = d.DequeueRight();
-            Assert.Equal(1, d.Right); Assert.Equal(4, d.PeekLeft());
+            Assert.Equal(1, d.PeekRight()); Assert.Equal(4, d.PeekLeft());
 
             // 4, 3, 2
             d = d.DequeueRight();
-            Assert.Equal(2, d.Right); Assert.Equal(4, d.PeekLeft());
+            Assert.Equal(2, d.PeekRight()); Assert.Equal(4, d.PeekLeft());
 
             // 4, 3
             d = d.DequeueRight();
-            Assert.Equal(3, d.Right); Assert.Equal(4, d.PeekLeft());
+            Assert.Equal(3, d.PeekRight()); Assert.Equal(4, d.PeekLeft());
 
             // 4
             d = d.DequeueRight();
-            Assert.Equal(4, d.Right); Assert.Equal(4, d.PeekLeft());
+            Assert.Equal(4, d.PeekRight()); Assert.Equal(4, d.PeekLeft());
 
             //
             d = d.DequeueRight();
@@ -172,47 +213,67 @@ namespace Atropos.Tests
             // 0
             d = d.EnqueueRight(0);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.PeekRight());
 
             // 0, 1
             d = d.EnqueueRight(1);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.PeekRight());
 
             // 0, 1, 2
             d = d.EnqueueRight(2);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.PeekRight());
 
             // 0, 1, 2, 3
             d = d.EnqueueRight(3);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.PeekRight());
 
             // 0, 1, 2, 3, 4
             d = d.EnqueueRight(4);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(4, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(4, d.PeekRight());
+
+            // 0, 1, 2, 3, 4, 5
+            d = d.EnqueueRight(5);
+            Assert.False(d.IsEmpty);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(5, d.PeekRight());
+
+            // 0, 1, 2, 3, 4, 5, 6
+            d = d.EnqueueRight(6);
+            Assert.False(d.IsEmpty);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(6, d.PeekRight());
+
+            // 0, 1, 2, 3, 4, 5
+            d = d.DequeueRight();
+            Assert.False(d.IsEmpty);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(5, d.PeekRight());
+
+            // 0, 1, 2, 3, 4
+            d = d.DequeueRight();
+            Assert.False(d.IsEmpty);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(4, d.PeekRight());
 
             // 0, 1, 2, 3
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(3, d.PeekRight());
 
             // 0, 1, 2 
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(2, d.PeekRight());
 
             // 0, 1
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(1, d.PeekRight());
 
             // 0
             d = d.DequeueRight();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.Right);
+            Assert.Equal(0, d.PeekLeft()); Assert.Equal(0, d.PeekRight());
 
             //
             d = d.DequeueRight();
@@ -227,47 +288,65 @@ namespace Atropos.Tests
             // 0
             d = d.EnqueueLeft(0);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(0, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(0, d.PeekLeft());
 
             // 1, 0
             d = d.EnqueueLeft(1);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(1, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(1, d.PeekLeft());
 
             // 2, 1, 0
             d = d.EnqueueLeft(2);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(2, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(2, d.PeekLeft());
 
             // 3, 2, 1, 0
             d = d.EnqueueLeft(3);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(3, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(3, d.PeekLeft());
 
             // 4, 3, 2, 1, 0
             d = d.EnqueueLeft(4);
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(4, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(4, d.PeekLeft());
+
+            // 5, 4, 3, 2, 1, 0
+            d = d.EnqueueLeft(5);
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(5, d.PeekLeft());
+
+            // 6, 5, 4, 3, 2, 1, 0
+            d = d.EnqueueLeft(6);
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(6, d.PeekLeft());
+
+            // 5, 4, 3, 2, 1, 0
+            d = d.DequeueLeft();
+            Assert.False(d.IsEmpty);
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(5, d.PeekLeft());
+
+            // 4, 3, 2, 1, 0
+            d = d.DequeueLeft();
+            Assert.False(d.IsEmpty);
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(4, d.PeekLeft());
 
             // 3, 2, 1, 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(3, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(3, d.PeekLeft());
 
             // 2, 1, 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(2, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(2, d.PeekLeft());
 
             // 1, 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(1, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(1, d.PeekLeft());
 
             // 0
             d = d.DequeueLeft();
             Assert.False(d.IsEmpty);
-            Assert.Equal(0, d.Right); Assert.Equal(0, d.PeekLeft());
+            Assert.Equal(0, d.PeekRight()); Assert.Equal(0, d.PeekLeft());
 
             //
             d = d.DequeueLeft();
@@ -308,7 +387,8 @@ namespace Atropos.Tests
             var l = Enumerable.Range(0, leftSize);
             var r = Enumerable.Range(0, rightSize);
             var d = ImmutableDeque.CreateRange(l).Concat(ImmutableDeque.CreateRange(r));
-            Assert.Equal<int>(d, l.Concat(r));
+            Assert.Equal(l.Concat(r), d);
+            Assert.Equal(l.Concat(r), ImmutableDeque.CreateRange(l).Concat(new TestImmutableDeque<int>(r)));
         }
 
         [Theory]
@@ -323,9 +403,9 @@ namespace Atropos.Tests
             var r = Enumerable.Range(0, size);
             var d = ImmutableDeque.CreateRange(r);
             var d1 = d.AddRange(r);
-            Assert.Equal<int>(r.Concat(r), d1);
+            Assert.Equal(r.Concat(r), d1);
             var d2 = d.AddRange(d);
-            Assert.Equal<int>(r.Concat(r), d2);
+            Assert.Equal(r.Concat(r), d2);
         }
     }
 }

@@ -20,7 +20,6 @@ The type of deque elements
 ### Properties
 - [Empty](./ImmutableDeque-T--Empty.md 'Atropos.ImmutableDeque&lt;T&gt;.Empty')
 - [IsEmpty](./ImmutableDeque-T--IsEmpty.md 'Atropos.ImmutableDeque&lt;T&gt;.IsEmpty')
-- [Right](./ImmutableDeque-T--Right.md 'Atropos.ImmutableDeque&lt;T&gt;.Right')
 ### Methods
 - [Clear()](./ImmutableDeque-T--Clear().md 'Atropos.ImmutableDeque&lt;T&gt;.Clear()')
 - [Concat(Atropos.IImmutableDeque&lt;T&gt;)](./ImmutableDeque-T--Concat(IImmutableDeque-T-).md 'Atropos.ImmutableDeque&lt;T&gt;.Concat(Atropos.IImmutableDeque&lt;T&gt;)')
@@ -33,3 +32,4 @@ The type of deque elements
 - [GetEnumerator()](./ImmutableDeque-T--GetEnumerator().md 'Atropos.ImmutableDeque&lt;T&gt;.GetEnumerator()')
 - [Peek()](./ImmutableDeque-T--Peek().md 'Atropos.ImmutableDeque&lt;T&gt;.Peek()')
 - [PeekLeft()](./ImmutableDeque-T--PeekLeft().md 'Atropos.ImmutableDeque&lt;T&gt;.PeekLeft()')
+- [PeekRight()](./ImmutableDeque-T--PeekRight().md 'Atropos.ImmutableDeque&lt;T&gt;.PeekRight()')

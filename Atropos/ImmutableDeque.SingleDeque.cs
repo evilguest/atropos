@@ -49,7 +49,10 @@ namespace Atropos
                 return item;
             }
 
-            public T Right => item;
+            public T PeekRight()
+            {
+                return item;
+            }
             #endregion
         }
     }

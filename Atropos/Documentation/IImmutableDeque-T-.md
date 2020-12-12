@@ -16,8 +16,6 @@ Implements [System.Collections.Immutable.IImmutableQueue&lt;](https://docs.micro
 `T`  
 The type of the Deque elements  
   
-### Properties
-- [Right](./IImmutableDeque-T--Right.md 'Atropos.IImmutableDeque&lt;T&gt;.Right')
 ### Methods
 - [Clear()](./IImmutableDeque-T--Clear().md 'Atropos.IImmutableDeque&lt;T&gt;.Clear()')
 - [Concat(Atropos.IImmutableDeque&lt;T&gt;)](./IImmutableDeque-T--Concat(IImmutableDeque-T-).md 'Atropos.IImmutableDeque&lt;T&gt;.Concat(Atropos.IImmutableDeque&lt;T&gt;)')
@@ -26,3 +24,4 @@ The type of the Deque elements
 - [EnqueueLeft(T)](./IImmutableDeque-T--EnqueueLeft(T).md 'Atropos.IImmutableDeque&lt;T&gt;.EnqueueLeft(T)')
 - [EnqueueRight(T)](./IImmutableDeque-T--EnqueueRight(T).md 'Atropos.IImmutableDeque&lt;T&gt;.EnqueueRight(T)')
 - [PeekLeft()](./IImmutableDeque-T--PeekLeft().md 'Atropos.IImmutableDeque&lt;T&gt;.PeekLeft()')
+- [PeekRight()](./IImmutableDeque-T--PeekRight().md 'Atropos.IImmutableDeque&lt;T&gt;.PeekRight()')
