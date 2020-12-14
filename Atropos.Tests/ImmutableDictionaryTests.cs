@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using NUnit.Framework;
 
@@ -143,7 +144,7 @@ namespace Atropos.Tests
                 new KeyValuePair<int, int>(2, 3),
                 new KeyValuePair<int, int>(3, 4)
             };
-            dictionary.AddRange(pairs);
+            dictionary = dictionary.AddRange(pairs);
             dictionary = dictionary.Clear();
 
             Assert.True(dictionary.Count == 0);
@@ -168,7 +169,7 @@ namespace Atropos.Tests
                 new KeyValuePair<int, int>(2, 3),
                 new KeyValuePair<int, int>(3, 4)
             };
-            dictionary.AddRange(pairs);
+            dictionary = dictionary.AddRange(pairs);
             dictionary = dictionary.RemoveRange(pairs.Select(it => it.Key));
 
             Assert.True(dictionary.Count == 0);
@@ -273,6 +274,191 @@ namespace Atropos.Tests
             CollectionAssert.AreEqual(Enumerable.Range(0, 10), dictionary.Values);
             CollectionAssert.AreEqual(Enumerable.Range(0, 10), dictionary.Keys);
             CollectionAssert.AreEqual(Enumerable.Range(0, 10), dictionary.Select(pair => pair.Key));
+        }
+
+        // [Test]
+        // public void InterfaceMethods_WorksAsExpected()
+        // {
+        //     IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+        //
+        //     dictionary = dictionary.Add(1, 2);
+        //     Assert.AreEqual(2, dictionary[1]);
+        //
+        //     dictionary = dictionary.AddRange(new List<KeyValuePair<int, int>>
+        //     {
+        //         new KeyValuePair<int, int>(3, 4),
+        //         new KeyValuePair<int, int>(5, 6)
+        //     });
+        //
+        //     Assert.AreEqual(4, dictionary[3]);
+        //     Assert.AreEqual(6, dictionary[5]);
+        //
+        //     dictionary = dictionary.RemoveRange(new[] {1, 3});
+        //
+        //     Assert.AreEqual(6, dictionary[5]);
+        //
+        //     dictionary = dictionary.
+        // }
+
+        [Test]
+        public void InterfaceAddValue_Overwritten_WhenValueExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>().Add(1, 2);
+            dictionary = dictionary.Add(1, 3);
+            Assert.AreEqual(3, dictionary[1]);
+        }
+
+        [Test]
+        public void InterfaceAddRange_Test()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary = dictionary.AddRange(pairs);
+            Assert.AreEqual(2, dictionary[1]);
+            Assert.AreEqual(3, dictionary[2]);
+            Assert.AreEqual(4, dictionary[3]);
+        }
+
+        [Test]
+        public void InterfaceSetItem_AddElement_WhenNotExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            dictionary = dictionary.SetItem(1, 2);
+            Assert.AreEqual(2, dictionary[1]);
+        }
+
+        [Test]
+        public void InterfaceSetItem_Overwritten_WhenValueExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            dictionary = dictionary.SetItem(1, 2);
+            dictionary = dictionary.SetItem(1, 3);
+            Assert.AreEqual(3, dictionary[1]);
+        }
+
+        [Test]
+        public void InterfaceSetItems_AddElements_WhenNotExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary = dictionary.SetItems(pairs);
+            Assert.AreEqual(2, dictionary[1]);
+            Assert.AreEqual(3, dictionary[2]);
+            Assert.AreEqual(4, dictionary[3]);
+        }
+
+        [Test]
+        public void InterfaceSetItems_AddElements_WhenValuesExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary = dictionary.SetItems(pairs);
+
+            var pairsWithNewValues = new[]
+            {
+                new KeyValuePair<int, int>(1, 5),
+                new KeyValuePair<int, int>(2, 6),
+                new KeyValuePair<int, int>(3, 7)
+            };
+            dictionary = dictionary.SetItems(pairsWithNewValues);
+
+            Assert.AreEqual(5, dictionary[1]);
+            Assert.AreEqual(6, dictionary[2]);
+            Assert.AreEqual(7, dictionary[3]);
+        }
+
+        [Test]
+        public void InterfaceClear_ReturnsEmpty_WhenHasElements()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary = dictionary.AddRange(pairs);
+            dictionary = dictionary.Clear();
+
+            Assert.True(dictionary.Count == 0);
+        }
+
+        [Test]
+        public void InterfaceClear_ReturnsThis_WhenEmpty()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            var clearDictionary = dictionary.Clear();
+
+            Assert.AreSame(dictionary, clearDictionary);
+        }
+
+        [Test]
+        public void InterfaceRemoveRange_ReturnsEmpty_WhenRemoveAllElements()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            var pairs = new[]
+            {
+                new KeyValuePair<int, int>(1, 2),
+                new KeyValuePair<int, int>(2, 3),
+                new KeyValuePair<int, int>(3, 4)
+            };
+            dictionary = dictionary.AddRange(pairs);
+            dictionary = dictionary.RemoveRange(pairs.Select(it => it.Key));
+
+            Assert.True(dictionary.Count == 0);
+        }
+
+        [Test]
+        public void InterfaceTryGetKey_ReturnsTrue_WhenExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            dictionary = dictionary.Add(1, 2);
+            Assert.True(dictionary.TryGetKey(1, out var actualKey));
+            Assert.AreEqual(1, actualKey);
+        }
+
+        [Test]
+        public void InterfaceTryGetKey_ReturnsFalse_WhenNotExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            dictionary = dictionary.Add(1, 2);
+            Assert.False(dictionary.TryGetKey(3, out var actualKey));
+            Assert.AreEqual(3, actualKey);
+        }
+
+        [Test]
+        public void InterfaceContains_ReturnsTrue_WhenPairExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            dictionary = dictionary.Add(1, 2);
+            dictionary = dictionary.Add(2, 3);
+            Assert.True(dictionary.Contains(new KeyValuePair<int, int>(1, 2)));
+            Assert.True(dictionary.Contains(new KeyValuePair<int, int>(2, 3)));
+        }
+
+        [Test]
+        public void InterfaceContains_ReturnsFalse_WhenPairNotExists()
+        {
+            IImmutableDictionary<int, int> dictionary = new ImmutableDictionary<int, int>();
+            dictionary = dictionary.Add(1, 2);
+            dictionary = dictionary.Add(2, 3);
+            Assert.False(dictionary.Contains(new KeyValuePair<int, int>(1, 3)));
+            Assert.False(dictionary.Contains(new KeyValuePair<int, int>(2, 2)));
         }
     }
 }
