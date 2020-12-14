@@ -263,12 +263,6 @@ namespace Atropos
         {
             return GetEnumerator();
         }
-
-        [Pure]
-        public override string ToString()
-        {
-            return $"Node{{{Value}}}";
-        }
     }
 
     internal static class TreeNodeExtensions
