@@ -45,6 +45,7 @@ namespace Atropos.Tests
             Assert.Throws<InvalidOperationException>(() => d.PeekLeft());
             Assert.Throws<InvalidOperationException>(() => d.PeekRight());
             Assert.Throws<InvalidOperationException>(() => d.Peek());
+            Assert.Throws<InvalidOperationException>(() => d.Dequeue());
             Assert.Same(d, d.Clear());
             Assert.Same(d, ((IImmutableQueue<int>)d).Clear());
         }

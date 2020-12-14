@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BenchmarkDotNet.Attributes;
 using System.Collections.Immutable;
-using System.Text;
 
 namespace Atropos.Benchmarks.Deque
 {
@@ -9,6 +7,7 @@ namespace Atropos.Benchmarks.Deque
     {
         public AmortizedDequeueInt() : base(i => i) { }
 
+        [Benchmark]
         public override IImmutableQueue<int> Atropos()
         {
             IImmutableQueue<int> a = _A;
@@ -17,6 +16,7 @@ namespace Atropos.Benchmarks.Deque
             return a;
         }
 
+        [Benchmark]
         public override IImmutableQueue<int> Official()
         {
             IImmutableQueue<int> c = _C;
@@ -25,6 +25,7 @@ namespace Atropos.Benchmarks.Deque
             return c;
         }
 
+        [Benchmark]
         public override IImmutableQueue<int> Tunnel()
         {
             IImmutableQueue<int> t = _T;
