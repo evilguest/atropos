@@ -128,6 +128,25 @@ namespace Atropos.Tests
             Assert.AreEqual(9, dictionary[9]);
             Assert.AreEqual(8, dictionary[8]);
             Assert.AreEqual(7, dictionary[7]);
+
+            dictionary = new ImmutableDictionary<int, int>()
+                .Add(7, 6)
+                .Add(8, 7)
+                .Add(9, 8)
+                .Add(11, 9)
+                .Add(10, 10);
+
+            dictionary = dictionary.SetItem(7, 10);
+            dictionary = dictionary.SetItem(8, 9);
+            dictionary = dictionary.SetItem(9, 8);
+            dictionary = dictionary.SetItem(11, 7);
+            dictionary = dictionary.SetItem(10, 6);
+
+            Assert.AreEqual(10, dictionary[7]);
+            Assert.AreEqual(9, dictionary[8]);
+            Assert.AreEqual(8, dictionary[9]);
+            Assert.AreEqual(7, dictionary[11]);
+            Assert.AreEqual(6, dictionary[10]);
         }
 
         [Test]
@@ -315,6 +334,10 @@ namespace Atropos.Tests
                 dictionary = dictionary.Add(i, i);
             }
 
+            var emptyDictionary = new ImmutableDictionary<int, int>();
+
+            CollectionAssert.AreEqual(new int[]{}, emptyDictionary.Values);
+            CollectionAssert.AreEqual(new int[]{}, emptyDictionary.Keys);
             CollectionAssert.AreEqual(Enumerable.Range(0, 10), dictionary.Values);
             CollectionAssert.AreEqual(Enumerable.Range(0, 10), dictionary.Keys);
             CollectionAssert.AreEqual(Enumerable.Range(0, 10), dictionary.Select(pair => pair.Key));
