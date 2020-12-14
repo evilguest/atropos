@@ -78,6 +78,16 @@
             Otherwise a new <see cref="T:Atropos.ImmutableDeque`1"/>  created from the items passed in the <paramref name="items"/> argument.</returns>
             <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="items"/> is null</exception>
         </member>
+        <member name="M:Atropos.ImmutableDeque.ToDeque``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Initializes a new immutable deque to the list of items passed
+            </summary>
+            <typeparam name="T">Type of the deque element</typeparam>
+            <param name="items">The collection to use for initialization</param>
+            <returns>If the passed argument is <see cref="T:Atropos.IImmutableDeque`1"/> then returns it without change.
+            Otherwise a new <see cref="T:Atropos.ImmutableDeque`1"/>  created from the items passed in the <paramref name="items"/> argument.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown when the <paramref name="items"/> is null</exception>
+        </member>
         <member name="M:Atropos.ImmutableDeque.AddRange``1(Atropos.IImmutableDeque{``0},System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Adds a range of item to the right of this queue

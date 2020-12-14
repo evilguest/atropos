@@ -30,6 +30,17 @@ namespace Atropos
                 d = d.EnqueueRight(item);
             return d;
         }
+
+        /// <summary>
+        /// Initializes a new immutable deque to the list of items passed
+        /// </summary>
+        /// <typeparam name="T">Type of the deque element</typeparam>
+        /// <param name="items">The collection to use for initialization</param>
+        /// <returns>If the passed argument is <see cref="IImmutableDeque{T}"/> then returns it without change.
+        /// Otherwise a new <see cref="ImmutableDeque{T}"/>  created from the items passed in the <paramref name="items"/> argument.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="items"/> is null</exception>
+        public static IImmutableDeque<T> ToDeque<T>(this IEnumerable<T> items)
+            => CreateRange(items);
         /// <summary>
         /// Adds a range of item to the right of this queue
         /// </summary>

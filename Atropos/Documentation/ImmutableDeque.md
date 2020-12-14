@@ -8,3 +8,4 @@ Inheritance [System.Object](https://docs.microsoft.com/en-us/dotnet/api/System.O
 ### Methods
 - [AddRange&lt;T&gt;(Atropos.IImmutableDeque&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableDeque-AddRange-T-(thisIImmutableDeque-T-_IEnumerable-T-).md 'Atropos.ImmutableDeque.AddRange&lt;T&gt;(Atropos.IImmutableDeque&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;)')
 - [CreateRange&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableDeque-CreateRange-T-(IEnumerable-T-).md 'Atropos.ImmutableDeque.CreateRange&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)')
+- [ToDeque&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)](./ImmutableDeque-ToDeque-T-(thisIEnumerable-T-).md 'Atropos.ImmutableDeque.ToDeque&lt;T&gt;(System.Collections.Generic.IEnumerable&lt;T&gt;)')

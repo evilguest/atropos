@@ -408,5 +408,14 @@ namespace Atropos.Tests
             var d2 = d.AddRange(d);
             Assert.Equal(r.Concat(r), d2);
         }
+        [Fact]
+        public void AsImmutableQueue()
+        {
+            IImmutableQueue<int> q = Enumerable.Range(0, 2).ToDeque();
+            Assert.Same(ImmutableDeque<int>.Empty, q.Clear());
+            Assert.Equal(0, q.Peek());
+            Assert.Equal(1, q.Dequeue().Peek());
+            Assert.Equal(2, q.Enqueue(2).Dequeue().Dequeue().Peek());
+        }
     }
 }
