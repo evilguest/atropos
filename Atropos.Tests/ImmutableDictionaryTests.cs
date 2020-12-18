@@ -301,6 +301,27 @@ namespace Atropos.Tests
         }
 
         [Test]
+        public void Add_OverwriteValue_WhenValueAlreadyExists()
+        {
+            var dictionary = new ImmutableDictionary<int, string>()
+                .Add(42, "42")
+                .Add(42, "43")
+                .Add(1, "1")
+                .Add(2, "2")
+                .Add(1, "10")
+                .Add(3, "3")
+                .Add(4, "4")
+                .Add(4, "40")
+                .Add(5, "5")
+                .Add(42, "44");
+
+            Assert.AreEqual(6, dictionary.Count);
+            Assert.AreEqual("44", dictionary[42]);
+            Assert.AreEqual("10", dictionary[1]);
+            Assert.AreEqual("40", dictionary[4]);
+        }
+
+        [Test]
         public void ModifyDictionary_OriginalNotChanged()
         {
             var empty = new ImmutableDictionary<int, int>();
