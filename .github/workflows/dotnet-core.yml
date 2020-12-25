@@ -32,17 +32,22 @@ jobs:
       run: dotnet build -c Release --no-restore
     - name: Run benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*List.Add*";
+    - name: Update benchmark results 
+      uses: EndBug/add-and-commit@v6
+      with:
+        message: 'Updating the benchmark results'
+        add: './Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*-report.csv'
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Warm-up R
       run: cd Atropos.Benchmarks; Rscript Warmup.R
     - name: Process benchmarks output with R
       run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
-    - name: Update benchmark results and charts
+    - name: Update benchmark charts
       uses: EndBug/add-and-commit@v6
       with:
-        message: 'Updating the benchmark results and charts'
-        add: '["Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv", "Atropos.Benchmarks/*.png"]'
+        message: 'Updating the benchmark charts'
+        add: './Atropos.Benchmarks/*.png'
       env:
       # This is necessary in order to push a commit to the repo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
