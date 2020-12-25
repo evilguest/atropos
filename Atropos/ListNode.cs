@@ -29,12 +29,12 @@ namespace Atropos
         public static unsafe int Length => sizeof(Indexes)/sizeof(int);
     }
     [StructLayout(LayoutKind.Explicit)]
-    internal unsafe struct NodeRef<T>
+    internal unsafe struct ChildrenRef<T>
     {
         [FieldOffset(0)]
-        public ListNode<T> Node;
+        public ListNode<T>[] Branches;
         [FieldOffset(0)]
-        public T[] Data;
+        public T[][] Leaves;
     }
 
     internal class ListNode
@@ -62,6 +62,9 @@ namespace Atropos
         internal static readonly ListNode<T> Empty = new ListNode<T>(new T[0], 0);
         private int _count;
         private int _childrenCount;
+        private int ChildrenCount => _childrenCount & 0xFFFF;
+        private bool IsLeafBranch => 
+        
 
         public ListNode<T> Freeze()
         {
@@ -165,46 +168,21 @@ namespace Atropos
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static (int child, int index) FindChildIndex(ListNode<T> node, int index)
         {
-            if (index < node._indexes.childIndex7 || node._indexes.childIndex7 == 0)
-            {
-                if (index < node._indexes.childIndex3 || node._indexes.childIndex3 == 0)
-                {
-                    if (index < node._indexes.childIndex1 || node._indexes.childIndex1 == 0)
-                    { 
-                        if(index < node._indexes.childIndex0 )
-                            return (0, index);
-                        else // >= child0
-                            return (1, index - node._indexes.childIndex0);
-                    }
-                    else
-                    {
-                        if (index < node._indexes.childIndex2 || node._indexes.childIndex2 == 0)
-                            return (2, index - node._indexes.childIndex1);
-                        else // >= child2
-                            return (3, index - node._indexes.childIndex2);
-                    }
-                }
-                else // >= child3
-                {
-                    if (index < node._indexes.childIndex5 || node._indexes.childIndex5 == 0)
-                    {
-                        if (index < node._indexes.childIndex4 || node._indexes.childIndex4 == 0)
-                            return (4, index - node._indexes.childIndex3);
-                        else // > child5
-                            return (5, index - node._indexes.childIndex4);
-                    }
-                    else // >= child5
-                    {
-                        if (index < node._indexes.childIndex6 || node._indexes.childIndex6 == 0)
-                            return (6, index - node._indexes.childIndex5);
-                        else // >= child6
-                            return (7, index - node._indexes.childIndex6);
-                    }
-                }
-            }
-            else // >= child7
-            {
-                return index < node._indexes.childIndexB || node._indexes.childIndexB == 0
+            return index < node._indexes.childIndex7 || node._indexes.childIndex7 == 0
+                ? index < node._indexes.childIndex3 || node._indexes.childIndex3 == 0
+                    ? index < node._indexes.childIndex1 || node._indexes.childIndex1 == 0
+                        ? index < node._indexes.childIndex0 ? (0, index) : (1, index - node._indexes.childIndex0)
+                        : index < node._indexes.childIndex2 || node._indexes.childIndex2 == 0
+                            ? (2, index - node._indexes.childIndex1)
+                            : (3, index - node._indexes.childIndex2)
+                    : index < node._indexes.childIndex5 || node._indexes.childIndex5 == 0
+                        ? index < node._indexes.childIndex4 || node._indexes.childIndex4 == 0
+                            ? (4, index - node._indexes.childIndex3)
+                            : (5, index - node._indexes.childIndex4)
+                        : index < node._indexes.childIndex6 || node._indexes.childIndex6 == 0
+                            ? (6, index - node._indexes.childIndex5)
+                            : (7, index - node._indexes.childIndex6)
+                : index < node._indexes.childIndexB || node._indexes.childIndexB == 0
                     ? index < node._indexes.childIndex9 || node._indexes.childIndex9 == 0
                         ? index < node._indexes.childIndex8 || node._indexes.childIndex8 == 0
                             ? (8, index - node._indexes.childIndex7)
@@ -219,7 +197,6 @@ namespace Atropos
                         : index < node._indexes.childIndexE || node._indexes.childIndexE == 0
                             ? (14, index - node._indexes.childIndexD)
                             : (15, index - node._indexes.childIndexE);
-            }
         }
 
 

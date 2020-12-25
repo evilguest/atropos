@@ -11,7 +11,7 @@ namespace Atropos.Benchmarks.List
             => ListSizes();
         public static IEnumerable<int> ListSizes()
         {
-            foreach (var i in Enumerable.Range(1, 16))
+            foreach (var i in Enumerable.Range(1, 3)) // 16
             {
                 var p = (1 << i);
                 yield return p - p / (2 * i);

@@ -39,7 +39,7 @@ jobs:
     - name: Process benchmarks output
       run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
     - name: Update benchmark charts
-      uses: EndBug/add-and-commit@v5
+      uses: EndBug/add-and-commit@v6
       with:
         message: 'Updating the benchmark results and charts'
         add: '["Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv", "Atropos.Benchmarks/*.png"]'
