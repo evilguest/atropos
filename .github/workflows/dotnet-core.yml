@@ -31,7 +31,7 @@ jobs:
     - name: list-benchmarks
       run: |
         cd Atropos.Benchmarks
-        echo "::set-output name=matrix::{\"benchmark\": $(sudo dotnet run -c Release --no-build --list Flat | jq -cR . | jq -cs)}"
+        echo "::set-output name=matrix::{\"benchmark\": $(sudo dotnet run -c Release --no-build --list Flat \| jq -cR . \| jq -cs)}"
   benchmark:
     needs: build
     runs-on: ubuntu-latest
