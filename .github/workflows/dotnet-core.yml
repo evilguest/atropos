@@ -8,9 +8,9 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
+    outputs: 
+      matrix: ${{ steps.list-benchmarks.outputs.matrix}}
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -26,14 +26,22 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./Atropos.Tests/TestResults/coverage.info   
-    - name: Install dependencies
-      run: dotnet restore
     - name: Build Release
-      run: dotnet build -c Release --no-restore
+      run: dotnet build -c Release 
+    - name: list-benchmarks
+      run: |
+        cd Atropos.Benchmarks
+        echo "::set-output name=matrix::{\"benchmark\": ${{sudo dotnet run -c Release --no-build --list Flat | jq -cR . | jq -cs}} }"
+  benchmark:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.build.outputs.matrix)}}
+    steps:
     - name: Run benchmarks
-      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*List.Add*";
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter ${{matrix.benchmark}};
     - name: Check benchmark results
-      run: ls ./Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results
+      run: ls ./Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv
     - name: Update benchmark results 
       uses: EndBug/add-and-commit@v6
       with:
