@@ -47,7 +47,7 @@ jobs:
     - name: Build Release
       run: dotnet build -c Release 
     - name: Run benchmarks
-      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter ${{matrix.benchmark}};
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter ${{matrix.benchmark}}.*;
     - name: Check benchmark results
       run: ls ./Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv
     - name: Update benchmark results 
