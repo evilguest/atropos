@@ -41,7 +41,7 @@ jobs:
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --list Flat | jq -cR . | jq -cs . > benchmarks.json
     - name: Display Benchmarks
       run: cat Atropos.Benchmarks/benchmarks.json
-    - name: set-output
+    - name: Send the list of benchmarks to the Benchmark job
       id: set-output
       run: echo "::set-output name=matrix::{\"benchmark\":$(cat Atropos.Benchmarks/benchmarks.json)}"
   benchmark:
@@ -52,11 +52,11 @@ jobs:
         benchmark: ["Atropos.Benchmarks.List.AddInt.Official"]
     steps:
     - name: test dependent job output
-      run: echo ${{needs.list-benchmark.outputs.matrix}}
+      run: echo ${{needs.list-benchmarks.outputs.matrix}}
     - name: test dependent job output
-      run: echo ${{fromJson(needs.list-benchmark.outputs.matrix).benchmark}}
+      run: echo ${{fromJson(needs.list-benchmarks.outputs.matrix).benchmark}}
     - name: test dependent job output
-      run: echo ${{fromJson(needs.list-benchmark.outputs.matrix).benchmark[0]}}
+      run: echo ${{fromJson(needs.list-benchmarks.outputs.matrix).benchmark[0]}}
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
