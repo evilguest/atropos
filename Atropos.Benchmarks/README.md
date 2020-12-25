@@ -38,7 +38,7 @@ The [List/AddRange.cs](./List/AddRange.cs) benchmark adds 10 items to the list o
 The immutable deque is does extend the functionality of the System.Collections.ImmutableQueue by allowing enqueuing and dequeuing from both ends. 
 Since the operations are perfectly symmetric, the benchmarks compare the behavior against the IImmutableQueue implementations offered by the "Official" code from .Net Core and the TunnelVision's ImmutableTreeQueue. Note that the latter does internally rely on the same IImmutableList discussed above, obviously counting on the B+-tree performance that covers the insertions-at-the-end and removals-at-the-start just as well as any other operations.
 Our implementation does attempt to benefit from the fact that the deque is never accessed "in the middle"; so we could choose a different layout than the traditional tree, to improve the asymptotics of the enqueue/dequeue operations over O(log(Size)). This is possible via the finger trees described by Okasaki. 
-Bencmarks for the tree operations are listed below.
+Benchmarks for the tree operations are listed below.
 A possible future performance improvement would be to consider a bit larger structures for Dequelette class, to benefit from the cache-friendly alignment. 
 I.e. since each object in .Net contains a header of 12 bytes (8 bytes on x86), and the cache line size is 64 bytes, we should try fitting exactly 52/56 bytes of data, or 116/120 bytes if we're ready to spare 2 cache lines. 
 52 bytes give us space for six 8-byte references + 4 bytes for int32 count; 56 bytes give us space for 13 4-byte references + 4 bytes for int32 count.
@@ -49,3 +49,25 @@ The [Deque/Enqueue.cs](./Deque/Enqueue.cs) benchmark enqueues a single integer t
 ### Dequeue
 The [Deque/Dequeue.cs](./Deque/Dequeue.cs) benchmark dequeues a single element from the integer queue of the specified Size.
 ![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.png)
+## [ImmutableDictionary](../Atropos/Documentation/ImmutableDictionary-TKey_TValue-.md 'Atropos.ImmutableDictionary&lt;T&gt;')
+The ImmutableDictionary<TKey, TValue> type uses a balanced binary tree to represent the dictionary.
+### Index ([this[key]](../Atropos/Documentation/ImmutableDictionary-TKey_TValue--this-TKey-.md) operation)
+Through the use of a balanced binary tree getting value by key works with O(log(N)) complexity.
+The [Dictionary/IndexIntString.cs](./Dictionary/Index.cs) benchmark getting string value by integer key.
+![Index](Atropos.Benchmarks.Dictionary.IndexIntString.png)
+### Add
+After adding the key-value pair into the dictionary we check and balance tree if it needs.
+The [Dictionary/Add.cs](./Dictionary/Add.cs) benchmark measures the efficiency of a single key-value pair insertions into the dictionary. 
+![Add](Atropos.Benchmarks.Dictionary.AddIntString.png)
+### AddRange
+The [Dictionary/AddRange.cs](./Dictionary/AddRange.cs) benchmark measures the efficiency of a range key-value pairs insertions into the dictionary. 
+![AddRange](Atropos.Benchmarks.Dictionary.AddRangeIntString.png)
+### SetItem 
+The [Dictionary/Set.cs](./Dictionary/Set.cs) benchmark measures the efficiency of overwriting value with existing key or inserting new key-value pair into the dictionary. 
+![SetItem](Atropos.Benchmarks.Dictionary.SetIntString.png)
+### TryGetKey
+The [Dictionary/TryGetKey.cs](./Dictionary/TryGetKey.cs) benchmark measures the efficiency of getting key from the dictionary. 
+![TryGetKey](Atropos.Benchmarks.Dictionary.TryGetKeyIntString.png)
+### TryGetValue
+The [Dictionary/TryGetValue.cs](./Dictionary/TryGetValue.cs) benchmark measures the efficiency of getting value from the dictionary. 
+![TryGetValue](Atropos.Benchmarks.Dictionary.TryGetValueIntString.png)

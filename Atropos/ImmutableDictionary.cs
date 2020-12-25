@@ -107,14 +107,16 @@ namespace Atropos
         public ImmutableDictionary<TKey, TValue> Add([NotNull] TKey key, TValue value)
         {
             var pair = new ComparableKeyValuePair(key, value);
-            var nodeWithRemovedOldValue = _rootNode?.Remove(pair, out _);
+            var success = false;
+            var nodeWithRemovedOldValue = _rootNode?.Remove(pair, out success);
             if (nodeWithRemovedOldValue == null)
             {
                 return new ImmutableDictionary<TKey, TValue>(
                     new TreeNode<ComparableKeyValuePair>(pair), 1);
             }
 
-            return new ImmutableDictionary<TKey, TValue>(_rootNode.Insert(pair), Count + 1);
+            var newCount = success ? Count : Count + 1;
+            return new ImmutableDictionary<TKey, TValue>(nodeWithRemovedOldValue.Insert(pair), newCount);
         }
 
         /// <summary>
