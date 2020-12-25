@@ -17,28 +17,28 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
-    - name: Build
+    - name: Build Debug
       run: dotnet build -c Debug 
-    - name: Test
+    - name: Run Tests
       run: dotnet test --no-restore -c Debug -v normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
-    - name: Publish coverage report to coveralls.io
+    - name: Publish test coverage report to coveralls.io
       uses: coverallsapp/github-action@v1.0.1
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./Atropos.Tests/TestResults/coverage.info   
     - name: Install dependencies
       run: dotnet restore
-    - name: Build
+    - name: Build Release
       run: dotnet build -c Release --no-restore
-    - name: Run dictionary benchmarks
+    - name: Run benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*List.Add*";
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Warm-up R
       run: cd Atropos.Benchmarks; Rscript Warmup.R
-    - name: Process benchmarks output
+    - name: Process benchmarks output with R
       run: cd Atropos.Benchmarks; Rscript RibbonGraph.R
-    - name: Update benchmark charts
+    - name: Update benchmark results and charts
       uses: EndBug/add-and-commit@v6
       with:
         message: 'Updating the benchmark results and charts'

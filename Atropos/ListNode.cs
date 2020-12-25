@@ -28,14 +28,14 @@ namespace Atropos
         //internal int childIndexF;
         public static unsafe int Length => sizeof(Indexes)/sizeof(int);
     }
-    [StructLayout(LayoutKind.Explicit)]
-    internal unsafe struct ChildrenRef<T>
-    {
-        [FieldOffset(0)]
-        public ListNode<T>[] Branches;
-        [FieldOffset(0)]
-        public T[][] Leaves;
-    }
+    //[StructLayout(LayoutKind.Explicit)]
+    //internal unsafe struct ChildrenRef<T>
+    //{
+    //    [FieldOffset(0)]
+    //    public ListNode<T>[] Branches;
+    //    [FieldOffset(0)]
+    //    public T[][] Leaves;
+    //}
 
     internal class ListNode
     {
