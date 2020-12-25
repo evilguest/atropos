@@ -30,6 +30,8 @@ jobs:
       run: dotnet build -c Release 
     - name: List Benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --list Flat > benchmarks.txt
+    - name: Display Benchmarks
+      run: cat Atropos.Benchmarks/benchmarks.txt
     - name: Convert Benchmarks
       run: cat Atropos.Benchmarks/benchmarks.txt | jq -cR . | jq -cs > benchmarks.json
     - name: Display Benchmarks
