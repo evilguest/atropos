@@ -27,7 +27,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./Atropos.Tests/TestResults/coverage.info   
     - name: List Benchmarks
-      run: cd Atropos.Benchmarks; sudo dotnet run -c Debug --no-build --list Flat | jq -cR . | jq -cs . > benchmarks.json
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Debug --no-build --list Flat | jq -cR "split(\".\") | .[0:4] | join(\".\")" | jq -cs unique > benchmarks.json
     - name: Display Benchmarks
       run: cat Atropos.Benchmarks/benchmarks.json
     - name: Send the list of benchmarks to the benchmark job
