@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs: 
+      matrix: ${{ steps.set-output.outputs.matrix}}
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -24,39 +26,22 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./Atropos.Tests/TestResults/coverage.info   
-  list-benchmarks:
-    needs: build
-    runs-on: ubuntu-latest
-    outputs: 
-      matrix: ${{ steps.set-output.outputs.matrix}}
-    steps:
-    - uses: actions/checkout@v2
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.301
-    - name: Build Release
-      run: dotnet build -c Release 
     - name: List Benchmarks
-      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --list Flat | jq -cR . | jq -cs . > benchmarks.json
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Debug --no-build --list Flat | jq -cR . | jq -cs . > benchmarks.json
     - name: Display Benchmarks
       run: cat Atropos.Benchmarks/benchmarks.json
-    - name: Send the list of benchmarks to the Benchmark job
+    - name: Send the list of benchmarks to the benchmark job
       id: set-output
       run: echo "::set-output name=matrix::{\"benchmark\":$(cat Atropos.Benchmarks/benchmarks.json)}"
   benchmark:
-    needs: list-benchmarks
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       matrix: 
-        benchmark: ["Atropos.Benchmarks.List.AddInt.Official"]
+        benchmark: ["Atropos.Benchmarks.List.AddInt.Official", "Atropos.Benchmarks.List.AddInt.Tunnel"]
     steps:
     - name: test dependent job output
-      run: echo ${{needs.list-benchmarks.outputs.matrix}}
-    - name: test dependent job output
-      run: echo ${{fromJson(needs.list-benchmarks.outputs.matrix).benchmark}}
-    - name: test dependent job output
-      run: echo ${{fromJson(needs.list-benchmarks.outputs.matrix).benchmark[0]}}
+      run: echo ${{fromJson(needs.build.outputs.matrix)}}
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
@@ -72,7 +57,14 @@ jobs:
       uses: EndBug/add-and-commit@v6
       with:
         message: 'Updating the benchmark results'
-        add: './Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*-report.csv'
+        add: ./Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
+  graphs:
+    needs: benchmark
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Warm-up R
@@ -85,5 +77,4 @@ jobs:
         message: 'Updating the benchmark charts'
         add: './Atropos.Benchmarks/*.png'
       env:
-      # This is necessary in order to push a commit to the repo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
