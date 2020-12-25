@@ -37,11 +37,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     strategy:
-      matrix: 
-        benchmark: ["Atropos.Benchmarks.List.AddInt.Official", "Atropos.Benchmarks.List.AddInt.Tunnel"]
+      matrix: ${{fromJson(needs.build.outputs.matrix)}}
     steps:
-    - name: test dependent job output
-      run: echo ${{fromJson(needs.build.outputs.matrix)}}
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
