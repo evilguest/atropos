@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs: 
       matrix: ${{ steps.set-output.outputs.matrix}}
+      plain: ${{steps.set-output2.outputs.plain}}
+      json: ${{steps.set-output3.outputs.json}}
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
@@ -33,13 +35,25 @@ jobs:
     - name: Display Benchmarks
       run: cat Atropos.Benchmarks/benchmarks.json
     - name: set-output
+      id: set-output
       run: echo "::set-output name=matrix::{\"benchmark\":$(cat Atropos.Benchmarks/benchmarks.json)}"
+    - name: set-output2
+      id: set-output2
+      run: echo "::set-output name=plain::plainoutput"
+    - name: set-output3
+      id: set-output3
+      run: echo "::set-output name=json::{\"benchmark\":[\"One\",\"Two\",\"Three\"]}"
   benchmark:
     needs: build
     runs-on: ubuntu-latest
     strategy:
-      matrix: ${{fromJson(needs.build.outputs.matrix)}}
+      matrix: 
+        benchmark: ["Atropos.Benchmarks.List.AddInt.Tunnel"]
     steps:
+    - name: Test plain result pass
+      run: echo ${{needs.build.outputs.plain}}
+    - name: Test JSON result pass
+      run: echo ${{fromJson(needs.build.outputs.matrix)}}
     - name: Run benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter ${{matrix.benchmark}};
     - name: Check benchmark results
