@@ -46,4 +46,10 @@ for (file in files) {
     scale_x_continuous(trans="log2") 
   cat(paste0("Saving ", title, ".png\n"))
   ggsaveNice(paste0(title, ".png"), plot, width=13, height=8, dpi=150)
+  aplot <- ggplot(report, aes(x=Size, y=Allocated, color=Method)) +
+    geom_line(size=1) +
+    geom_point(size=1.5) +
+    scale_x_continuous(trans="log2") 
+  cat(paste0("Saving ", title, ".alloc.png\n"))
+  ggsaveNice(paste0(title, ".alloc.png"), plot, width=13, height=8, dpi=150)
 }

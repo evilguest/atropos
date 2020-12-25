@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: dotnet build -c Release --no-restore
     - name: Run dictionary benchmarks
-      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*Dictionary.Add*";
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter "*List.Add*";
     - name: Setup R
       uses: r-lib/actions/setup-r@v1
     - name: Warm-up R
@@ -41,8 +41,8 @@ jobs:
     - name: Update benchmark charts
       uses: EndBug/add-and-commit@v5
       with:
-        message: 'Updating the benchmark charts'
-        add: "Atropos.Benchmarks/*.png"
+        message: 'Updating the benchmark results and charts'
+        add: '["Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv", "Atropos.Benchmarks/*.png"]'
       env:
       # This is necessary in order to push a commit to the repo
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this line unchanged
