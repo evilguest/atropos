@@ -29,15 +29,11 @@ jobs:
     - name: Build Release
       run: dotnet build -c Release 
     - name: List Benchmarks
-      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --list Flat > benchmarks.txt
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --list Flat | jq -cR . | jq -cs . > benchmarks.json
     - name: Display Benchmarks
-      run: cat Atropos.Benchmarks/benchmarks.txt
-    - name: Convert Benchmarks
-      run: cat Atropos.Benchmarks/benchmarks.txt | jq -cR . | jq -cs > benchmarks.json
-    - name: Display Benchmarks
-      run: cat benchmarks.json
+      run: cat Atropos.Benchmarks/benchmarks.json
     - name: set-output
-      run: echo "::set-output name=matrix::{\"benchmark\":$(cat benchmarks.json)}"
+      run: echo "::set-output name=matrix::{\"benchmark\":$(cat Atropos.Benchmarks/benchmarks.json)}"
   benchmark:
     needs: build
     runs-on: ubuntu-latest
