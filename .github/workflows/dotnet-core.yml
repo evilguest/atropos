@@ -9,17 +9,13 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs: 
-      matrix: ${{ steps.set-output.outputs.matrix}}
-      plain: ${{steps.set-output2.outputs.plain}}
-      json: ${{steps.set-output3.outputs.json}}
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.301
-    - name: Build Debug
+    - name: Build 
       run: dotnet build -c Debug 
     - name: Run Tests
       run: dotnet test --no-restore -c Debug -v normal /p:CollectCoverage=true /p:CoverletOutput=TestResults/ /p:CoverletOutputFormat=lcov
@@ -28,6 +24,17 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         path-to-lcov: ./Atropos.Tests/TestResults/coverage.info   
+  list-benchmarks:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs: 
+      matrix: ${{ steps.set-output.outputs.matrix}}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
     - name: Build Release
       run: dotnet build -c Release 
     - name: List Benchmarks
@@ -37,23 +44,19 @@ jobs:
     - name: set-output
       id: set-output
       run: echo "::set-output name=matrix::{\"benchmark\":$(cat Atropos.Benchmarks/benchmarks.json)}"
-    - name: set-output2
-      id: set-output2
-      run: echo "::set-output name=plain::plainoutput"
-    - name: set-output3
-      id: set-output3
-      run: echo "::set-output name=json::{\"benchmark\":[\"One\",\"Two\",\"Three\"]}"
   benchmark:
-    needs: build
+    needs: list-benchmarks
     runs-on: ubuntu-latest
     strategy:
-      matrix: 
-        benchmark: ["Atropos.Benchmarks.List.AddInt.Tunnel"]
+      matrix: ${{fromJson(needs.build.outputs.matrix)}}
     steps:
-    - name: Test plain result pass
-      run: echo ${{needs.build.outputs.plain}}
-    - name: Test JSON result pass
-      run: echo ${{fromJson(needs.build.outputs.matrix)}}
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Build Release
+      run: dotnet build -c Release 
     - name: Run benchmarks
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter ${{matrix.benchmark}};
     - name: Check benchmark results
