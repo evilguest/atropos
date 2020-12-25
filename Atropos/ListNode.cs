@@ -62,9 +62,7 @@ namespace Atropos
         internal static readonly ListNode<T> Empty = new ListNode<T>(new T[0], 0);
         private int _count;
         private int _childrenCount;
-        private int ChildrenCount => _childrenCount & 0xFFFF;
-        private bool IsLeafBranch => 
-        
+       
 
         public ListNode<T> Freeze()
         {
