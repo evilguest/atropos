@@ -50,6 +50,8 @@ jobs:
       run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter '${{matrix.benchmark}}.*';
     - name: Check benchmark results
       run: ls ./Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv
+    - name: Sync the repo 
+      run: git pull
     - name: Update benchmark results 
       uses: EndBug/add-and-commit@v6
       with:
