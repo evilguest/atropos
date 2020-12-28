@@ -38,6 +38,7 @@ for (file in files) {
   report <- read.csv(paste(resPath, file, sep="/"), sep=",")
   report$Mean <- as.numeric(gsub(",","", str_sub(report$Mean, end=-5)))
   report$Error <- as.numeric(gsub(",","", str_sub(report$Error, end=-5)))
+  report$Allocated <- as.numeric(str_sub(report$Allocated, end=-2)))
 
   plot <- ggplot(report, aes(x=Size, y=Mean, ymin=Mean-Error, ymax=Mean+Error, color=Method)) +
     labs(y="Time") +
@@ -46,11 +47,11 @@ for (file in files) {
     geom_point(size=1.5) +
     scale_x_continuous(trans="log2") 
   cat(paste0("Saving ", title, ".png\n"))
-  ggsaveNice(paste0(title, ".png"), plot, width=13, height=8, dpi=150)
+  ggsaveNice(paste0(title, ".png"), plot, width=8, height=5, dpi=150)
   aplot <- ggplot(report, aes(x=Size, y=Allocated, color=Method)) +
     geom_line(size=1) +
     geom_point(size=1.5) +
     scale_x_continuous(trans="log2") 
   cat(paste0("Saving ", title, ".alloc.png\n"))
-  ggsaveNice(paste0(title, ".alloc.png"), aplot, width=13, height=8, dpi=150)
+  ggsaveNice(paste0(title, ".alloc.png"), aplot, width=8, height=5, dpi=150)
 }

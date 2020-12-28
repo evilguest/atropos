@@ -44,7 +44,7 @@ This saves some (but not all) copying.
 The [List/AddRange.cs](./List/AddRange.cs) benchmark adds 10 items to the list of a given size.
 | Time (ns) | RAM consumption (bytes) | 
 | - | - |
-| ![AddRange](Atropos.Benchmarks.List.AddRange.png) | ![AddRange](Atropos.Benchmarks.List.AddRange.alloc.png) |
+| ![AddRange](Atropos.Benchmarks.List.AddRangeInt.png) | ![AddRange](Atropos.Benchmarks.List.AddRangeInt.alloc.png) |
 ## [ImmutableDeque](../Atropos/Documentation/ImmutableDeque-T-.md 'Atropos.ImmutableDeque&lt;T&gt;')
 The immutable deque is does extend the functionality of the System.Collections.ImmutableQueue by allowing enqueuing and dequeuing from both ends. 
 Since the operations are perfectly symmetric, the benchmarks compare the behavior against the IImmutableQueue implementations offered by the "Official" code from .Net Core and the TunnelVision's ImmutableTreeQueue. Note that the latter does internally rely on the same IImmutableList discussed above, obviously counting on the B+-tree performance that covers the insertions-at-the-end and removals-at-the-start just as well as any other operations.
@@ -54,16 +54,27 @@ A possible future performance improvement would be to consider a bit larger stru
 I.e. since each object in .Net contains a header of 12 bytes (8 bytes on x86), and the cache line size is 64 bytes, we should try fitting exactly 52/56 bytes of data, or 116/120 bytes if we're ready to spare 2 cache lines. 
 52 bytes give us space for six 8-byte references + 4 bytes for int32 count; 56 bytes give us space for 13 4-byte references + 4 bytes for int32 count.
 These seem to be the numbers to consider. Note that we'd need to adjust the layout for the value types that can take any number of bytes.
-### Enqueue
-The [Deque/Enqueue.cs](./Deque/Enqueue.cs) benchmark enqueues a single integer to the queue of the specified Size.
+### Enqueue single element
+The [Deque/EnqueueInt.cs](./Deque/Enqueue.cs) benchmark enqueues a single integer to the queue of the specified Size.
 | Time (ns) | RAM consumption (bytes) | 
 | - | - |
 | ![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.png) | ![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.alloc.png) |
-### Dequeue
-The [Deque/Dequeue.cs](./Deque/Dequeue.cs) benchmark dequeues a single element from the integer queue of the specified Size.
+### Dequeue single element
+The [Deque/DequeueInt.cs](./Deque/Dequeue.cs) benchmark dequeues a single element from the integer queue of the specified Size.
 | Time (ns) | RAM consumption (bytes) | 
 | - | - |
-| ![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.png) | ![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.alloc.png) |
+| ![DequeueSpeed](Atropos.Benchmarks.Deque.DequeueInt.png) | ![DequeueSize](Atropos.Benchmarks.Deque.DequeueInt.alloc.png) |
+### Enqueue Size elements to an empty queue
+The [Deque/AmortizedEnqueueInt.cs](./Deque/AmortizedEnqueueInt.cs) benchmark enqueues a single integer to the queue of the specified Size.
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Enqueue](Atropos.Benchmarks.Deque.AmortizedEnqueueInt.png) | ![Enqueue](Atropos.Benchmarks.Deque.AmortizedEnqueueInt.alloc.png) |
+### Dequeue all elements from the queue of length Size
+The [Deque/AmortizedDequeueInt.cs](./Deque/AmortizedDequeue.cs) benchmark dequeues a single element from the integer queue of the specified Size.
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![DequeueSpeed](Atropos.Benchmarks.Deque.DequeueInt.png) | ![DequeueSize](Atropos.Benchmarks.Deque.DequeueInt.alloc.png) |
+
 ## [ImmutableDictionary](../Atropos/Documentation/ImmutableDictionary-TKey_TValue-.md 'Atropos.ImmutableDictionary&lt;T&gt;')
 The ImmutableDictionary<TKey, TValue> type uses a balanced binary tree to represent the dictionary.
 ### Index ([this[key]](../Atropos/Documentation/ImmutableDictionary-TKey_TValue--this-TKey-.md) operation)
@@ -71,7 +82,7 @@ Through the use of a balanced binary tree getting value by key works with O(log(
 The [Dictionary/IndexIntString.cs](./Dictionary/Index.cs) benchmark getting string value by integer key.
 | Time (ns) | RAM consumption (bytes) | 
 | - | - |
-| ![Index](Atropos.Benchmarks.Dictionary.IndexIntString.png) | ![Index](Atropos.Benchmarks.Dictionary.IndexIntString.alloc.png) |
+| ![IndexSpeed](Atropos.Benchmarks.Dictionary.IndexIntString.png) | ![IndexSize](Atropos.Benchmarks.Dictionary.IndexIntString.alloc.png) |
 ### Add
 After adding the key-value pair into the dictionary we check and balance tree if it needs.
 The [Dictionary/Add.cs](./Dictionary/Add.cs) benchmark measures the efficiency of a single key-value pair insertions into the dictionary. 
