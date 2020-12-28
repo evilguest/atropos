@@ -22,5 +22,5 @@ to be executed within O(Log(Count)) with sufficiently large logaritm base. Inser
 | 1 | Initial implementation (basic functions) | 20.11.2020 | Done |
 | 2 | Unit test coverage | 27.11.2020 | [![Coverage Status](https://coveralls.io/repos/github/evilguest/atropos/badge.svg?branch=main)](https://coveralls.io/github/evilguest/atropos?branch=main)|
 | 3 | Extended functions (Merge, Split, mass-initialization, etc) | 4.12.2020 | |
-| 4 | [Benchmarks](./Atropos.Benchmarks) | 11.12.2020 | |
-| 5 | Performance optimizations | 25.12.2020 | |
+| 4 | [Benchmarks](./Atropos.Benchmarks) | 11.12.2020 | Done |
+| 5 | Performance optimizations | 25.12.2020 | Partially done |

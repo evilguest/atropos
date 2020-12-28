@@ -16,24 +16,35 @@ Each test iteration involves 1000 requests at different indices to avoid measuri
 Note that each measure consists of this[i], integer addition, and increment - to make sure neither compiler no JIT does eliminate the access to the list elements. 
 See the [List/Index.cs](./List/Index.cs) for more detail.
 Anyway, the benchmark provides good enough insight on the comparative performance of the implementations for the various collection sizes.
-![Index](Atropos.Benchmarks.List.Index.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Index Speed](Atropos.Benchmarks.List.IndexInt.png) | ![Index Size](Atropos.Benchmarks.List.IndexInt.alloc.png) | 
+
 Note how Official implementation does feature a gradual degradation somewhere between 256 and 1024 - most likely attributed to the cache effects.
 Also note the stair-like behavior of the Atropos and TunnelVision implementation, reflecting their branch factors.
 ### Init
 This benchmark measures the time to init the list to a specified size, feeding an IEnumerable&lt;T&gt; into it one element by one.
-![Init](Atropos.Benchmarks.List.InitInt.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Init Speed](Atropos.Benchmarks.List.InitInt.png) | ![Init Size](Atropos.Benchmarks.List.InitInt.png) |
 ### Add 
 The [List/Add.cs](./List/Add.cs) benchmark measures the efficiency of a single-item additions to the end of the list. 
-![Index](Atropos.Benchmarks.List.AddInt.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Index](Atropos.Benchmarks.List.AddInt.png) | ![Index](Atropos.Benchmarks.List.AddInt.alloc.png) | 
 ### Insert
 The [List/Insert.cs](./List/Insert.cs) benchmark measures the efficiency of a single-item insertions into the middle of the list. 
 We expect approximately the same behavior as for additions at the end.
-![Insert](Atropos.Benchmarks.List.InsertInt.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Insert](Atropos.Benchmarks.List.InsertInt.png) | ![Insert](Atropos.Benchmarks.List.InsertInt.alloc.png) |
 ### AddRange
 There is a more efficient way to add a bunch of items to an immutable list - the idea is to keep the intermediate results mutable until it is time to return the list to the user.
 This saves some (but not all) copying.
 The [List/AddRange.cs](./List/AddRange.cs) benchmark adds 10 items to the list of a given size.
-![AddRange](Atropos.Benchmarks.List.AddRange.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![AddRange](Atropos.Benchmarks.List.AddRange.png) | ![AddRange](Atropos.Benchmarks.List.AddRange.alloc.png) |
 ## [ImmutableDeque](../Atropos/Documentation/ImmutableDeque-T-.md 'Atropos.ImmutableDeque&lt;T&gt;')
 The immutable deque is does extend the functionality of the System.Collections.ImmutableQueue by allowing enqueuing and dequeuing from both ends. 
 Since the operations are perfectly symmetric, the benchmarks compare the behavior against the IImmutableQueue implementations offered by the "Official" code from .Net Core and the TunnelVision's ImmutableTreeQueue. Note that the latter does internally rely on the same IImmutableList discussed above, obviously counting on the B+-tree performance that covers the insertions-at-the-end and removals-at-the-start just as well as any other operations.
@@ -45,29 +56,45 @@ I.e. since each object in .Net contains a header of 12 bytes (8 bytes on x86), a
 These seem to be the numbers to consider. Note that we'd need to adjust the layout for the value types that can take any number of bytes.
 ### Enqueue
 The [Deque/Enqueue.cs](./Deque/Enqueue.cs) benchmark enqueues a single integer to the queue of the specified Size.
-![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.png) | ![Enqueue](Atropos.Benchmarks.Deque.EnqueueInt.alloc.png) |
 ### Dequeue
 The [Deque/Dequeue.cs](./Deque/Dequeue.cs) benchmark dequeues a single element from the integer queue of the specified Size.
-![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.png) | ![Enqueue](Atropos.Benchmarks.Deque.DequeueInt.alloc.png) |
 ## [ImmutableDictionary](../Atropos/Documentation/ImmutableDictionary-TKey_TValue-.md 'Atropos.ImmutableDictionary&lt;T&gt;')
 The ImmutableDictionary<TKey, TValue> type uses a balanced binary tree to represent the dictionary.
 ### Index ([this[key]](../Atropos/Documentation/ImmutableDictionary-TKey_TValue--this-TKey-.md) operation)
 Through the use of a balanced binary tree getting value by key works with O(log(N)) complexity.
 The [Dictionary/IndexIntString.cs](./Dictionary/Index.cs) benchmark getting string value by integer key.
-![Index](Atropos.Benchmarks.Dictionary.IndexIntString.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Index](Atropos.Benchmarks.Dictionary.IndexIntString.png) | ![Index](Atropos.Benchmarks.Dictionary.IndexIntString.alloc.png) |
 ### Add
 After adding the key-value pair into the dictionary we check and balance tree if it needs.
 The [Dictionary/Add.cs](./Dictionary/Add.cs) benchmark measures the efficiency of a single key-value pair insertions into the dictionary. 
-![Add](Atropos.Benchmarks.Dictionary.AddIntString.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![Add](Atropos.Benchmarks.Dictionary.AddIntString.png) | ![Add](Atropos.Benchmarks.Dictionary.AddIntString.alloc.png) |
 ### AddRange
 The [Dictionary/AddRange.cs](./Dictionary/AddRange.cs) benchmark measures the efficiency of a range key-value pairs insertions into the dictionary. 
-![AddRange](Atropos.Benchmarks.Dictionary.AddRangeIntString.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![AddRange](Atropos.Benchmarks.Dictionary.AddRangeIntString.png) | ![AddRange](Atropos.Benchmarks.Dictionary.AddRangeIntString.alloc.png) |
 ### SetItem 
 The [Dictionary/Set.cs](./Dictionary/Set.cs) benchmark measures the efficiency of overwriting value with existing key or inserting new key-value pair into the dictionary. 
-![SetItem](Atropos.Benchmarks.Dictionary.SetIntString.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![SetItem](Atropos.Benchmarks.Dictionary.SetIntString.png) | ![SetItem](Atropos.Benchmarks.Dictionary.SetIntString.alloc.png) |
 ### TryGetKey
 The [Dictionary/TryGetKey.cs](./Dictionary/TryGetKey.cs) benchmark measures the efficiency of getting key from the dictionary. 
-![TryGetKey](Atropos.Benchmarks.Dictionary.TryGetKeyIntString.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![TryGetKey](Atropos.Benchmarks.Dictionary.TryGetKeyIntString.png) | ![TryGetKey](Atropos.Benchmarks.Dictionary.TryGetKeyIntString.alloc.png) |
 ### TryGetValue
 The [Dictionary/TryGetValue.cs](./Dictionary/TryGetValue.cs) benchmark measures the efficiency of getting value from the dictionary. 
-![TryGetValue](Atropos.Benchmarks.Dictionary.TryGetValueIntString.png)
+| Time (ns) | RAM consumption (bytes) | 
+| - | - |
+| ![TryGetValue](Atropos.Benchmarks.Dictionary.TryGetValueIntString.png) | ![TryGetValue](Atropos.Benchmarks.Dictionary.TryGetValueIntString.alloc.png) |
