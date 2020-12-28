@@ -38,7 +38,7 @@ for (file in files) {
   report <- read.csv(paste(resPath, file, sep="/"), sep=",")
   report$Mean <- as.numeric(gsub(",","", str_sub(report$Mean, end=-5)))
   report$Error <- as.numeric(gsub(",","", str_sub(report$Error, end=-5)))
-  report$Allocated <- as.numeric(str_sub(report$Allocated, end=-2)))
+  report$Allocated <- as.numeric(str_sub(report$Allocated, end=-2))
 
   plot <- ggplot(report, aes(x=Size, y=Mean, ymin=Mean-Error, ymax=Mean+Error, color=Method)) +
     labs(y="Time") +
