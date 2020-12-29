@@ -33,7 +33,35 @@ jobs:
     - name: Send the list of benchmarks to the benchmark job
       id: set-output
       run: echo "::set-output name=matrix::{\"benchmark\":$(cat Atropos.Benchmarks/benchmarks.json)}"
+  benchmark:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.build.outputs.matrix)}}
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.301
+    - name: Build Release
+      run: dotnet build -c Release 
+    - name: Run benchmarks
+      run: cd Atropos.Benchmarks; sudo dotnet run -c Release --no-build --filter '${{matrix.benchmark}}.*';
+    - name: Check benchmark results
+      run: ls ./Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv
+    - name: Sync the repo 
+      run: |
+        git config pull.rebase false
+        git pull
+    - name: Update benchmark results 
+      uses: EndBug/add-and-commit@v6
+      with:
+        message: 'Updating the benchmark results'
+        add: './Atropos.Benchmarks/BenchmarkDotNet.Artifacts/results/*.csv'
   graphs:
+    needs: benchmark
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
