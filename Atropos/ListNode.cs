@@ -690,7 +690,7 @@ namespace Atropos
                 ? BalanceLeaf(other) 
                 : BalanceBranch(other);
 
-        internal static ListNode<T> Fill(T value, int count)
+        internal static ListNode<T> Fill(T value, int count) 
         {
             if (count <= PageSize)
             {
@@ -721,6 +721,7 @@ namespace Atropos
                     blockSize *= BranchFactor;
                     levels++;
                 }
+
                 var children = new ListNode<T>[pageCount];
                 var pageSize = count / pageCount;
                 var page = Fill(value, pageSize);

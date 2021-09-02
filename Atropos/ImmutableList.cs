@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Atropos
 {
@@ -200,8 +201,13 @@ namespace Atropos
         /// </summary>
         /// <param name="index">The index of the element to remove.</param>
         /// <returns>A new immutable list with the element removed.</returns>
-        public ImmutableList<T> RemoveAt(int index) 
-            => new ImmutableList<T>(_root.RemoveAt(index).Freeze());
+        public ImmutableList<T> RemoveAt(int index)
+        {
+            var oldCount = _root.Count;
+            var root = _root.RemoveAt(index).Freeze();
+            Debug.Assert(root.Count == oldCount - 1, $"Expected new count to be {oldCount-1}, found {root.Count}");
+            return new ImmutableList<T>(root);
+        }
 
         /// <summary>
         /// Returns a new list with the first matching element in the list replaced with the specified element.
@@ -233,13 +239,9 @@ namespace Atropos
             if (index < 0 || index > Count)
                 throw new IndexOutOfRangeException($"Trying to get element #{index} out of {Count}");
 
-            var root = _root;
+            var root = _root.IsFull ? _root.SplitNGrow() : _root;
 
-            if (root.IsFull) // split the root
-                root = new ListNode<T>(_root.Split());
-            root = root.InsertDataAt(index, value);
-            
-            return new ImmutableList<T>(root.Freeze());
+            return new ImmutableList<T>(root.InsertAt(index, value).Freeze());
         }
 
         /// <summary>
@@ -261,8 +263,8 @@ namespace Atropos
             foreach (var item in items)
             {
                 if (root.IsFull) // split the root
-                    root = new ListNode<T>(root.Split());
-                root = root.InsertDataAt(index, item);
+                    root = root.SplitNGrow();
+                root = root.InsertAt(index, item);
                 index++;
             }
             return new ImmutableList<T>(root.Freeze());
@@ -314,7 +316,7 @@ namespace Atropos
             get
             {
                 if (index < 0 || index >= _root.Count)
-                    throw new IndexOutOfRangeException();
+                    throw new IndexOutOfRangeException($"{index} is out of [0, {_root.Count})");
                 return _root[index];
             }
         }
@@ -342,7 +344,7 @@ namespace Atropos
         }*/
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        internal ListNode<T> _root;
+        internal IListNode<T> _root;
 
         /// <summary>
         /// Constructs a list from the value
@@ -353,13 +355,38 @@ namespace Atropos
         {
             if (count <= 0)
                 throw new ArgumentOutOfRangeException(nameof(count), "Count must be above zero");
-            _root = ListNode<T>.Fill(value, count).Freeze();
+            _root = Fill(value, count).Freeze();
         }
+
+        internal static IListNode<T> Fill(T value, int count)
+        {
+            var box = new Box<LeafNode<T>, T>();
+            IListNode<T> ret = box;
+
+            if (count <= 16)
+            {
+                box.Node.Fill(value, count);
+                box.Freeze();
+            }
+            else
+            {
+                box.Node.Fill(value, 16);
+
+                for (count -= 16; count > 0; count--)
+                {
+                    if (ret.IsFull)
+                        ret = ret.SplitNGrow();
+                    ret = ret.Add(value);
+                }
+            }
+            return ret.Freeze();
+        }
+
         /// <summary>
         /// Creates a new empty immutable list
         /// </summary>
-        public ImmutableList() => _root = ListNode<T>.Empty;
-        internal ImmutableList(ListNode<T> root)
+        public ImmutableList() => _root = LeafNode<T>.Empty;
+        internal ImmutableList(IListNode<T> root)
         {
             Debug.Assert(root.Frozen);
             _root = root;
@@ -380,12 +407,10 @@ namespace Atropos
         /// <returns>A new list with the object added</returns>
         public ImmutableList<T> Add(T value)
         {
-            var root = (_root.IsFull
-                    ? new ListNode<T>(_root.Split())
-                    : _root)
-                .AddData(value);
-            root.Freeze();
-            return new ImmutableList<T>(root);
+            return new ImmutableList<T>(
+                (_root.IsFull
+                    ? _root.SplitNGrow()
+                    : _root).Add(value).Freeze());
         }
 
         /// <summary>
@@ -399,8 +424,8 @@ namespace Atropos
             foreach (var value in values)
             {
                 if (root.IsFull)
-                    root = new ListNode<T>(root.Split());
-                root = root.AddData(value);
+                    root = root.SplitNGrow();
+                root = root.Add(value);
             }
             return new ImmutableList<T>(root.Freeze());
         }
@@ -412,7 +437,16 @@ namespace Atropos
         /// <param name="value">The element to replace the old element with.</param>
         /// <returns>A new list that contains the new element</returns>
         public ImmutableList<T> SetItem(int index, T value)
-            => this[index].Equals(value) ? this : new ImmutableList<T>(_root.ReplaceDataAt(index, value).Freeze());
+        {
+            if (this[index].Equals(value))
+                return this;
+            else
+            {
+                var t = _root.ReplaceAt(index, value);
+                t.Freeze();
+                return new ImmutableList<T>(t);
+            }
+        }
 
         #region Operators
         /// <summary>
