@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Intrinsics;
+using System.Runtime.Intrinsics.X86;
 
 namespace Atropos
 {
@@ -24,7 +27,7 @@ namespace Atropos
             get
             {
                 Debug.Assert(index >= 0 && index < Count);
-                var (t, i) = FindChild(index);
+                var (t, i) = FindChildS(index);
                 return t.Node[i];
             }
         }
@@ -36,7 +39,44 @@ namespace Atropos
 
         internal Span<Box<N, T>> Children => MemoryMarshal.CreateSpan(ref _children._data0, _childrenCount);
         internal Span<int> Indices => MemoryMarshal.CreateSpan(ref _indices._data0, _childrenCount);
+        internal ReadOnlySpan<Vector256<int>> VectorIndices => MemoryMarshal.Cast<int, Vector256<int>>(MemoryMarshal.CreateReadOnlySpan(ref _indices._data0, 16));
 
+
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public (Box<N, T> child, int index) FindChildV(int index)
+        {
+            (Box<N, T>, int) Return(ref BranchNode<N, T> self, int childNo) 
+                => (self.Children[childNo], index - (childNo > 0 ? self.Indices[childNo - 1] : 0));
+
+
+            var c = Vector256.Create(index);
+            var a = 0;
+            foreach (var m in VectorIndices)
+            {
+                var t = Avx2.CompareGreaterThan(m, c);
+                var o = Avx2.MoveMask(t.AsSingle()) | 0xFFFFFF00;
+                var p = BitOperations.TrailingZeroCount((uint)o); // our mask is 8-bit wide;
+                var child = a + p;
+                if (child >= _childrenCount)
+                    return Return(ref this, _childrenCount - 1);
+                if (p < 8)
+                {
+                    return Return(ref this, child);
+                }
+                a += 8;
+            }
+            return Return(ref this, _childrenCount - 1);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public (Box<N, T> child, int index) FindChildS(int index)
+        {
+            var c = Indices;
+            for (var i = 0; i < c.Length; i++)
+                if (Indices[i] > index)
+                    return (Children[i], i > 0 ? index - Indices[i - 1] : index);
+            return (Children[_childrenCount - 1], index - Indices[_childrenCount - 2]);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public (Box<N, T> child, int index) FindChild(int index)
@@ -86,6 +126,7 @@ namespace Atropos
             _indices._data1 = children.left.Count + children.right.Count;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private (int child, int index) FindChildIndex(int index)
         {
             return index < _indices._data7 || _childrenCount < 9
@@ -215,6 +256,7 @@ namespace Atropos
             return result;
 
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal void InitChildIndicesStartingFrom(int start)
         {
             var s = start == 0 ? 0 : Indices[start - 1];
@@ -428,24 +470,5 @@ namespace Atropos
             Debug.Assert(newLeft.Node._childrenCount + newRight.Node._childrenCount == oldLeftCount + oldRightCount);
             return (newLeft, newRight);
         }
-
-        //private void InitChildIndices()
-        //{
-        //    var s = 0;
-        //    int i = 0;
-        //    var children = MemoryMarshal.CreateReadOnlySpan(ref _children._data0, _childrenCount);
-        //    var indices = MemoryMarshal.CreateSpan(ref _indices._data0, _childrenCount);
-        //    while(i< _childrenCount)
-        //    {
-        //        indices[i] = s += children[i].Value.Count;
-        //        i++;
-        //    }
-        //    while(i<16)
-        //    {
-        //        indices[i] = 0;
-        //        i++;
-        //    }
-        //}
-
     }
 }

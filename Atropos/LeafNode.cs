@@ -17,7 +17,6 @@ namespace Atropos
             MemoryMarshal.CreateSpan(ref data._data0, count).Fill(value);
 
         }
-        public LeafNode(T value, int count) : this() => Fill(value, count);
 
         public T this[int index]
         {
@@ -56,29 +55,6 @@ namespace Atropos
         }
             
 
-        public Box<LeafNode<T>, T> InsertDataAt(Box<LeafNode<T>, T> self, int index, T value)
-        {
-            if (self.Frozen)
-            {
-                var r = new Box<LeafNode<T>, T>();
-                r.Node._count = Count + 1;
-                var t = r.Node.AsSpan;
-                AsSpan.Slice(0, index).CopyTo(t);
-                t[index] = value;
-                AsSpan.Slice(index).CopyTo(t.Slice(index + 1));
-                return r;
-            }
-            else
-            {
-                var count = self.Count;
-                self.Node._count++;
-
-                self.Node.AsSpan.Slice(index, count - index).CopyTo(self.Node.AsSpan.Slice(index + 1));
-                self.Node[index] = value;
-                return self;
-            }
-        }
-
         public Box<LeafNode<T>, T> RemoveAt(Box<LeafNode<T>, T> self, int index)
         {
             var r = self;
@@ -95,40 +71,38 @@ namespace Atropos
         public Box<LeafNode<T>, T> InsertAt(Box<LeafNode<T>, T> self, int index, T value)
         {
             Debug.Assert(!self.IsFull);
+            var result = self;
             if(self.Frozen)
             {
-                var r = new Box<LeafNode<T>, T>();
-                r.Node._count = self.Count + 1;
-                self.Node.AsSpan.Slice(0, index).CopyTo(r.Node.AsSpan);
-                r.Node[index] = value;
-                self.Node.AsSpan.Slice(index).CopyTo(r.Node.AsSpan.Slice(index + 1));
-                return r;
+                result = new Box<LeafNode<T>, T>();
+                result.Node._count = self.Count;
+                self.Node.AsSpan.Slice(0, index).CopyTo(result.Node.AsSpan);
             }
-            else
-            {
-                var count = self.Count;
-                self.Node._count++;
-                self.Node.AsSpan.Slice(index, count-index).CopyTo(self.Node.AsSpan.Slice(index + 1));
-                self.Node[index] = value;
-                return self;
-            }
+            var count = self.Count;
+            result.Node._count++;
+            self.Node.AsSpan.Slice(index, count-index).CopyTo(result.Node.AsSpan.Slice(index + 1));
+            result.Node[index] = value;
+            return result;
+
         }
 
         public Box<LeafNode<T>, T> ReplaceAt(Box<LeafNode<T>, T> self, int index, T value)
         {
-            if (self.Frozen)
-            {
-                var r = new Box<LeafNode<T>, T>();
-                r.Node._count = self.Count;
-                self.Node.AsSpan.CopyTo(r.Node.AsSpan);
-                r.Node[index] = value;
-                return r;
-            }
-            else
-            {
-                self.Node[index] = value;
-                return self;
-            }
+            // We're ignoring the Frozen state since in our ImmutableList implementation there are no batch-update scenarios.
+            // I.e. when calling ReplaceAt, the self is always frozen.
+            // if those scenarios would ever be implemented, the code can be uncommented back
+            //if (self.Frozen)
+            //{
+                var result = new Box<LeafNode<T>, T>();
+                result.Node = self.Node;
+                result.Node[index] = value;
+                return result;
+            //}
+            //else
+            //{
+            //    self.Node[index] = value;
+            //    return self;
+            //}
         }
 
         public IEnumerator<T> GetEnumerator()

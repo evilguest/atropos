@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 namespace Atropos
 {
-
     internal class Box<N, T>: IListNode<T>
         where N: struct, IListNodeImpl<N, T>
     {

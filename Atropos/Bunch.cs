@@ -6,6 +6,7 @@ namespace Atropos
     {
         internal T _data0;
         internal T _data1;
+#pragma warning disable CS0649
         internal T _data2;
         internal T _data3;
         internal T _data4;
@@ -20,6 +21,7 @@ namespace Atropos
         internal T _dataD;
         internal T _dataE;
         internal T _dataF;
+#pragma warning restore CS0649
         public ref T this[int index]=>ref MemoryMarshal.CreateSpan(ref _data0, 16)[index];
     }
 }

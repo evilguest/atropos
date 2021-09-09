@@ -17,17 +17,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Container.cs" />
-    <Compile Remove="Leaf.cs" />
-    <Compile Remove="Page.cs" />
-    <Compile Remove="StructNode.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="StructNode.tt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="DefaultDocumentation" Version="0.7.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
